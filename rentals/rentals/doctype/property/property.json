@@ -1,0 +1,57 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-14 22:30:25.789111",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "landlord",
+  "lease_agreement_template",
+  "location"
+ ],
+ "fields": [
+  {
+   "fieldname": "landlord",
+   "fieldtype": "Link",
+   "label": "Landlord",
+   "options": "Landlord"
+  },
+  {
+   "fieldname": "lease_agreement_template",
+   "fieldtype": "Link",
+   "label": "Lease Agreement Template",
+   "options": "Lease Agreement Template"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "label": "Location"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-04-14 22:37:42.499644",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Property",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

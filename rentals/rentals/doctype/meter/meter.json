@@ -1,0 +1,91 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-14 22:42:27.641527",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "meter_method",
+  "meter_type",
+  "property",
+  "unit",
+  "column_break_belj",
+  "initial_reading",
+  "current_reading",
+  "token_used"
+ ],
+ "fields": [
+  {
+   "fieldname": "meter_method",
+   "fieldtype": "Select",
+   "label": "Meter Method",
+   "options": "Per Unit\nFull Property"
+  },
+  {
+   "depends_on": "eval:doc.meter_method == \"Full Property\"",
+   "fieldname": "property",
+   "fieldtype": "Link",
+   "label": "Property",
+   "options": "Property"
+  },
+  {
+   "depends_on": "eval:doc.meter_method == \"Per Unit\"",
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "options": "Unit"
+  },
+  {
+   "fieldname": "initial_reading",
+   "fieldtype": "Float",
+   "label": "Initial Reading",
+   "read_only": 1
+  },
+  {
+   "fieldname": "current_reading",
+   "fieldtype": "Float",
+   "label": "Current Reading"
+  },
+  {
+   "fieldname": "token_used",
+   "fieldtype": "Float",
+   "label": "Token Used"
+  },
+  {
+   "fieldname": "meter_type",
+   "fieldtype": "Select",
+   "label": "Meter Type",
+   "options": "Electricity\nWater"
+  },
+  {
+   "fieldname": "column_break_belj",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-04-14 22:52:15.177740",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Meter",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
