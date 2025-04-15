@@ -7,6 +7,10 @@ from frappe import _
 
 
 class LeaseAgreement(Document):
+    def before_save(self):
+        pass
+ 
+    
     def on_submit(self):
         customer_name = self.tenant_name
         price_list_name = f"{customer_name} Price List"

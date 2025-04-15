@@ -1,25 +1,62 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:LOG-{##}",
  "creation": "2025-04-14 22:55:03.673470",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_kyyq"
+  "meter_type",
+  "meter_reading",
+  "units_used",
+  "status",
+  "customer"
  ],
  "fields": [
   {
-   "fieldname": "section_break_kyyq",
-   "fieldtype": "Section Break"
+   "fieldname": "meter_reading",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Meter Reading",
+   "options": "Meter Reading",
+   "reqd": 1
+  },
+  {
+   "fieldname": "units_used",
+   "fieldtype": "Float",
+   "label": "Units Used",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nBilled\nCancelled"
+  },
+  {
+   "fieldname": "meter_type",
+   "fieldtype": "Select",
+   "label": "Meter Type",
+   "options": "\nWater\nElectricity",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-14 22:55:03.673470",
+ "modified": "2025-04-15 22:55:31.139174",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Utility Bill Log",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

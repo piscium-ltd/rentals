@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:AGR-{landlord_name}-{tenant_name}",
+ "autoname": "format:AGR-{YY}-{MM}-{##}",
  "creation": "2025-04-15 10:31:51.309295",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -9,6 +9,7 @@
   "section_break_rxt3",
   "landlord",
   "lease_agreement_template",
+  "status",
   "column_break_lbif",
   "tenant",
   "billing_currency",
@@ -39,7 +40,10 @@
   "end_date",
   "section_break_aqzz",
   "chargable_services",
+  "section_break_guxm",
   "payment_method",
+  "column_break_tvde",
+  "grand_total",
   "authorised_by_section",
   "signee",
   "obligations_and_clauses_tab",
@@ -68,7 +72,6 @@
   {
    "fieldname": "lease_agreement_template",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Lease Agreement Template",
    "options": "Lease Agreement Template",
    "reqd": 1
@@ -194,7 +197,8 @@
    "fieldname": "payment_method",
    "fieldtype": "Select",
    "label": "Payment Method",
-   "options": "\nCash\nBank Draft\nCheque"
+   "options": "\nCash\nBank Draft\nCheque",
+   "reqd": 1
   },
   {
    "fetch_from": "landlord.address",
@@ -221,6 +225,7 @@
    "fetch_from": "tenant.full_name",
    "fieldname": "tenant_name",
    "fieldtype": "Read Only",
+   "in_list_view": 1,
    "label": "Tenant Name"
   },
   {
@@ -233,12 +238,15 @@
    "fetch_from": "property.property_name",
    "fieldname": "property_name",
    "fieldtype": "Read Only",
+   "in_list_view": 1,
    "label": "Property Name"
   },
   {
    "fetch_from": "unit.house_no",
    "fieldname": "house_no",
    "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "House No"
   },
   {
@@ -252,12 +260,14 @@
    "fetch_from": "unit.unit_type",
    "fieldname": "unit_type",
    "fieldtype": "Read Only",
+   "in_list_view": 1,
    "label": "Unit Type"
   },
   {
    "fetch_from": "landlord.full_name",
    "fieldname": "landlord_name",
    "fieldtype": "Read Only",
+   "in_list_view": 1,
    "label": "Landlord Name"
   },
   {
@@ -300,13 +310,35 @@
    "label": "Billing Currency",
    "options": "Currency",
    "reqd": 1
+  },
+  {
+   "fieldname": "grand_total",
+   "fieldtype": "Float",
+   "label": "Grand Total",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_guxm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_tvde",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nInactive\nExpired\nUnsigned"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-15 16:23:24.581616",
+ "modified": "2025-04-16 00:14:21.190199",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

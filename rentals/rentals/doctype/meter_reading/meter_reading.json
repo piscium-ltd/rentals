@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:RDG-{##}",
  "creation": "2025-04-15 09:59:03.853944",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -8,7 +9,7 @@
   "meter",
   "initial_reading",
   "current_reading",
-  "token_used",
+  "units_used",
   "amended_from"
  ],
  "fields": [
@@ -31,11 +32,6 @@
    "label": "Current Reading"
   },
   {
-   "fieldname": "token_used",
-   "fieldtype": "Float",
-   "label": "Token Used"
-  },
-  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -44,16 +40,23 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "units_used",
+   "fieldtype": "Float",
+   "label": "Units Used",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-15 15:51:12.037636",
+ "modified": "2025-04-15 22:44:36.345526",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Meter Reading",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

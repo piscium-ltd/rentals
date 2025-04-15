@@ -142,14 +142,13 @@ app_license = "mit"
 
 # Scheduled Tasks
 # ---------------
-
-# scheduler_events = {
+scheduler_events = {
 # 	"all": [
 # 		"rentals.tasks.all"
 # 	],
-# 	"daily": [
-# 		"rentals.tasks.daily"
-# 	],
+	"daily": [
+		"rentals.tasks.daily.check_expired_leases"
+	],
 # 	"hourly": [
 # 		"rentals.tasks.hourly"
 # 	],
@@ -159,7 +158,7 @@ app_license = "mit"
 # 	"monthly": [
 # 		"rentals.tasks.monthly"
 # 	],
-# }
+}
 
 # Testing
 # -------
