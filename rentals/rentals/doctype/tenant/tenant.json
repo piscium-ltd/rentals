@@ -9,11 +9,8 @@
   "full_name",
   "idpassport_no",
   "phone_number",
-  "customer",
-  "column_break_pdns",
-  "property",
-  "unit",
-  "email"
+  "email",
+  "customer"
  ],
  "fields": [
   {
@@ -31,30 +28,11 @@
    "reqd": 1
   },
   {
-   "fieldname": "unit",
-   "fieldtype": "Link",
-   "label": "Unit",
-   "options": "Unit",
-   "reqd": 1
-  },
-  {
-   "fetch_from": "unit.property",
-   "fieldname": "property",
-   "fieldtype": "Link",
-   "label": "Property",
-   "options": "Property",
-   "reqd": 1
-  },
-  {
    "fieldname": "idpassport_no",
    "fieldtype": "Data",
    "label": "ID/Passport No",
    "reqd": 1,
    "unique": 1
-  },
-  {
-   "fieldname": "column_break_pdns",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "email",
@@ -65,6 +43,7 @@
   {
    "fieldname": "customer",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Customer",
    "options": "Customer",
    "read_only": 1
@@ -73,8 +52,8 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-15 13:51:14.201560",
- "modified_by": "Administrator",
+ "modified": "2025-04-15 15:27:53.765743",
+ "modified_by": "pisciumsolutions@gmail.com",
  "module": "Rentals",
  "name": "Tenant",
  "naming_rule": "By fieldname",

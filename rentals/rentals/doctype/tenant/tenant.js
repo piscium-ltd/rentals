@@ -3,10 +3,10 @@
 
 frappe.ui.form.on("Tenant", {
 	refresh(frm) {
-        frm.set_query("unit", () => ({
-            filters:{
-                property: frm.doc.property
-            },
-        }));
+		frm.set_query("unit", () => ({
+			filters: {
+				property: frm.doc.property,
+			},
+		}));
 	},
 });

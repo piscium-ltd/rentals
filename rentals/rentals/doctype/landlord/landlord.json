@@ -11,7 +11,8 @@
   "phone_number",
   "idpassport_no",
   "kra_pin",
-  "address"
+  "address",
+  "supplier"
  ],
  "fields": [
   {
@@ -54,6 +55,13 @@
    "non_negative": 1,
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
@@ -64,8 +72,8 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2025-04-15 11:23:14.998578",
- "modified_by": "Administrator",
+ "modified": "2025-04-15 15:42:54.684778",
+ "modified_by": "pisciumsolutions@gmail.com",
  "module": "Rentals",
  "name": "Landlord",
  "naming_rule": "By fieldname",

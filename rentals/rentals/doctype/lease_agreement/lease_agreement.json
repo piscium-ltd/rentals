@@ -11,6 +11,7 @@
   "lease_agreement_template",
   "column_break_lbif",
   "tenant",
+  "billing_currency",
   "section_break_djzt",
   "landlord_information_column",
   "landlord_name",
@@ -122,12 +123,11 @@
    "reqd": 1
   },
   {
-   "fetch_from": "tenant.property",
    "fieldname": "property",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Property",
-   "options": "Property"
+   "options": "Property",
+   "reqd": 1
   },
   {
    "fieldname": "obligations_and_clauses_tab",
@@ -186,8 +186,8 @@
   {
    "fieldname": "chargable_services",
    "fieldtype": "Table",
-   "label": "Chargable Services",
-   "options": "Chargable Services",
+   "label": "Chargeable Services",
+   "options": "Chargeable Services",
    "reqd": 1
   },
   {
@@ -242,12 +242,11 @@
    "label": "House No"
   },
   {
-   "fetch_from": "tenant.unit",
    "fieldname": "unit",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Unit",
-   "options": "Unit"
+   "options": "Unit",
+   "reqd": 1
   },
   {
    "fetch_from": "unit.unit_type",
@@ -294,13 +293,20 @@
   {
    "fieldname": "column_break_fmhz",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "billing_currency",
+   "fieldtype": "Link",
+   "label": "Billing Currency",
+   "options": "Currency",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-15 13:50:04.669418",
+ "modified": "2025-04-15 16:23:24.581616",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

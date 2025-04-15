@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class ChargableServices(Document):
+class ChargeableServices(Document):
 	pass
