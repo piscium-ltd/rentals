@@ -1,0 +1,328 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:AGR-{landlord_name}-{tenant_name}",
+ "creation": "2025-04-15 10:31:51.309295",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_rxt3",
+  "landlord",
+  "lease_agreement_template",
+  "column_break_lbif",
+  "tenant",
+  "section_break_djzt",
+  "landlord_information_column",
+  "landlord_name",
+  "address",
+  "column_break_sbqh",
+  "kra_pin",
+  "landlord_phone_number",
+  "section_break_czzi",
+  "tenant_information_column",
+  "tenant_name",
+  "tenant_email",
+  "column_break_fmhz",
+  "tenant_phone_number",
+  "property_details_section",
+  "property",
+  "property_name",
+  "property_address",
+  "column_break_gppq",
+  "unit",
+  "unit_type",
+  "house_no",
+  "contract_period_section",
+  "start_date",
+  "column_break_svbg",
+  "end_date",
+  "section_break_aqzz",
+  "chargable_services",
+  "payment_method",
+  "authorised_by_section",
+  "signee",
+  "obligations_and_clauses_tab",
+  "landlord_obligation",
+  "tenant_obligation",
+  "termination_clause",
+  "kra__erits_tax_compliance",
+  "dispute_resolution",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_rxt3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Lease Agreement",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "lease_agreement_template",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Lease Agreement Template",
+   "options": "Lease Agreement Template",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "lease_agreement_template.tenant_obligation",
+   "fieldname": "tenant_obligation",
+   "fieldtype": "Text Editor",
+   "label": "Tenant Obligation",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "lease_agreement_template.landlord_obligation",
+   "fieldname": "landlord_obligation",
+   "fieldtype": "Text Editor",
+   "label": "Landlord Obligation",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "lease_agreement_template.termination_clause",
+   "fieldname": "termination_clause",
+   "fieldtype": "Text",
+   "label": "Termination Clause",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "lease_agreement_template.kra__erits_tax_compliance",
+   "fieldname": "kra__erits_tax_compliance",
+   "fieldtype": "Text",
+   "label": "KRA  eRITS Tax Compliance",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "lease_agreement_template.dispute_resolution",
+   "fieldname": "dispute_resolution",
+   "fieldtype": "Text",
+   "label": "Dispute Resolution",
+   "read_only": 1
+  },
+  {
+   "fieldname": "landlord",
+   "fieldtype": "Link",
+   "label": "Landlord ID No.",
+   "options": "Landlord",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant ID No.",
+   "options": "Tenant",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "tenant.property",
+   "fieldname": "property",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Property",
+   "options": "Property"
+  },
+  {
+   "fieldname": "obligations_and_clauses_tab",
+   "fieldtype": "Tab Break",
+   "label": "Obligations And Clauses"
+  },
+  {
+   "fieldname": "contract_period_section",
+   "fieldtype": "Section Break",
+   "label": "Lease Terms"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_svbg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "authorised_by_section",
+   "fieldtype": "Section Break",
+   "label": "Authorised By"
+  },
+  {
+   "fieldname": "signee",
+   "fieldtype": "Signature",
+   "label": "Signee"
+  },
+  {
+   "fieldname": "section_break_djzt",
+   "fieldtype": "Section Break",
+   "label": "Landlord Information"
+  },
+  {
+   "fieldname": "landlord_information_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "property_details_section",
+   "fieldtype": "Section Break",
+   "label": "Property Details"
+  },
+  {
+   "fieldname": "section_break_aqzz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "chargable_services",
+   "fieldtype": "Table",
+   "label": "Chargable Services",
+   "options": "Chargable Services",
+   "reqd": 1
+  },
+  {
+   "fieldname": "payment_method",
+   "fieldtype": "Select",
+   "label": "Payment Method",
+   "options": "\nCash\nBank Draft\nCheque"
+  },
+  {
+   "fetch_from": "landlord.address",
+   "fieldname": "address",
+   "fieldtype": "Read Only",
+   "label": "Address"
+  },
+  {
+   "fetch_from": "landlord.kra_pin",
+   "fieldname": "kra_pin",
+   "fieldtype": "Read Only",
+   "label": "KRA PIN"
+  },
+  {
+   "fieldname": "section_break_czzi",
+   "fieldtype": "Section Break",
+   "label": "Tenant Information"
+  },
+  {
+   "fieldname": "tenant_information_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "tenant.full_name",
+   "fieldname": "tenant_name",
+   "fieldtype": "Read Only",
+   "label": "Tenant Name"
+  },
+  {
+   "fetch_from": "property.premises_address",
+   "fieldname": "property_address",
+   "fieldtype": "Read Only",
+   "label": "Property Address"
+  },
+  {
+   "fetch_from": "property.property_name",
+   "fieldname": "property_name",
+   "fieldtype": "Read Only",
+   "label": "Property Name"
+  },
+  {
+   "fetch_from": "unit.house_no",
+   "fieldname": "house_no",
+   "fieldtype": "Read Only",
+   "label": "House No"
+  },
+  {
+   "fetch_from": "tenant.unit",
+   "fieldname": "unit",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Unit",
+   "options": "Unit"
+  },
+  {
+   "fetch_from": "unit.unit_type",
+   "fieldname": "unit_type",
+   "fieldtype": "Read Only",
+   "label": "Unit Type"
+  },
+  {
+   "fetch_from": "landlord.full_name",
+   "fieldname": "landlord_name",
+   "fieldtype": "Read Only",
+   "label": "Landlord Name"
+  },
+  {
+   "fetch_from": "tenant.phone_number",
+   "fieldname": "tenant_phone_number",
+   "fieldtype": "Read Only",
+   "label": "Phone Number"
+  },
+  {
+   "fetch_from": "tenant.email",
+   "fieldname": "tenant_email",
+   "fieldtype": "Read Only",
+   "label": "Tenant Email"
+  },
+  {
+   "fieldname": "column_break_sbqh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_gppq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "landlord.phone_number",
+   "fieldname": "landlord_phone_number",
+   "fieldtype": "Read Only",
+   "label": "Phone Number"
+  },
+  {
+   "fieldname": "column_break_lbif",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_fmhz",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-04-15 13:50:04.669418",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Lease Agreement",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

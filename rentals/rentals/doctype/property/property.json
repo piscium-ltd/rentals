@@ -1,40 +1,53 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:{property_name}-{premises_address}",
  "creation": "2025-04-14 22:30:25.789111",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "property_name",
   "landlord",
-  "lease_agreement_template",
-  "location"
+  "premises_address"
  ],
  "fields": [
   {
    "fieldname": "landlord",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Landlord",
-   "options": "Landlord"
+   "options": "Landlord",
+   "reqd": 1,
+   "unique": 1
   },
   {
-   "fieldname": "lease_agreement_template",
-   "fieldtype": "Link",
-   "label": "Lease Agreement Template",
-   "options": "Lease Agreement Template"
-  },
-  {
-   "fieldname": "location",
+   "fieldname": "premises_address",
    "fieldtype": "Data",
-   "label": "Location"
+   "in_list_view": 1,
+   "label": "Premises Address",
+   "reqd": 1
+  },
+  {
+   "fieldname": "property_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Property Name",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2025-04-14 22:37:42.499644",
+ "links": [
+  {
+   "link_doctype": "Unit",
+   "link_fieldname": "property"
+  }
+ ],
+ "modified": "2025-04-15 11:36:17.993200",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Property",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -53,5 +66,6 @@
  "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "property_name"
 }

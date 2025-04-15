@@ -6,20 +6,40 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "service"
+  "service",
+  "billing_cycle",
+  "rate"
  ],
  "fields": [
   {
    "fieldname": "service",
-   "fieldtype": "Data",
-   "label": "Service"
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Service",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "billing_cycle",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Billing Cycle",
+   "options": "\nDaily\nMonthly",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Rate",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-14 22:59:46.003506",
+ "modified": "2025-04-15 13:05:23.500963",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Chargable Services",

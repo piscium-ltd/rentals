@@ -1,31 +1,41 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:idpassport_no",
  "creation": "2025-04-14 22:56:22.005078",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "full_name",
+  "idpassport_no",
   "phone_number",
+  "customer",
+  "column_break_pdns",
+  "property",
   "unit",
-  "property"
+  "email"
  ],
  "fields": [
   {
    "fieldname": "full_name",
    "fieldtype": "Data",
-   "label": "Full Name"
+   "in_list_view": 1,
+   "label": "Full Name",
+   "reqd": 1
   },
   {
    "fieldname": "phone_number",
-   "fieldtype": "Phone",
-   "label": "Phone Number"
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Phone Number",
+   "reqd": 1
   },
   {
    "fieldname": "unit",
    "fieldtype": "Link",
    "label": "Unit",
-   "options": "Unit"
+   "options": "Unit",
+   "reqd": 1
   },
   {
    "fetch_from": "unit.property",
@@ -33,16 +43,41 @@
    "fieldtype": "Link",
    "label": "Property",
    "options": "Property",
+   "reqd": 1
+  },
+  {
+   "fieldname": "idpassport_no",
+   "fieldtype": "Data",
+   "label": "ID/Passport No",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_pdns",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
    "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-14 22:58:14.413107",
+ "modified": "2025-04-15 13:51:14.201560",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Tenant",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -61,5 +96,6 @@
  "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "full_name"
 }

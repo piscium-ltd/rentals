@@ -1,26 +1,32 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:{property}-{house_no}",
  "creation": "2025-04-14 22:31:18.928175",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "property",
+  "landlord",
   "unit_type",
-  "landlord"
+  "house_no"
  ],
  "fields": [
   {
    "fieldname": "property",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Property",
-   "options": "Property"
+   "options": "Property",
+   "reqd": 1
   },
   {
    "fieldname": "unit_type",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Unit Type",
-   "options": "One Bedroom\nTwo Bedroom\nThree Bedroom\nSingle Room\nBNB\nBedsitter\nShop"
+   "options": "\nMaisonette\nOne Bedroom\nTwo Bedroom\nThree Bedroom\nSingle Room\nBNB\nBedsitter\nShop",
+   "reqd": 1
   },
   {
    "fetch_from": "property.landlord",
@@ -29,15 +35,23 @@
    "label": "Landlord",
    "options": "Landlord",
    "read_only": 1
+  },
+  {
+   "fieldname": "house_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "House No",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-14 22:41:50.044678",
+ "modified": "2025-04-15 11:35:58.429258",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Unit",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -56,5 +70,6 @@
  "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "house_no"
 }

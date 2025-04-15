@@ -1,19 +1,25 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:idpassport_no",
  "creation": "2025-04-14 22:28:13.618292",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "full_name",
   "email",
-  "phone_number"
+  "phone_number",
+  "idpassport_no",
+  "kra_pin",
+  "address"
  ],
  "fields": [
   {
    "fieldname": "full_name",
    "fieldtype": "Data",
-   "label": "Full Name"
+   "in_list_view": 1,
+   "label": "Full Name",
+   "reqd": 1
   },
   {
    "fieldname": "email",
@@ -23,8 +29,31 @@
   },
   {
    "fieldname": "phone_number",
-   "fieldtype": "Phone",
-   "label": "Phone Number"
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Phone Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "kra_pin",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "KRA PIN",
+   "reqd": 1
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address",
+   "reqd": 1
+  },
+  {
+   "fieldname": "idpassport_no",
+   "fieldtype": "Int",
+   "label": "ID/Passport No",
+   "non_negative": 1,
+   "reqd": 1,
+   "unique": 1
   }
  ],
  "grid_page_length": 50,
@@ -35,10 +64,11 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2025-04-14 22:33:49.566682",
+ "modified": "2025-04-15 11:23:14.998578",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Landlord",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -57,5 +87,6 @@
  "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "full_name"
 }

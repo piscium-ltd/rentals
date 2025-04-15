@@ -5,14 +5,11 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "meter_method",
   "meter_type",
+  "meter_method",
   "property",
   "unit",
-  "column_break_belj",
-  "initial_reading",
-  "current_reading",
-  "token_used"
+  "meter_reading"
  ],
  "fields": [
   {
@@ -36,36 +33,22 @@
    "options": "Unit"
   },
   {
-   "fieldname": "initial_reading",
-   "fieldtype": "Float",
-   "label": "Initial Reading",
-   "read_only": 1
-  },
-  {
-   "fieldname": "current_reading",
-   "fieldtype": "Float",
-   "label": "Current Reading"
-  },
-  {
-   "fieldname": "token_used",
-   "fieldtype": "Float",
-   "label": "Token Used"
-  },
-  {
    "fieldname": "meter_type",
    "fieldtype": "Select",
    "label": "Meter Type",
    "options": "Electricity\nWater"
   },
   {
-   "fieldname": "column_break_belj",
-   "fieldtype": "Column Break"
+   "fieldname": "meter_reading",
+   "fieldtype": "Float",
+   "label": "Meter Reading",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-14 22:52:15.177740",
+ "modified": "2025-04-15 10:05:17.078060",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Meter",

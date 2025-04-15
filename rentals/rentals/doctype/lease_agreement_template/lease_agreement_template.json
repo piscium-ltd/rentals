@@ -1,37 +1,52 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2025-04-14 22:34:58.636389",
+ "autoname": "format:LAT-{##}",
+ "creation": "2025-04-15 10:34:27.766960",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_n9vp",
-  "amended_from"
+  "tenant_obligation",
+  "landlord_obligation",
+  "termination_clause",
+  "kra__erits_tax_compliance",
+  "dispute_resolution"
  ],
  "fields": [
   {
-   "fieldname": "section_break_n9vp",
-   "fieldtype": "Section Break"
+   "fieldname": "tenant_obligation",
+   "fieldtype": "Text Editor",
+   "label": "Tenant Obligation"
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Lease Agreement Templates",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
+   "fieldname": "landlord_obligation",
+   "fieldtype": "Text Editor",
+   "label": "Landlord Obligation"
+  },
+  {
+   "fieldname": "termination_clause",
+   "fieldtype": "Text",
+   "label": "Termination Clause"
+  },
+  {
+   "fieldname": "kra__erits_tax_compliance",
+   "fieldtype": "Text",
+   "label": "KRA  eRITS Tax Compliance"
+  },
+  {
+   "fieldname": "dispute_resolution",
+   "fieldtype": "Text",
+   "label": "Dispute Resolution"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "is_submittable": 1,
  "links": [],
- "modified": "2025-04-14 22:34:58.636389",
+ "modified": "2025-04-15 11:55:23.015900",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement Template",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -44,7 +59,6 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
-   "submit": 1,
    "write": 1
   }
  ],
