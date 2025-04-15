@@ -22,4 +22,4 @@ class Tenant(Document):
                 customer.insert(ignore_permissions=True)
                 self.customer = customer.name
                 self.db_update()
-                frappe.msgprint(f"A new Customer <b>{self.customer}</b> has been created and linked to this Tenant.")
+                frappe.msgprint(f"✅ A new Customer <b>{self.customer}</b> has been created.")

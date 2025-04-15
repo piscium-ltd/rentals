@@ -20,4 +20,4 @@ class Landlord(Document):
                 supplier.insert(ignore_permissions=True)
                 self.supplier = supplier.name
                 self.db_update()
-                frappe.msgprint(f"A new Supplier <b>{self.supplier}</b> has been created and linked to this Landlord.")
+                frappe.msgprint(f"✅ A new Supplier <b>{self.supplier}</b> has been created.")
