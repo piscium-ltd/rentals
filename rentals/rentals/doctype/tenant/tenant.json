@@ -24,8 +24,7 @@
    "fieldname": "phone_number",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Phone Number",
-   "reqd": 1
+   "label": "Phone Number"
   },
   {
    "fieldname": "idpassport_no",
@@ -38,7 +37,8 @@
    "fieldname": "email",
    "fieldtype": "Data",
    "label": "Email",
-   "options": "Email"
+   "options": "Email",
+   "reqd": 1
   },
   {
    "fieldname": "customer",
@@ -52,8 +52,8 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-15 15:27:53.765743",
- "modified_by": "pisciumsolutions@gmail.com",
+ "modified": "2025-04-16 11:48:53.018009",
+ "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Tenant",
  "naming_rule": "By fieldname",

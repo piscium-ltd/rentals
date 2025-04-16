@@ -4,13 +4,15 @@
 import frappe
 from frappe.model.document import Document
 from frappe import _
+from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
 
 
 class LeaseAgreement(Document):
     def before_save(self):
-        pass
- 
-    
+        # Calculate Grand Total
+        total = sum([row.rate for row in self.chargeable_services])
+        self.grand_total = total
+
     def on_submit(self):
         customer_name = self.tenant_name
         price_list_name = f"{customer_name} Price List"
@@ -41,7 +43,7 @@ class LeaseAgreement(Document):
             return
 
         # 3. Add or update item prices for chargeable services
-        for row in self.chargable_services:
+        for row in self.chargeable_services:
             item_code = row.service
             rate = row.rate
 
@@ -71,3 +73,46 @@ class LeaseAgreement(Document):
                 item_price.insert(ignore_permissions=True)
                 frappe.msgprint(_(f"✅ Created new price for item {item_code} in {price_list_name}"))
 
+        # 4. Create Sales Order and Payment Request
+        try:
+            sales_order = frappe.get_doc({
+                "doctype": "Sales Order",
+                "customer": tenant_doc.customer,
+                "currency": self.billing_currency,
+                "selling_price_list": price_list_name,
+                "transaction_date": frappe.utils.nowdate(),
+                "delivery_date": frappe.utils.nowdate(),
+                "items": [
+                    {
+                        "item_code": row.service,
+                        "qty": 1,
+                        "rate": row.rate,
+                        "delivery_date": frappe.utils.nowdate()
+                    }
+                    for row in self.chargeable_services
+                ]
+            })
+            sales_order.insert(ignore_permissions=True)
+            sales_order.submit()
+
+        except Exception as e:
+            frappe.log_error(frappe.get_traceback(), "LeaseAgreement: Sales Order Error")
+
+        try:
+            recipient_email = tenant_doc.email
+            if not recipient_email:
+                frappe.msgprint(_("⚠️ Tenant does not have an email. Skipping Payment Request creation."))
+                return
+
+            payment_request = make_payment_request(
+                dt="Sales Order",
+                dn=sales_order.name,
+                recipient_id=recipient_email,
+                submit_doc=True
+            )
+            self.db_set("payment_request", payment_request.name)
+            frappe.msgprint(_(f"✅ Created new Payment Request: {payment_request.name}"))
+
+        except Exception as e:
+            frappe.log_error(frappe.get_traceback(), "LeaseAgreement: Payment Request Error")
+            frappe.throw(_("❌ Could not create Payment Request."))
