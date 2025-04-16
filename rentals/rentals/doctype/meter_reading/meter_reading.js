@@ -8,9 +8,17 @@ frappe.ui.form.on("Meter Reading", {
 });
 
 function calculate_units_used(frm) {
-	const current = frm.doc.current_reading || 0;
-	const initial = frm.doc.initial_reading || 0;
-	const units_used = current - initial;
+	const current = frm.doc.current_reading;
+	const initial = frm.doc.initial_reading;
 
-	frm.set_value("units_used", units_used);
+	if (initial && current) {
+		if (current <= initial) {
+			frappe.msgprint("🚫 Current reading must be greater than initial reading.");
+			return;
+		}
+		const units_used = current - initial;
+		frm.set_value("units_used", units_used);
+	} else {
+		frm.set_value("units_used", 0);
+	}
 }

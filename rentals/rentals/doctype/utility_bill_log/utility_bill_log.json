@@ -19,6 +19,7 @@
    "in_list_view": 1,
    "label": "Meter Reading",
    "options": "Meter Reading",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -27,6 +28,7 @@
    "in_list_view": 1,
    "label": "Units Used",
    "non_negative": 1,
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -35,6 +37,7 @@
    "in_list_view": 1,
    "label": "Customer",
    "options": "Customer",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -42,7 +45,8 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Open\nBilled\nCancelled"
+   "options": "Open\nBilled\nCancelled",
+   "read_only": 1
   },
   {
    "fieldname": "meter_type",
@@ -50,13 +54,14 @@
    "in_list_view": 1,
    "label": "Meter Type",
    "options": "\nWater\nElectricity",
+   "read_only": 1,
    "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-16 13:59:28.339124",
+ "modified": "2025-04-16 14:30:45.714960",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Utility Bill Log",

@@ -45,13 +45,14 @@
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Meter Reading",
+   "non_negative": 1,
    "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-16 13:53:34.986988",
+ "modified": "2025-04-16 14:06:48.794553",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Meter",
