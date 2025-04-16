@@ -95,6 +95,7 @@ class LeaseAgreement(Document):
             sales_order.insert(ignore_permissions=True)
             sales_order.submit()
             self.sales_order_reference = sales_order.name
+            self.save(ignore_permissions=True)
 
         except Exception as e:
             frappe.log_error(frappe.get_traceback(), "LeaseAgreement: Sales Order Error")
@@ -112,6 +113,7 @@ class LeaseAgreement(Document):
                 submit_doc=True
             )
             self.payment_request_reference = payment_request.name
+            self.save(ignore_permissions=True)
             frappe.msgprint(_(f"✅ Created new Payment Request: {payment_request.name}"))
 
         except Exception as e:
