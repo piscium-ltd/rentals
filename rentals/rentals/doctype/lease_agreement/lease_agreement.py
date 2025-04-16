@@ -121,8 +121,8 @@ class LeaseAgreement(Document):
             frappe.throw(_("❌ Could not create Payment Request."))
 
     def on_cancel(self):
-        # 1. Cancel or Delete the Payment Request
         try:
+            # 1. Cancel or Delete the Payment Request
             if self.payment_request_reference:
                 payment_request = frappe.get_doc("Payment Request", self.payment_request_reference)
 
@@ -134,17 +134,17 @@ class LeaseAgreement(Document):
                     payment_request.cancel()
                     frappe.msgprint(_(f"✅ Canceled Payment Request: {self.payment_request_reference}"))
                 self.payment_request_reference = ""
-                self.save(ignore_permissions=True)
-        except Exception as e:
-            frappe.log_error(frappe.get_traceback(), "LeaseAgreement: Payment Request Cancel/Delete Error")
-        
-        # 2. Cancel the Sales Order
-        try:
+
+            # 2. Cancel the Sales Order
             if self.sales_order_reference:
                 sales_order = frappe.get_doc("Sales Order", self.sales_order_reference)
+
                 if sales_order.docstatus == 1:
                     sales_order.cancel()
                 self.sales_order_reference = ""
-                self.save(ignore_permissions=True)
-        except Exception as e:
-            frappe.log_error(frappe.get_traceback(), "LeaseAgreement: Sales Order Cancel Error")
+
+            self.save(ignore_permissions=True)
+
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "LeaseAgreement: Error while cancelling Payment Request or Sales Order")
+            frappe.msgprint(_("⚠️ An error occurred during cancellation. Please check the error log."))
