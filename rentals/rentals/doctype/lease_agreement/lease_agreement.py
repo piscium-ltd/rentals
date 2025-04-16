@@ -110,7 +110,6 @@ class LeaseAgreement(Document):
                 recipient_id=recipient_email,
                 submit_doc=True
             )
-            self.db_set("payment_request", payment_request.name)
             frappe.msgprint(_(f"✅ Created new Payment Request: {payment_request.name}"))
 
         except Exception as e:
