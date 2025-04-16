@@ -36,12 +36,14 @@
   {
    "fieldname": "meter_type",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Meter Type",
    "options": "Electricity\nWater"
   },
   {
    "fieldname": "meter_reading",
    "fieldtype": "Float",
+   "in_list_view": 1,
    "label": "Meter Reading",
    "read_only": 1
   }
@@ -49,7 +51,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-15 22:20:07.801025",
+ "modified": "2025-04-16 13:53:34.986988",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Meter",
