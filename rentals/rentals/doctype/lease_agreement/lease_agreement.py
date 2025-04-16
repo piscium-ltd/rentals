@@ -133,6 +133,8 @@ class LeaseAgreement(Document):
                 elif payment_request.docstatus == 1:
                     payment_request.cancel()
                     frappe.msgprint(_(f"✅ Canceled Payment Request: {self.payment_request_reference}"))
+                self.payment_request_reference = ""
+                self.save(ignore_permissions=True)
         except Exception as e:
             frappe.log_error(frappe.get_traceback(), "LeaseAgreement: Payment Request Cancel/Delete Error")
         
@@ -142,5 +144,7 @@ class LeaseAgreement(Document):
                 sales_order = frappe.get_doc("Sales Order", self.sales_order_reference)
                 if sales_order.docstatus == 1:
                     sales_order.cancel()
+                self.sales_order_reference = ""
+                self.save(ignore_permissions=True)
         except Exception as e:
             frappe.log_error(frappe.get_traceback(), "LeaseAgreement: Sales Order Cancel Error")
