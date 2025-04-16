@@ -3,6 +3,16 @@
 
 frappe.ui.form.on("Lease Agreement", {
 	refresh(frm) {
+		frm.set_query("property", () => ({
+			filters: {
+				landlord: frm.doc.landlord,
+			},
+		}));
+		frm.set_query("unit", () => ({
+			filters: {
+				property: frm.doc.property,
+			},
+		}));
 		calculate_grand_total(frm);
 	},
 });

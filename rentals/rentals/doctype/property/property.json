@@ -17,8 +17,7 @@
    "in_list_view": 1,
    "label": "Landlord",
    "options": "Landlord",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "fieldname": "premises_address",
@@ -43,7 +42,7 @@
    "link_fieldname": "property"
   }
  ],
- "modified": "2025-04-15 11:36:17.993200",
+ "modified": "2025-04-16 12:28:06.705568",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Property",
