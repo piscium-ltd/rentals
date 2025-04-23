@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:LAT-{##}",
+ "autoname": "format:\tLEASE-TPL-{MM}-{YYYY}-{####}",
  "creation": "2025-04-15 10:34:27.766960",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -42,7 +42,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-15 11:55:23.015900",
+ "modified": "2025-04-22 12:53:25.470624",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement Template",

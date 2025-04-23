@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:LOG-{##}",
+ "autoname": "format:UTILITYLOG-{YYYY}-{MM}-{####}",
  "creation": "2025-04-14 22:55:03.673470",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -61,7 +61,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-16 14:30:45.714960",
+ "modified": "2025-04-22 12:20:22.074912",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Utility Bill Log",

@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:AGR-{YY}-{MM}-{##}",
+ "autoname": "format:LEASEAGR-{YY}-{MM}-{##}",
  "creation": "2025-04-15 10:31:51.309295",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -358,7 +358,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-16 15:30:36.389632",
+ "modified": "2025-04-22 12:29:48.117333",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

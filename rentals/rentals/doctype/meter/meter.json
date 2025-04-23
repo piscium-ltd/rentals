@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{MRT}-{###}",
+ "autoname": "format:Mtr:-{MM}-{YYYY}-{####}",
  "creation": "2025-04-14 22:42:27.641527",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -52,7 +52,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-16 14:06:48.794553",
+ "modified": "2025-04-22 14:01:15.240007",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Meter",
