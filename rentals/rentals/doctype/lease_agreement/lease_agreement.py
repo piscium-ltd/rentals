@@ -4,13 +4,34 @@
 import frappe
 from frappe.model.document import Document
 from frappe import _
+from frappe.utils import today, add_days, add_months, add_years, getdate
 from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
 
 
 class LeaseAgreement(Document):
     def before_save(self):
-        # Calculate Grand Total
-        total = sum([row.rate for row in self.chargeable_services])
+        # Calculate Grand Total from child table
+        total = 0
+        base_date = getdate(today())
+
+        for row in self.chargeable_services:
+            total += row.rate
+
+            # Only set billing date if not already set
+            if not row.billing_date:
+                if row.billing_cycle == "Once":
+                    row.billing_date = base_date
+                elif row.billing_cycle == "Daily":
+                    row.billing_date = add_days(base_date, 1)
+                elif row.billing_cycle == "Weekly":
+                    row.billing_date = add_days(base_date, 7)
+                elif row.billing_cycle == "Monthly":
+                    row.billing_date = add_months(base_date, 1)
+                elif row.billing_cycle == "Annually":
+                    row.billing_date = add_years(base_date, 1)
+                else:
+                    row.billing_date = base_date
+
         self.grand_total = total
 
     def on_submit(self):

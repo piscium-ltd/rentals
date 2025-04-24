@@ -300,6 +300,7 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "grand_total",
    "fieldtype": "Currency",
    "label": "Grand Total",
@@ -359,7 +360,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-23 14:22:26.099917",
+ "modified": "2025-04-24 16:56:21.528753",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

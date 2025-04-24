@@ -31,19 +31,6 @@ class MeterReading(Document):
 
         meter_doc = frappe.get_doc("Meter", self.meter)
 
-        # Fetch Meter Rate Document
-        meter_rate = frappe.get_all(
-            "Meter Rate",
-            filters={"meter": self.meter},
-            limit=1,
-            fields=["name", "rate_type", "flat_rate"]
-        )
-
-        if not meter_rate:
-            frappe.throw(f"❌ Meter Rate not found for meter {self.meter}")
-
-        meter_rate_doc = frappe.get_doc("Meter Rate", meter_rate[0].name)
-
         if meter_doc.meter_method == "Per Unit":
             # Find tenant from the unit
             if not meter_doc.unit:
@@ -60,20 +47,6 @@ class MeterReading(Document):
             tenant = lease_agreements[0].get("tenant")
             tenant_doc = frappe.get_doc("Tenant", tenant)
 
-            # Calculate the utility bill based on the rate type (Flat or Slab)
-            if meter_rate_doc.rate_type == "Flat":
-                amount = self.units_used * (meter_rate_doc.flat_rate or 0)
-            elif meter_rate_doc.rate_type == "Slab":
-                amount = 0
-                for slab in meter_rate_doc.slab:
-                    if self.units_used >= slab.from_unit:
-                        units_in_slab = min(self.units_used, slab.to_unit) - slab.from_unit + 1
-                        amount += units_in_slab * slab.rate
-                    else:
-                        break
-            else:
-                frappe.throw("⚠️ Invalid rate type. Must be 'Flat' or 'Slab'.")
-
             # Create one Utility Bill Log
             utility_bill_log = frappe.get_doc({
                 "doctype": "Utility Bill Log",
@@ -82,8 +55,7 @@ class MeterReading(Document):
                 "meter_type": meter_doc.meter_type,
                 "meter_method": meter_doc.meter_method,
                 "status": "Open",
-                "customer": tenant_doc.customer,
-                "amount": amount  
+                "customer": tenant_doc.customer
             })
             utility_bill_log.insert()
             frappe.msgprint(f"✅ Created Utility Bill Log: {utility_bill_log.name}")
@@ -103,26 +75,11 @@ class MeterReading(Document):
                 return
 
             total_tenants = len(lease_agreements)
-            share_per_tenant = self.units_used / total_tenants if total_tenants else 0  
+            share_per_tenant = self.units_used / total_tenants if total_tenants else 0
 
             for lease in lease_agreements:
                 tenant_doc = frappe.get_doc("Tenant", lease.get("tenant"))
 
-                # Calculate the utility bill based on the rate type (Flat or Slab)
-                if meter_rate_doc.rate_type == "Flat":
-                    amount = share_per_tenant * (meter_rate_doc.flat_rate or 0)
-                elif meter_rate_doc.rate_type == "Slab":
-                    amount = 0
-                    for slab in meter_rate_doc.slab:
-                        if share_per_tenant >= slab.from_unit:
-                            units_in_slab = min(share_per_tenant, slab.to_unit) - slab.from_unit + 1
-                            amount += units_in_slab * slab.rate
-                        else:
-                            break
-                else:
-                    frappe.throw("⚠️ Invalid rate type. Must be 'Flat' or 'Slab'.")
-
-                # Create one Utility Bill Log for each tenant
                 utility_bill_log = frappe.get_doc({
                     "doctype": "Utility Bill Log",
                     "meter_reading": self.name,
@@ -130,8 +87,7 @@ class MeterReading(Document):
                     "meter_type": meter_doc.meter_type,
                     "meter_method": meter_doc.meter_method,
                     "status": "Open",
-                    "customer": tenant_doc.customer,
-                    "amount": amount  
+                    "customer": tenant_doc.customer
                 })
                 utility_bill_log.insert()
 
@@ -162,4 +118,3 @@ class MeterReading(Document):
         except Exception:
             frappe.log_error(frappe.get_traceback(), "MeterReading on_cancel Error")
             frappe.msgprint("⚠️ An error occurred while reversing changes. Please check the error log.")
-

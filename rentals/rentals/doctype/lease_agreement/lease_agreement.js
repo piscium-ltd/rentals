@@ -27,6 +27,25 @@ frappe.ui.form.on("Chargeable Services", {
 	chargeable_services_remove(frm) {
 		calculate_grand_total(frm);
 	},
+	billing_cycle: function (frm, cdt, cdn) {
+		let row = locals[cdt][cdn];
+		let today = frappe.datetime.get_today();
+		let next_date;
+
+		if (row.billing_cycle === "Once") {
+			next_date = today;
+		} else if (row.billing_cycle === "Daily") {
+			next_date = frappe.datetime.add_days(today, 1);
+		} else if (row.billing_cycle === "Weekly") {
+			next_date = frappe.datetime.add_days(today, 7);
+		} else if (row.billing_cycle === "Monthly") {
+			next_date = frappe.datetime.add_months(today, 1);
+		} else if (row.billing_cycle === "Annually") {
+			next_date = frappe.datetime.add_years(today, 1);
+		}
+
+		frappe.model.set_value(cdt, cdn, "billing_date", next_date);
+	},
 });
 
 function calculate_grand_total(frm) {
