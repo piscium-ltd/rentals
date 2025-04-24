@@ -1,7 +1,7 @@
 {
  "app": "Rentals",
  "charts": [],
- "content": "[{\"id\":\"N46TnEbozu\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Landlord\",\"col\":3}},{\"id\":\"bMfH0TZ81N\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant\",\"col\":3}},{\"id\":\"O8YiA8zdyX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Property\",\"col\":3}},{\"id\":\"otubgcRvNq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter\",\"col\":3}},{\"id\":\"OwFYWxONby\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement Template\",\"col\":4}},{\"id\":\"ReRUwNQOcE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement\",\"col\":3}},{\"id\":\"OkVw4R9ynG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":3}},{\"id\":\"wAew_BQ44P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Provider\",\"col\":3}},{\"id\":\"uh19rv1s0F\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Bill Log\",\"col\":3}}]",
+ "content": "[{\"id\":\"N46TnEbozu\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Landlord\",\"col\":3}},{\"id\":\"bMfH0TZ81N\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant\",\"col\":3}},{\"id\":\"O8YiA8zdyX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Property\",\"col\":3}},{\"id\":\"otubgcRvNq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter\",\"col\":3}},{\"id\":\"OwFYWxONby\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement Template\",\"col\":4}},{\"id\":\"ReRUwNQOcE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement\",\"col\":3}},{\"id\":\"OkVw4R9ynG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":3}},{\"id\":\"wAew_BQ44P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Provider\",\"col\":3}},{\"id\":\"uh19rv1s0F\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Bill Log\",\"col\":3}},{\"id\":\"pCEWpgUdwz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Rate\",\"col\":3}}]",
  "creation": "2025-04-16 09:38:16.534279",
  "custom_blocks": [],
  "docstatus": 0,
@@ -15,7 +15,7 @@
  "label": "Rental Management",
  "link_type": "DocType",
  "links": [],
- "modified": "2025-04-16 09:49:01.913710",
+ "modified": "2025-04-24 09:58:17.143117",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Rental Management",
@@ -32,6 +32,14 @@
    "doc_view": "List",
    "label": "Landlord",
    "link_to": "Landlord",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Meter Rate",
+   "link_to": "Meter Rate",
    "stats_filter": "[]",
    "type": "DocType"
   },

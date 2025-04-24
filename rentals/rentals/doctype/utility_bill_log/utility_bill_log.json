@@ -10,7 +10,8 @@
   "status",
   "meter_reading",
   "units_used",
-  "customer"
+  "customer",
+  "amount"
  ],
  "fields": [
   {
@@ -56,12 +57,17 @@
    "options": "\nWater\nElectricity",
    "read_only": 1,
    "reqd": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Float",
+   "label": "Amount"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-22 12:20:22.074912",
+ "modified": "2025-04-23 14:30:15.242431",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Utility Bill Log",
