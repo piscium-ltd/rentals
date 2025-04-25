@@ -1,8 +1,8 @@
 {
- "app": "Rentals",
+ "app": "rentals",
  "charts": [],
- "content": "[{\"id\":\"N46TnEbozu\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Landlord\",\"col\":3}},{\"id\":\"bMfH0TZ81N\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tenant\",\"col\":3}},{\"id\":\"O8YiA8zdyX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Property\",\"col\":3}},{\"id\":\"otubgcRvNq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter\",\"col\":3}},{\"id\":\"OwFYWxONby\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement Template\",\"col\":4}},{\"id\":\"ReRUwNQOcE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement\",\"col\":3}},{\"id\":\"OkVw4R9ynG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":3}},{\"id\":\"wAew_BQ44P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Provider\",\"col\":3}},{\"id\":\"uh19rv1s0F\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Bill Log\",\"col\":3}},{\"id\":\"pCEWpgUdwz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Rate\",\"col\":3}}]",
- "creation": "2025-04-16 09:38:16.534279",
+ "content": "[{\"id\":\"pjHhpkXVyg\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Shortcuts</b>\",\"col\":12}},{\"id\":\"uJNQznj-WF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":4}},{\"id\":\"ZTrpBXTA0c\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement\",\"col\":4}},{\"id\":\"nD1KwpTPKp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Bill Log\",\"col\":4}},{\"id\":\"v0RCVd1VMd\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Reports &amp; Masters</b>\",\"col\":12}},{\"id\":\"s1ytWpZj60\",\"type\":\"card\",\"data\":{\"card_name\":\"Rentals\",\"col\":4}}]",
+ "creation": "2025-04-25 16:09:23.293045",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -14,8 +14,78 @@
  "is_hidden": 0,
  "label": "Rental Management",
  "link_type": "DocType",
- "links": [],
- "modified": "2025-04-24 09:58:17.143117",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rentals",
+   "link_count": 6,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Landlord",
+   "link_count": 0,
+   "link_to": "Landlord",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Property",
+   "link_count": 0,
+   "link_to": "Property",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Unit",
+   "link_count": 0,
+   "link_to": "Unit",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tenant",
+   "link_count": 0,
+   "link_to": "Tenant",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Meter",
+   "link_count": 0,
+   "link_to": "Meter",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Lease Agreement Template",
+   "link_count": 0,
+   "link_to": "Lease Agreement Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2025-04-25 16:21:28.695483",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Rental Management",
@@ -30,48 +100,8 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Landlord",
-   "link_to": "Landlord",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Meter Rate",
-   "link_to": "Meter Rate",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Utility Provider",
-   "link_to": "Utility Provider",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Utility Bill Log",
-   "link_to": "Utility Bill Log",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
    "label": "Meter Reading",
    "link_to": "Meter Reading",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Meter",
-   "link_to": "Meter",
    "stats_filter": "[]",
    "type": "DocType"
   },
@@ -86,24 +116,8 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Lease Agreement Template",
-   "link_to": "Lease Agreement Template",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Property",
-   "link_to": "Property",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Tenant",
-   "link_to": "Tenant",
+   "label": "Utility Bill Log",
+   "link_to": "Utility Bill Log",
    "stats_filter": "[]",
    "type": "DocType"
   }
