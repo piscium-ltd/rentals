@@ -11,7 +11,7 @@ function calculate_units_used(frm) {
 	const current = frm.doc.current_reading;
 	const initial = frm.doc.initial_reading;
 
-	if (initial && current) {
+	if (current && initial >= 0) {
 		if (current <= initial) {
 			frappe.msgprint("🚫 Current reading must be greater than initial reading.");
 			return;

@@ -6,7 +6,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "meter_type",
+  "utility",
   "status",
   "customer",
   "meter_reading",
@@ -49,11 +49,11 @@
    "read_only": 1
   },
   {
-   "fieldname": "meter_type",
-   "fieldtype": "Select",
+   "fieldname": "utility",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Meter Type",
-   "options": "\nWater\nElectricity",
+   "label": "Utility",
+   "options": "Item",
    "read_only": 1,
    "reqd": 1
   }
@@ -61,7 +61,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-24 14:43:46.610085",
+ "modified": "2025-04-25 10:45:35.306004",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Utility Bill Log",

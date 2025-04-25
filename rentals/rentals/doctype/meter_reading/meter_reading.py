@@ -52,7 +52,7 @@ class MeterReading(Document):
                 "doctype": "Utility Bill Log",
                 "meter_reading": self.name,
                 "units_used": self.units_used,
-                "meter_type": meter_doc.meter_type,
+                "utility": meter_doc.utility,
                 "meter_method": meter_doc.meter_method,
                 "status": "Open",
                 "customer": tenant_doc.customer
@@ -84,7 +84,7 @@ class MeterReading(Document):
                     "doctype": "Utility Bill Log",
                     "meter_reading": self.name,
                     "units_used": share_per_tenant,
-                    "meter_type": meter_doc.meter_type,
+                    "utility": meter_doc.utility,
                     "meter_method": meter_doc.meter_method,
                     "status": "Open",
                     "customer": tenant_doc.customer

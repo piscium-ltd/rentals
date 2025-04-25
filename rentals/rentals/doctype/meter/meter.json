@@ -6,7 +6,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "meter_type",
+  "utility",
   "meter_method",
   "property",
   "unit",
@@ -17,7 +17,7 @@
    "fieldname": "meter_method",
    "fieldtype": "Select",
    "label": "Meter Method",
-   "options": "Per Unit\nFull Property"
+   "options": "\nPer Unit\nFull Property"
   },
   {
    "depends_on": "eval:doc.meter_method == \"Full Property\"",
@@ -34,25 +34,30 @@
    "options": "Unit"
   },
   {
-   "fieldname": "meter_type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Meter Type",
-   "options": "Electricity\nWater"
-  },
-  {
    "fieldname": "meter_reading",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Meter Reading",
    "non_negative": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "utility",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Utility",
+   "options": "Item"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2025-04-22 14:01:15.240007",
+ "links": [
+  {
+   "link_doctype": "Meter Reading",
+   "link_fieldname": "meter"
+  }
+ ],
+ "modified": "2025-04-25 15:35:15.154017",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Meter",
