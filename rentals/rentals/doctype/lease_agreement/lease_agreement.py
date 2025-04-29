@@ -9,6 +9,28 @@ from erpnext.accounts.doctype.payment_request.payment_request import make_paymen
 
 
 class LeaseAgreement(Document):
+
+    def validate(self):
+        # Check if there's an active lease already assigned to this unit
+        existing_leases = frappe.get_all(
+            "Lease Agreement",
+            filters={
+                "unit": self.unit,
+                "status": "Active",
+                "docstatus": ["!=", 2], 
+                "name": ["!=", self.name]  
+            },
+            fields=["name", "tenant", "start_date", "end_date"]
+        )
+
+        if existing_leases:
+            existing_lease = existing_leases[0]
+            frappe.throw(_(
+                f"Cannot assign Unit {self.unit} to Tenant {self.tenant}. "
+                f"It is already leased to another tenant (Lease: {existing_lease.name}) "
+                f"from {existing_lease.start_date} to {existing_lease.end_date}."
+            ))
+
     def before_save(self):
         # Calculate Grand Total from child table
         total = 0
