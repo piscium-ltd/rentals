@@ -52,56 +52,56 @@ def get_utility_item_code_and_rate(utility, units_used, customer):
             return item_price[0].item_code, item_price[0].price_list_rate
 
     return None, 0
-
-def generate_sales_invoices():
+@frappe.whitelist()
+def generate_sales_invoices(lease_name=None, override_billing_date=False):
     today = getdate(nowdate())
-    active_leases = frappe.get_all(
-        "Lease Agreement",
-        filters={"status": "Active", "docstatus": 1},
-        fields=["name"]
-    )
 
-    for lease in active_leases:
-        lease_doc = frappe.get_doc("Lease Agreement", lease.name)
+    if lease_name:
+        leases = [{"name": lease_name}]
+    else:
+        leases = frappe.get_all(
+            "Lease Agreement",
+            filters={"status": "Active", "docstatus": 1},
+            fields=["name"]
+        )
+
+    for lease in leases:
+        lease_doc = frappe.get_doc("Lease Agreement", lease["name"])
         tenant_doc = frappe.get_doc("Tenant", lease_doc.tenant)
         customer = frappe.get_doc("Customer", tenant_doc.customer)
 
         updated = False
+
         for service in lease_doc.chargeable_services:
-            if getdate(service.billing_date) == today and service.billing_cycle != "Once":
-                # Create Sales Invoice
+            if override_billing_date or getdate(service.billing_date) == today:
+                # Generate invoice logic...
                 invoice = frappe.new_doc("Sales Invoice")
                 invoice.customer = customer.name
                 invoice.currency = lease_doc.billing_currency
                 invoice.due_date = invoice.posting_date = today
                 invoice.mode_of_payment = lease_doc.mode_of_payment
-                invoice.remarks = f"Auto-generated invoice for lease {lease_doc.name} on {today}"
+                invoice.remarks = f"Invoice for lease {lease_doc.name} generated {'manually' if override_billing_date else 'automatically'} on {today}"
 
-                # Get Utility Bill Logs
+                # Add Utility Items (if any)
                 utility_bill_logs = frappe.get_all(
                     "Utility Bill Log",
                     filters={"status": "Open", "customer": customer.name},
                     fields=["name"]
                 )
+                for log in utility_bill_logs:
+                    utility_bill_log = frappe.get_doc("Utility Bill Log", log.name)
+                    item_code, rate = get_utility_item_code_and_rate(utility_bill_log.utility, utility_bill_log.units_used, customer.name)
 
-                if utility_bill_logs:
-                    for log in utility_bill_logs:
-                        utility_bill_log = frappe.get_doc("Utility Bill Log", log.name)
+                    if item_code:
+                        invoice.append("items", {
+                            "item_code": item_code,
+                            "qty": utility_bill_log.units_used,
+                            "rate": rate,
+                        })
+                        utility_bill_log.status = "Billed"
+                        utility_bill_log.save(ignore_permissions=True)
 
-                        # Get utility item code and rate based on usage and price list
-                        item_code, rate = get_utility_item_code_and_rate(utility_bill_log.utility, utility_bill_log.units_used, customer.name)
-
-                        if item_code:
-                            # Add the utility bill item to the invoice
-                            invoice.append("items", {
-                                "item_code": item_code,
-                                "qty": utility_bill_log.units_used,
-                                "rate": rate,
-                            })
-                            utility_bill_log.status = "Billed"
-                            utility_bill_log.save(ignore_permissions=True)
-
-                # Add chargeable service to invoice
+                # Add Chargeable Service
                 invoice.append("items", {
                     "item_code": service.service,
                     "qty": 1,
@@ -112,15 +112,15 @@ def generate_sales_invoices():
                 invoice.submit()
                 frappe.logger().info(f"Sales Invoice created for Lease {lease_doc.name}")
 
-                # Update next billing date based on the cycle
-                if service.billing_cycle == "Daily":
-                    service.billing_date = add_days(today, 1)
-                elif service.billing_cycle == "Weekly":
-                    service.billing_date = add_days(today, 7)
-                elif service.billing_cycle == "Monthly":
-                    service.billing_date = add_months(today, 1)
-                elif service.billing_cycle == "Annually":
-                    service.billing_date = add_years(today, 1)
+                if not override_billing_date:
+                    if service.billing_cycle == "Daily":
+                        service.billing_date = add_days(today, 1)
+                    elif service.billing_cycle == "Weekly":
+                        service.billing_date = add_days(today, 7)
+                    elif service.billing_cycle == "Monthly":
+                        service.billing_date = add_months(today, 1)
+                    elif service.billing_cycle == "Annually":
+                        service.billing_date = add_years(today, 1)
 
                 updated = True
             else:

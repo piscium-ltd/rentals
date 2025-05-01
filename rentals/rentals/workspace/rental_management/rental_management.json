@@ -1,7 +1,7 @@
 {
  "app": "rentals",
  "charts": [],
- "content": "[{\"id\":\"pjHhpkXVyg\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Shortcuts</b>\",\"col\":12}},{\"id\":\"uJNQznj-WF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":4}},{\"id\":\"ZTrpBXTA0c\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement\",\"col\":4}},{\"id\":\"nD1KwpTPKp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Bill Log\",\"col\":4}},{\"id\":\"v0RCVd1VMd\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Reports &amp; Masters</b>\",\"col\":12}},{\"id\":\"s1ytWpZj60\",\"type\":\"card\",\"data\":{\"card_name\":\"Rentals\",\"col\":4}}]",
+ "content": "[{\"id\":\"pjHhpkXVyg\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Shortcuts</b>\",\"col\":12}},{\"id\":\"uJNQznj-WF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":4}},{\"id\":\"ZTrpBXTA0c\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement\",\"col\":4}},{\"id\":\"nD1KwpTPKp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Bill Log\",\"col\":4}},{\"id\":\"hUDO4oT6d0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Provider\",\"col\":3}},{\"id\":\"v0RCVd1VMd\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Reports &amp; Masters</b>\",\"col\":12}},{\"id\":\"s1ytWpZj60\",\"type\":\"card\",\"data\":{\"card_name\":\"Rentals\",\"col\":4}}]",
  "creation": "2025-04-25 16:09:23.293045",
  "custom_blocks": [],
  "docstatus": 0,
@@ -85,7 +85,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-04-25 16:21:28.695483",
+ "modified": "2025-04-30 15:02:32.262209",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Rental Management",
@@ -97,6 +97,14 @@
  "roles": [],
  "sequence_id": 23.0,
  "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Utility Provider",
+   "link_to": "Utility Provider",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
   {
    "color": "Grey",
    "doc_view": "List",
