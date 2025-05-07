@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:LEASEAGR-{YY}-{MM}-{##}",
+ "autoname": "format:LAGR-{YY}-{MM}-{##}",
  "creation": "2025-04-15 10:31:51.309295",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -123,6 +123,7 @@
   {
    "fieldname": "tenant",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Tenant ID No.",
    "options": "Tenant",
    "reqd": 1
@@ -130,6 +131,7 @@
   {
    "fieldname": "property",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Property",
    "options": "Property",
    "reqd": 1
@@ -234,12 +236,12 @@
    "fieldname": "house_no",
    "fieldtype": "Read Only",
    "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "House No"
   },
   {
    "fieldname": "unit",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Unit",
    "options": "Unit",
    "reqd": 1
@@ -320,6 +322,8 @@
    "allow_on_submit": 1,
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Status",
    "options": "Active\nInactive\nExpired\nUnsigned"
   },
@@ -360,7 +364,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-24 16:56:21.528753",
+ "modified": "2025-05-07 15:02:38.749464",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

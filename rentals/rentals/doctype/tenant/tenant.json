@@ -17,6 +17,7 @@
    "fieldname": "full_name",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Full Name",
    "reqd": 1
   },
@@ -29,6 +30,8 @@
   {
    "fieldname": "idpassport_no",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "ID/Passport No",
    "reqd": 1,
    "unique": 1
@@ -53,7 +56,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-16 13:52:10.219553",
+ "modified": "2025-05-07 14:39:06.854124",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Tenant",

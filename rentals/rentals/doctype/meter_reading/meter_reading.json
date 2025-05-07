@@ -17,8 +17,10 @@
    "fieldname": "meter",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Meter",
-   "options": "Meter"
+   "options": "Meter",
+   "reqd": 1
   },
   {
    "fetch_from": "meter.meter_reading",
@@ -34,7 +36,8 @@
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Current Reading",
-   "non_negative": 1
+   "non_negative": 1,
+   "reqd": 1
   },
   {
    "fieldname": "amended_from",
@@ -59,7 +62,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-16 14:06:26.921240",
+ "modified": "2025-05-07 15:43:55.563261",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Meter Reading",

@@ -19,6 +19,7 @@
    "fieldname": "full_name",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Full Name",
    "reqd": 1
   },
@@ -45,12 +46,16 @@
   {
    "fieldname": "address",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Address",
    "reqd": 1
   },
   {
    "fieldname": "idpassport_no",
    "fieldtype": "Int",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "ID/Passport No",
    "non_negative": 1,
    "reqd": 1,
@@ -72,8 +77,8 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2025-04-15 15:42:54.684778",
- "modified_by": "pisciumsolutions@gmail.com",
+ "modified": "2025-05-07 14:34:25.038930",
+ "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Landlord",
  "naming_rule": "By fieldname",

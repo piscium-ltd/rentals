@@ -17,41 +17,6 @@ def check_expired_leases():
         frappe.db.set_value("Lease Agreement", lease.name, "status", "Expired")
         frappe.logger().info(f"Lease {lease.name} marked as Expired.")
 
-def get_utility_item_code_and_rate(utility, units_used, customer):
-    """Fetch the correct utility item code and rate based on utility type, usage, and customer price list."""
-    item_code = None
-    if utility == "Electricity":
-        if units_used <= 50:
-            item_code = "Electricity-Up to 50 units"
-        elif units_used <= 100:
-            item_code = "Electricity-Above 50 up to 100 units"
-        elif units_used <= 200:
-            item_code = "Electricity-Above 100 up to 200 units"
-        else:
-            item_code = "Electricity-Above 200 units"
-    elif utility == "Water":
-        if units_used <= 50:
-            item_code = "Water-Up to 50 units"
-        elif units_used <= 100:
-            item_code = "Water-Above 50 up to 100 units"
-        elif units_used <= 200:
-            item_code = "Water-Above 100 up to 200 units"
-        else:
-            item_code = "Water-Above 200 units"
-    
-    if item_code:
-        # Fetch the item code and rate from Item Price
-        item_price = frappe.get_all(
-            "Item Price",
-            filters={"item_code": item_code},
-            fields=["price_list_rate", "item_code"]
-        )
-
-        if item_price:
-            # Return the item_code and price_list_rate (rate)
-            return item_price[0].item_code, item_price[0].price_list_rate
-
-    return None, 0
 @frappe.whitelist()
 def generate_sales_invoices(lease_name=None, override_billing_date=False):
     today = getdate(nowdate())
@@ -121,19 +86,56 @@ def generate_sales_invoices(lease_name=None, override_billing_date=False):
         # Add utility items
         for log_name in data["utility_logs"]:
             utility_log = frappe.get_doc("Utility Bill Log", log_name)
-            item_code, rate = get_utility_item_code_and_rate(
-                utility_log.utility,
-                utility_log.units_used,
-                customer_name
-            )
-            if item_code:
-                invoice.append("items", {
-                    "item_code": item_code,
-                    "qty": utility_log.units_used,
-                    "rate": rate,
-                })
+            utility_rate = frappe.get_all("Utility Rate", filters={
+                "utility_provider": utility_log.utility_provider,
+                "utility": utility_log.utility,
+            }, fields=["name", "rate_type", "flat_rate"])
+
+            if utility_rate:
+                rate_type = utility_rate[0].get("rate_type")
+                units = utility_log.units_used
+
+                if rate_type == "Flat":
+                    rate = utility_rate[0].get("flat_rate")
+                    invoice.append("items", {
+                        "item_code": utility_log.utility,
+                        "qty": units,
+                        "rate": rate,
+                        "description": f"{units} units @ flat rate of {rate}",
+                    })
+
+                elif rate_type == "Slab":
+                    rate_doc = frappe.get_doc("Utility Rate", utility_rate[0]["name"])
+                    slab_rates = rate_doc.slab_rate
+
+                    remaining_units = units
+
+                    for slab in sorted(slab_rates, key=lambda x: x.from_units):
+                        from_units = slab.from_units
+                        to_units = slab.to_units or float('inf')
+                        rate = slab.rate
+
+                        if remaining_units <= 0:
+                            break
+
+                        if to_units == float('inf'):
+                            slab_units = remaining_units
+                        else:
+                            slab_units = min(remaining_units, to_units - from_units + 1)
+
+                        if slab_units > 0:
+                            description = f"{slab_units} units from {from_units} to {'∞' if to_units == float('inf') else to_units} @ rate {rate}"
+                            invoice.append("items", {
+                                "item_code": utility_log.utility,
+                                "qty": slab_units,
+                                "rate": rate,
+                                "description": description,
+                            })
+                            remaining_units -= slab_units
+
                 utility_log.status = "Billed"
                 utility_log.save(ignore_permissions=True)
+
         # Add service items
         for item in data["items"]:
             invoice.append("items", item)

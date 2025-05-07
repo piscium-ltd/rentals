@@ -1,49 +1,42 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:Mtr:-{MM}-{YYYY}-{####}",
- "creation": "2025-04-14 22:42:27.641527",
+ "autoname": "field:utility_provider",
+ "creation": "2025-05-02 10:10:44.348292",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "utility_provider",
   "utility",
-  "meter_method",
-  "property",
-  "unit",
-  "meter_reading"
+  "rate_type",
+  "flat_rate",
+  "slab_rate"
  ],
  "fields": [
   {
-   "fieldname": "meter_method",
+   "fieldname": "rate_type",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Meter Method",
-   "options": "\nPer Unit\nFull Property",
+   "label": "Rate Type",
+   "options": "\nFlat\nSlab",
    "reqd": 1
   },
   {
-   "depends_on": "eval:doc.meter_method == \"Full Property\"",
-   "fieldname": "property",
-   "fieldtype": "Link",
-   "label": "Property",
-   "options": "Property"
-  },
-  {
-   "depends_on": "eval:doc.meter_method == \"Per Unit\"",
-   "fieldname": "unit",
-   "fieldtype": "Link",
-   "label": "Unit",
-   "options": "Unit"
-  },
-  {
-   "fieldname": "meter_reading",
+   "depends_on": "eval:doc.rate_type == \"Flat\"",
+   "description": "Per unit used",
+   "fieldname": "flat_rate",
    "fieldtype": "Float",
-   "in_list_view": 1,
-   "label": "Meter Reading",
-   "non_negative": 1,
-   "read_only": 1
+   "label": "Flat Rate",
+   "mandatory_depends_on": "eval:doc.rate_type == \"Flat\""
+  },
+  {
+   "depends_on": "eval:doc.rate_type == \"Slab\"",
+   "fieldname": "slab_rate",
+   "fieldtype": "Table",
+   "label": "Slab rate",
+   "mandatory_depends_on": "eval:doc.rate_type == \"Slab\"",
+   "options": "Slab Rate"
   },
   {
    "fieldname": "utility_provider",
@@ -52,7 +45,8 @@
    "in_standard_filter": 1,
    "label": "Utility Provider",
    "options": "Utility Provider",
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fetch_from": "utility_provider.utility",
@@ -65,17 +59,12 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "link_doctype": "Meter Reading",
-   "link_fieldname": "meter"
-  }
- ],
- "modified": "2025-05-07 14:37:39.247373",
+ "links": [],
+ "modified": "2025-05-07 16:03:46.116116",
  "modified_by": "Administrator",
  "module": "Rentals",
- "name": "Meter",
- "naming_rule": "Expression",
+ "name": "Utility Rate",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

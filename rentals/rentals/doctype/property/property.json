@@ -23,6 +23,7 @@
    "fieldname": "premises_address",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Premises Address",
    "reqd": 1
   },
@@ -30,6 +31,7 @@
    "fieldname": "property_name",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Property Name",
    "reqd": 1
   }
@@ -42,7 +44,7 @@
    "link_fieldname": "property"
   }
  ],
- "modified": "2025-04-16 12:28:06.705568",
+ "modified": "2025-05-07 14:35:16.820706",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Property",

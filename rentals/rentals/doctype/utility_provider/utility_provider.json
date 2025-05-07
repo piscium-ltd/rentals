@@ -1,33 +1,19 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:provider",
+ "autoname": "field:provider_name",
  "creation": "2025-04-14 22:53:22.799511",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "provider",
-  "type_of_utility",
+  "provider_name",
+  "provider_type",
+  "utility",
   "email",
-  "address"
+  "address",
+  "supplier"
  ],
  "fields": [
-  {
-   "fieldname": "provider",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Provider",
-   "unique": 1
-  },
-  {
-   "fieldname": "type_of_utility",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Type of Utility",
-   "options": "\nWater\nElectricity"
-  },
   {
    "fieldname": "email",
    "fieldtype": "Data",
@@ -40,12 +26,44 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Address"
+  },
+  {
+   "fieldname": "provider_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Provider Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "provider_type",
+   "fieldtype": "Select",
+   "label": "Provider Type",
+   "options": "\nCompany\nIndividual",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "read_only": 1
+  },
+  {
+   "fieldname": "utility",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Utility",
+   "options": "\nWater\nElectricity",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-30 15:20:38.773359",
+ "modified": "2025-05-07 13:48:09.757883",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Utility Provider",
