@@ -13,6 +13,43 @@ frappe.ui.form.on("Lease Agreement", {
 				property: frm.doc.property,
 			},
 		}));
+
+		if (frm.doc.docstatus === 1) {
+			// only show for submitted leases
+			frm.add_custom_button(__("Generate Invoice"), function () {
+				frappe.call({
+					method: "rentals.tasks.daily.generate_sales_invoices",
+					args: {
+						lease_name: frm.doc.name,
+						override_billing_date: true,
+					},
+					callback: function (r) {
+						if (r.message && r.message.invoices && r.message.invoices.length > 0) {
+							let links = r.message.invoices
+								.map((inv) => {
+									let invoice_url = `/app/sales-invoice/${inv}`;
+									// Automatically open the invoice in a new tab
+									window.open(invoice_url, "_blank");
+									return `<a href="${invoice_url}" target="_blank">${inv}</a>`;
+								})
+								.join("<br>");
+							frappe.msgprint({
+								title: __("Sales Invoice(s) Created"),
+								indicator: "green",
+								message: __(r.message.message + "<br><br>" + links),
+							});
+							frm.reload_doc();
+						} else {
+							frappe.msgprint(r.message.message || __("No invoices created."));
+						}
+					},
+					error: function () {
+						frappe.msgprint(__("Error generating sales invoice."));
+					},
+				});
+			});
+		}
+
 		calculate_grand_total(frm);
 	},
 });
