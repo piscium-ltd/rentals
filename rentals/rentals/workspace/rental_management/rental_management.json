@@ -98,7 +98,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Rentals Shortcuts",
-   "link_count": 1,
+   "link_count": 2,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -112,9 +112,19 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Deposit Certificate",
+   "link_count": 0,
+   "link_to": "Deposit Certificate",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2025-05-07 16:47:54.223884",
+ "modified": "2025-05-27 01:23:11.145042",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Rental Management",
