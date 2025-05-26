@@ -37,7 +37,15 @@ def get_doctype_from_account_number(account_number):
     return None
 
 
-def create_payment_entry(party, company, invoice):
+def create_payment_entry(party, company, reference_doc):
+    reference_doctype = reference_doc.doctype
+    reference_name = reference_doc.name
+
+    # Use outstanding_amount if available, otherwise fallback to grand_total (for Sales Order)
+    amount = getattr(reference_doc, "outstanding_amount", None)
+    if amount is None:
+        amount = reference_doc.grand_total
+
     return frappe.get_doc({
         "doctype": "Payment Entry",
         "payment_type": "Receive",
@@ -46,17 +54,17 @@ def create_payment_entry(party, company, invoice):
         "posting_date": frappe.utils.nowdate(),
         "paid_from": frappe.get_value("Company", company, "default_receivable_account"),
         "paid_to": frappe.get_value("Company", company, "default_bank_account"),
-        "received_amount": invoice.outstanding_amount,
-        "paid_amount": invoice.outstanding_amount,
+        "received_amount": amount,
+        "paid_amount": amount,
         "references": [{
-            "reference_doctype": "Sales Invoice",
-            "reference_name": invoice.name,
-            "total_amount": invoice.grand_total,
-            "outstanding_amount": invoice.outstanding_amount,
-            "allocated_amount": invoice.outstanding_amount,
+            "reference_doctype": reference_doctype,
+            "reference_name": reference_name,
+            "total_amount": reference_doc.grand_total,
+            "outstanding_amount": amount,
+            "allocated_amount": amount,
         }],
         "company": company,
-        "reference_no": invoice.name,
+        "reference_no": reference_name,
         "reference_date": frappe.utils.nowdate(),
     })
 
@@ -73,13 +81,17 @@ def handle_sales_invoice(doc):
 
 
 def handle_sales_order(doc):
+    # Create Payment Entry
+    payment_entry = create_payment_entry(doc.customer, doc.company, doc)
+    payment_entry.insert()
+    payment_entry.submit()
+
+    # Create Deposit Certificate
     deposit_item = next((item for item in doc.items if item.item_code == DEPOSIT_ITEM_CODE), None)
-    other_items = [item for item in doc.items if item.item_code != DEPOSIT_ITEM_CODE]
 
     if not deposit_item:
         return {"error": "No Deposit item found in Sales Order"}
-
-    # Create Deposit Certificate
+    
     deposit_certificate = frappe.get_doc({
         "doctype": "Deposit Certificate",
         "tenant": doc.customer,
@@ -90,7 +102,8 @@ def handle_sales_order(doc):
     deposit_certificate.insert()
     deposit_certificate.submit()
 
-    # Create Sales Invoice
+    # Create Sales Invoice for remaining items
+    other_items = [item for item in doc.items if item.item_code != DEPOSIT_ITEM_CODE]
     sales_invoice = frappe.new_doc("Sales Invoice")
     sales_invoice.update({
         "customer": doc.customer,
@@ -114,14 +127,9 @@ def handle_sales_order(doc):
     sales_invoice.insert()
     sales_invoice.submit()
 
-    # Create Payment Entry
-    payment_entry = create_payment_entry(sales_invoice.customer, sales_invoice.company, sales_invoice)
-    payment_entry.insert()
-    payment_entry.submit()
-
     return {
         "sales_order": doc.name,
-        "deposit_certificate": deposit_certificate.name,
+        "payment_entry": payment_entry.name,
         "sales_invoice": sales_invoice.name,
-        "payment_entry": payment_entry.name
+        "deposit_certificate": deposit_certificate.name
     }
