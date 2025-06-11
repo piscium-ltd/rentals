@@ -1,40 +1,39 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:idpassport_no",
+ "autoname": "format:LAN-{##}",
  "creation": "2025-04-14 22:28:13.618292",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "landlord_type",
   "full_name",
-  "email",
-  "phone_number",
-  "idpassport_no",
+  "company_name",
+  "abbr",
+  "column_break_btax",
   "kra_pin",
-  "address",
-  "supplier"
+  "idpassport_no",
+  "business_registration_certificate",
+  "company",
+  "address_and_contact_tab",
+  "landlord_primary_address",
+  "primary_address",
+  "column_break_lkes",
+  "primary_contact",
+  "mobile_no",
+  "email_id",
+  "first_name",
+  "last_name"
  ],
  "fields": [
   {
+   "depends_on": "eval:doc.landlord_type == \"Individual\"",
    "fieldname": "full_name",
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Full Name",
-   "reqd": 1
-  },
-  {
-   "fieldname": "email",
-   "fieldtype": "Data",
-   "label": "Email",
-   "options": "Email"
-  },
-  {
-   "fieldname": "phone_number",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Phone Number",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.landlord_type == \"Individual\""
   },
   {
    "fieldname": "kra_pin",
@@ -44,29 +43,110 @@
    "reqd": 1
   },
   {
-   "fieldname": "address",
+   "depends_on": "eval:doc.landlord_type == \"Individual\"",
+   "fieldname": "idpassport_no",
+   "fieldtype": "Int",
+   "in_standard_filter": 1,
+   "label": "ID/Passport No",
+   "mandatory_depends_on": "eval:doc.landlord_type == \"Individual\"",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "address_and_contact_tab",
+   "fieldtype": "Tab Break",
+   "label": "Address and Contact"
+  },
+  {
+   "fieldname": "primary_address",
+   "fieldtype": "Text",
+   "label": "Primary Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "primary_contact",
+   "fieldtype": "Link",
+   "label": "Primary Contact",
+   "options": "Contact"
+  },
+  {
+   "fieldname": "column_break_btax",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "primary_contact.mobile_no",
+   "fieldname": "mobile_no",
+   "fieldtype": "Read Only",
+   "label": "Mobile No",
+   "options": "Mobile"
+  },
+  {
+   "fetch_from": "primary_contact.email_id",
+   "fieldname": "email_id",
+   "fieldtype": "Read Only",
+   "label": "Email Id",
+   "options": "Email"
+  },
+  {
+   "fetch_from": "primary_contact.first_name",
+   "fieldname": "first_name",
+   "fieldtype": "Read Only",
+   "label": "First Name"
+  },
+  {
+   "fetch_from": "primary_contact.last_name",
+   "fieldname": "last_name",
+   "fieldtype": "Read Only",
+   "label": "Last Name"
+  },
+  {
+   "fieldname": "column_break_lkes",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "landlord_primary_address",
+   "fieldtype": "Link",
+   "label": "Landlord Primary Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "landlord_type",
+   "fieldtype": "Select",
+   "label": "Landlord Type",
+   "options": "\nCompany\nIndividual"
+  },
+  {
+   "depends_on": "eval:doc.landlord_type == \"Company\"",
+   "fieldname": "company_name",
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Address",
-   "reqd": 1
-  },
-  {
-   "fieldname": "idpassport_no",
-   "fieldtype": "Int",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "ID/Passport No",
-   "non_negative": 1,
-   "reqd": 1,
+   "label": "Company Name",
+   "mandatory_depends_on": "eval:doc.landlord_type == \"Company\"",
    "unique": 1
   },
   {
-   "fieldname": "supplier",
+   "fieldname": "company",
    "fieldtype": "Link",
-   "label": "Supplier",
-   "options": "Supplier",
+   "hidden": 1,
+   "label": "Company",
+   "options": "Company",
    "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.landlord_type == \"Company\"",
+   "fieldname": "business_registration_certificate",
+   "fieldtype": "Attach",
+   "label": "Business Registration Certificate",
+   "mandatory_depends_on": "eval:doc.landlord_type == \"Company\""
+  },
+  {
+   "fieldname": "abbr",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Abbr",
+   "read_only": 1,
+   "set_only_once": 1,
+   "unique": 1
   }
  ],
  "grid_page_length": 50,
@@ -77,11 +157,11 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2025-05-07 14:34:25.038930",
+ "modified": "2025-06-11 15:37:35.576702",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Landlord",
- "naming_rule": "By fieldname",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -100,6 +180,5 @@
  "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": [],
- "title_field": "full_name"
+ "states": []
 }

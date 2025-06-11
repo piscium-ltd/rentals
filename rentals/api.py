@@ -91,41 +91,61 @@ def handle_sales_order(doc):
 
     if not deposit_item:
         return {"error": "No Deposit item found in Sales Order"}
-    
-    deposit_certificate = frappe.get_doc({
-        "doctype": "Deposit Certificate",
-        "tenant": doc.customer,
-        "sales_order": doc.name,
-        "deposit_amount": deposit_item.amount,
-        "date": frappe.utils.nowdate()
+
+    deposit_certificate = frappe.new_doc("Sales Invoice")
+    deposit_certificate.update({
+        "customer": doc.customer,
+        "company": doc.company,
+        "due_date": frappe.utils.nowdate(),
+        "posting_date": frappe.utils.nowdate(),
+        "debit_to": frappe.get_value("Company", doc.company, "default_receivable_account"),
+        "allocate_advances_automatically": 1,
+        "items": [{
+            "item_code": deposit_item.item_code,
+            "item_name": deposit_item.item_name,
+            "qty": deposit_item.qty,
+            "rate": deposit_item.rate,
+            "uom": deposit_item.uom,
+            "warehouse": deposit_item.warehouse,
+            "cost_center": deposit_item.cost_center,
+            "sales_order": doc.name,
+            "so_detail": deposit_item.name
+        }]
     })
     deposit_certificate.insert()
     deposit_certificate.submit()
 
     # Create Sales Invoice for remaining items
     other_items = [item for item in doc.items if item.item_code != DEPOSIT_ITEM_CODE]
-    sales_invoice = frappe.new_doc("Sales Invoice")
-    sales_invoice.update({
-        "customer": doc.customer,
-        "due_date": frappe.utils.nowdate(),
-        "posting_date": frappe.utils.nowdate(),
-        "company": doc.company,
-        "debit_to": frappe.get_value("Company", doc.company, "default_receivable_account")
-    })
 
-    for item in other_items:
-        sales_invoice.append("items", {
-            "item_code": item.item_code,
-            "item_name": item.item_name,
-            "qty": item.qty,
-            "rate": item.rate,
-            "uom": item.uom,
-            "warehouse": item.warehouse,
-            "cost_center": item.cost_center
+    if other_items:
+        sales_invoice = frappe.new_doc("Sales Invoice")
+        sales_invoice.update({
+            "customer": doc.customer,
+            "company": doc.company,
+            "due_date": frappe.utils.nowdate(),
+            "posting_date": frappe.utils.nowdate(),
+            "debit_to": frappe.get_value("Company", doc.company, "default_receivable_account"),
+            "allocate_advances_automatically": 1
         })
 
-    sales_invoice.insert()
-    sales_invoice.submit()
+        for item in other_items:
+            sales_invoice.append("items", {
+                "item_code": item.item_code,
+                "item_name": item.item_name,
+                "qty": item.qty,
+                "rate": item.rate,
+                "uom": item.uom,
+                "warehouse": item.warehouse,
+                "cost_center": item.cost_center,
+                "sales_order": doc.name,
+                "so_detail": item.name,        
+            })
+
+        sales_invoice.insert()
+        sales_invoice.submit()
+    else:
+        sales_invoice_name = None
 
     return {
         "sales_order": doc.name,

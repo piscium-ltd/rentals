@@ -18,6 +18,7 @@
   "section_break_djzt",
   "landlord_information_column",
   "landlord_name",
+  "company_name",
   "address",
   "column_break_sbqh",
   "kra_pin",
@@ -43,7 +44,7 @@
   "section_break_aqzz",
   "chargeable_services",
   "section_break_guxm",
-  "mode_of_payment",
+  "column_break_rkwi",
   "column_break_tvde",
   "grand_total",
   "authorised_by_section",
@@ -116,7 +117,7 @@
   {
    "fieldname": "landlord",
    "fieldtype": "Link",
-   "label": "Landlord ID No.",
+   "label": "Landlord",
    "options": "Landlord",
    "reqd": 1
   },
@@ -191,10 +192,12 @@
    "fieldtype": "Section Break"
   },
   {
-   "fetch_from": "landlord.address",
+   "fetch_from": "landlord.primary_address",
    "fieldname": "address",
-   "fieldtype": "Read Only",
-   "label": "Address"
+   "fieldtype": "Link",
+   "label": "Address",
+   "options": "Address",
+   "read_only": 1
   },
   {
    "fetch_from": "landlord.kra_pin",
@@ -281,7 +284,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "landlord.phone_number",
+   "fetch_from": "landlord.mobile_no",
    "fieldname": "landlord_phone_number",
    "fieldtype": "Read Only",
    "label": "Phone Number"
@@ -336,13 +339,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "mode_of_payment",
-   "fieldtype": "Link",
-   "label": "Mode of Payment",
-   "options": "Mode of Payment",
-   "reqd": 1
-  },
-  {
    "allow_on_submit": 1,
    "fieldname": "sales_order_reference",
    "fieldtype": "Link",
@@ -358,13 +354,24 @@
    "label": "Payment Request Reference",
    "options": "Payment Request",
    "read_only": 1
+  },
+  {
+   "fetch_from": "landlord.company_name",
+   "fieldname": "company_name",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Company Name"
+  },
+  {
+   "fieldname": "column_break_rkwi",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-07 15:02:38.749464",
+ "modified": "2025-06-11 15:48:07.190063",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

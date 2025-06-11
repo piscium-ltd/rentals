@@ -57,6 +57,8 @@ class LeaseAgreement(Document):
         self.grand_total = total
 
     def on_submit(self):
+        landlord_doc = frappe.get_doc("Landlord", self.landlord)
+        company = landlord_doc.company
         customer_name = self.tenant_name
         price_list_name = f"{customer_name} Price List"
 
@@ -120,6 +122,7 @@ class LeaseAgreement(Document):
         try:
             sales_order = frappe.get_doc({
                 "doctype": "Sales Order",
+                "company": company,
                 "customer": tenant_doc.customer,
                 "currency": self.billing_currency,
                 "selling_price_list": price_list_name,

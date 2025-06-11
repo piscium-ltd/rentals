@@ -34,13 +34,14 @@ def generate_sales_invoices(lease_name=None, override_billing_date=False):
     customer_data = {}
     for lease in leases:
         lease_doc = frappe.get_doc("Lease Agreement", lease["name"])
+        landlord_doc = frappe.get_doc("Landlord", lease_doc.landlord)
+        company = landlord_doc.company
         tenant_doc = frappe.get_doc("Tenant", lease_doc.tenant)
         customer_name = tenant_doc.customer
 
         if customer_name not in customer_data:
             customer_data[customer_name] = {
                 "currency": lease_doc.billing_currency,
-                "mode_of_payment": lease_doc.mode_of_payment,
                 "items": [],
                 "lease_updates": [],
                 "utility_logs": [],
@@ -77,10 +78,10 @@ def generate_sales_invoices(lease_name=None, override_billing_date=False):
     # Generate one invoice per customer
     for customer_name, data in customer_data.items():
         invoice = frappe.new_doc("Sales Invoice")
+        invoice.company = company
         invoice.customer = customer_name
         invoice.currency = data["currency"]
         invoice.posting_date = invoice.due_date = today
-        invoice.mode_of_payment = data["mode_of_payment"]
         invoice.remarks = f"Consolidated invoice generated {'manually' if override_billing_date else 'automatically'} on {today}"
 
         # Add utility items
