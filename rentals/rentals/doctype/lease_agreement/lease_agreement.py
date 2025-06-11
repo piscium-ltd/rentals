@@ -122,6 +122,7 @@ class LeaseAgreement(Document):
         try:
             sales_order = frappe.get_doc({
                 "doctype": "Sales Order",
+                "naming_series": "S.###.YY.",
                 "company": company,
                 "customer": tenant_doc.customer,
                 "currency": self.billing_currency,

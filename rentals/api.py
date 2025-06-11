@@ -30,9 +30,9 @@ def register_payment(**kwargs):
 
 
 def get_doctype_from_account_number(account_number):
-    if account_number.startswith("SAL-ORD"):
+    if account_number.startswith("S"):
         return "Sales Order"
-    if account_number.startswith("ACC-SINV"):
+    if account_number.startswith("P"):
         return "Sales Invoice"
     return None
 

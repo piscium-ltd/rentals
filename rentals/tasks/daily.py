@@ -78,6 +78,7 @@ def generate_sales_invoices(lease_name=None, override_billing_date=False):
     # Generate one invoice per customer
     for customer_name, data in customer_data.items():
         invoice = frappe.new_doc("Sales Invoice")
+        invoice.naming_series = "P.###.YY."
         invoice.company = company
         invoice.customer = customer_name
         invoice.currency = data["currency"]

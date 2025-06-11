@@ -14,6 +14,12 @@ frappe.ui.form.on("Lease Agreement", {
 			},
 		}));
 
+		frm.set_query("service", "chargeable_services", () => ({
+			filters: {
+				item_group: "Chargeable Services",
+			},
+		}));
+
 		if (frm.doc.docstatus === 1) {
 			// only show for submitted leases
 			frm.add_custom_button(__("Generate Invoice"), function () {
