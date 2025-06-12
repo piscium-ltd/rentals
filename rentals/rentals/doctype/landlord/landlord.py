@@ -27,7 +27,8 @@ class Landlord(Document):
                 "default_currency": "KES",
                 "country": "Kenya",
                 "tax_id": self.kra_pin,
-                "parent_company": default_company,
+                "create_chart_of_accounts_based_on": "Existing Company",
+                "existing_company": default_company
             })
             company.insert(ignore_permissions=True)
 
