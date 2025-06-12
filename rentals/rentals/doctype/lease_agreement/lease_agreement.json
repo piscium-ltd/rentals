@@ -13,8 +13,6 @@
   "column_break_lbif",
   "tenant",
   "billing_currency",
-  "sales_order_reference",
-  "payment_request_reference",
   "section_break_djzt",
   "landlord_information_column",
   "landlord_name",
@@ -339,23 +337,6 @@
    "reqd": 1
   },
   {
-   "allow_on_submit": 1,
-   "fieldname": "sales_order_reference",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Sales Order Reference",
-   "options": "Sales Order",
-   "read_only": 1
-  },
-  {
-   "allow_on_submit": 1,
-   "fieldname": "payment_request_reference",
-   "fieldtype": "Link",
-   "label": "Payment Request Reference",
-   "options": "Payment Request",
-   "read_only": 1
-  },
-  {
    "fetch_from": "landlord.company_name",
    "fieldname": "company_name",
    "fieldtype": "Read Only",
@@ -370,8 +351,25 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2025-06-11 15:48:07.190063",
+ "links": [
+  {
+   "link_doctype": "Sales Order",
+   "link_fieldname": "custom_lease_agreement"
+  },
+  {
+   "link_doctype": "Sales Invoice",
+   "link_fieldname": "custom_lease_agreement"
+  },
+  {
+   "link_doctype": "Payment Entry",
+   "link_fieldname": "custom_lease_agreement"
+  },
+  {
+   "link_doctype": "Utility Bill Log",
+   "link_fieldname": "lease_agreement"
+  }
+ ],
+ "modified": "2025-06-12 23:24:53.287981",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

@@ -16,7 +16,7 @@ frappe.ui.form.on("Lease Agreement", {
 
 		frm.set_query("service", "chargeable_services", () => ({
 			filters: {
-				item_group: "Chargeable Services",
+				item_group: "Rental Chargeable Services",
 			},
 		}));
 

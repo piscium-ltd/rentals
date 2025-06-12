@@ -70,9 +70,9 @@
   "image": null,
   "is_group": 0,
   "item_group_defaults": [],
-  "item_group_name": "Chargeable services",
+  "item_group_name": "Rental Chargeable services",
   "modified": "2025-06-11 22:53:52.500662",
-  "name": "Chargeable services",
+  "name": "Rental Chargeable services",
   "old_parent": "All Item Groups",
   "parent_item_group": "All Item Groups",
   "taxes": []
@@ -83,9 +83,9 @@
   "image": null,
   "is_group": 0,
   "item_group_defaults": [],
-  "item_group_name": "Utlity",
+  "item_group_name": "Utility",
   "modified": "2025-04-25 11:35:37.874159",
-  "name": "Utlity",
+  "name": "Utility",
   "old_parent": "All Item Groups",
   "parent_item_group": "All Item Groups",
   "taxes": []

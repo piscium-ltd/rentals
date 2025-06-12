@@ -13,7 +13,7 @@ class Landlord(Document):
             frappe.throw("Company Name or Full Name is required to create a Company.")
 
         # Generate a unique abbreviation
-        abbr = self.get_abbreviation(company_name)
+        abbr = self.get_abbreviation()
         self.db_set("abbr", abbr)
 
         # Create Company if it doesn't exist
@@ -35,14 +35,40 @@ class Landlord(Document):
         # Link the company to this landlord
         self.db_set("company", company_name)
 
-    def get_abbreviation(self, name):
-        """Generate a unique uppercase abbreviation from the first letters of each word."""
-        base_abbr = "".join(word[0].upper() for word in name.strip().split() if word)
-        candidate = base_abbr
-        count = 1
+    def get_abbreviation(self):
+        safe_charset = "ACDEFHJKMNPRTVWXY"
+        BLACKLIST = {"FAP", "FAT", "WET", "WTF"}
+        base = len(safe_charset)
 
-        while frappe.db.exists("Company", {"abbr": candidate}):
-            candidate = f"{base_abbr}{count}"
-            count += 1
+        # Retrieve current counter from Rental Settings singleton
+        counter = frappe.db.get_single_value("Rental Settings", "last_used_counter") or 0
 
-        return candidate
+        max_combinations = base ** 3
+        if counter >= max_combinations:
+            frappe.throw("No more abbreviations available.")
+
+        attempts = 0
+        while attempts < max_combinations:
+            # Convert counter to base-N abbreviation
+            temp = counter
+            abbr = ""
+            for _ in range(3):
+                abbr = safe_charset[temp % base] + abbr
+                temp //= base
+
+            # Skip blacklisted words
+            if abbr in BLACKLIST:
+                counter += 1
+                attempts += 1
+                continue
+
+            # Check if abbreviation is unique
+            if not frappe.db.exists("Company", {"abbr": abbr}):
+                # Save updated counter in Rental Settings
+                frappe.db.set_value("Rental Settings", None, "last_used_counter", counter + 1)
+                return abbr
+
+            counter += 1
+            attempts += 1
+
+        frappe.throw("Unable to generate unique abbreviation.")

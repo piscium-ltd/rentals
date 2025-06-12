@@ -37,8 +37,8 @@ class MeterReading(Document):
                 frappe.throw("⚠️ Meter is 'Per Unit' but no Unit is linked.")
             lease_agreements = frappe.get_all(
                 "Lease Agreement",
-                filters={"unit": meter_doc.unit, "status": "Active"},
-                fields=["tenant"]
+                filters={"unit": meter_doc.unit, "status": "Active", "docstatus": 1},
+                fields=["name", "tenant"]
             )
             if not lease_agreements:
                 frappe.msgprint("⚠️ No active lease agreement found for the unit.")
@@ -56,9 +56,10 @@ class MeterReading(Document):
                 "utility": meter_doc.utility,
                 "meter_method": meter_doc.meter_method,
                 "status": "Open",
-                "customer": tenant_doc.customer
+                "customer": tenant_doc.customer,
+                "lease_agreement": lease_agreements[0].get("name")
             })
-            utility_bill_log.insert()
+            utility_bill_log.insert(ignore_permissions=True)
             frappe.msgprint(f"✅ Created Utility Bill Log: {utility_bill_log.name}")
 
         elif meter_doc.meter_method == "Full Property":
@@ -68,8 +69,8 @@ class MeterReading(Document):
 
             lease_agreements = frappe.get_all(
                 "Lease Agreement",
-                filters={"property": meter_doc.property, "status": "Active"},
-                fields=["tenant"]
+                filters={"property": meter_doc.property, "status": "Active", "docstatus": 1},
+                fields=["name", "tenant"]
             )
             if not lease_agreements:
                 frappe.msgprint("⚠️ No active lease agreements found for the property.")
@@ -89,9 +90,10 @@ class MeterReading(Document):
                     "utility": meter_doc.utility,
                     "meter_method": meter_doc.meter_method,
                     "status": "Open",
-                    "customer": tenant_doc.customer
+                    "customer": tenant_doc.customer,
+                    "lease_agreement": lease.get("name")
                 })
-                utility_bill_log.insert()
+                utility_bill_log.insert(ignore_permissions=True)
 
             frappe.msgprint(f"✅ Created {total_tenants} Utility Bill Logs for Full Property meter.")
 

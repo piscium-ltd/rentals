@@ -11,7 +11,8 @@
   "status",
   "customer",
   "meter_reading",
-  "units_used"
+  "units_used",
+  "lease_agreement"
  ],
  "fields": [
   {
@@ -53,7 +54,8 @@
    "fieldtype": "Read Only",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Utility"
+   "label": "Utility",
+   "read_only": 1
   },
   {
    "fieldname": "utility_provider",
@@ -63,12 +65,19 @@
    "label": "Utility Provider",
    "options": "Utility Provider",
    "read_only": 1
+  },
+  {
+   "fieldname": "lease_agreement",
+   "fieldtype": "Link",
+   "label": "Lease Agreement",
+   "options": "Lease Agreement",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-07 15:36:07.119228",
+ "modified": "2025-06-12 23:42:01.470093",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Utility Bill Log",

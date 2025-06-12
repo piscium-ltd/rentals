@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
+import random
 from frappe.model.document import Document
 from frappe import _
 from frappe.utils import today, add_days, add_months, add_years, getdate
@@ -9,6 +10,30 @@ from erpnext.accounts.doctype.payment_request.payment_request import make_paymen
 
 
 class LeaseAgreement(Document):
+    def autoname(self):
+        if not self.landlord:
+            frappe.throw("Landlord must be set before generating name.")
+
+        # Get abbreviation from linked Landlord
+        abbr = frappe.db.get_value("Landlord", self.landlord, "abbr")
+        if not abbr:
+            frappe.throw("Landlord abbreviation not found.")
+
+        # Define allowed digits (excluding 0, 1, 5)
+        allowed_digits = "2346789"
+
+        def generate_number():
+            return ''.join(random.choices(allowed_digits, k=7))
+
+        # Generate a unique name
+        for _ in range(100):  # attempt limit
+            random_number = generate_number()
+            name = f"{abbr}{random_number}"
+            if not frappe.db.exists("LeaseAgreement", name):
+                self.name = name
+                return
+
+        frappe.throw("Unable to generate unique Lease Agreement name.")
 
     def validate(self):
         # Check if there's an active lease already assigned to this unit
@@ -57,43 +82,53 @@ class LeaseAgreement(Document):
         self.grand_total = total
 
     def on_submit(self):
+        # Fetch landlord and tenant documents
         landlord_doc = frappe.get_doc("Landlord", self.landlord)
+        tenant_doc = frappe.get_doc("Tenant", self.tenant)
+
+        if not landlord_doc.company:
+            frappe.msgprint(_("⚠️ Landlord is not linked to a Company."), alert=True)
+            return
+        
+        if not tenant_doc.customer:
+            frappe.msgprint(_("⚠️ Tenant is not linked to a Customer."), alert=True)
+            return
+
         company = landlord_doc.company
         customer_name = self.tenant_name
         price_list_name = f"{customer_name} Price List"
 
-        # 1. Create the price list if it doesn't exist
+        # 1. Ensure Price List exists
         if not frappe.db.exists("Price List", price_list_name):
-            price_list = frappe.get_doc({
+            frappe.get_doc({
                 "doctype": "Price List",
                 "price_list_name": price_list_name,
                 "currency": self.billing_currency,
                 "selling": 1,
                 "enabled": 1
-            })
-            price_list.insert(ignore_permissions=True)
-            frappe.msgprint(_(f"✅ Created new Price List: {price_list_name}"))
+            }).insert(ignore_permissions=True)
+            frappe.msgprint(_(f"✅ Created new Price List: <b>{price_list_name}</b>"))
 
-        # 2. Link to customer's default price list
-        tenant_doc = frappe.get_doc("Tenant", self.tenant)
-        if tenant_doc.customer:
-            customer_doc = frappe.get_doc("Customer", tenant_doc.customer)
+        # 2. Update Customer's default price list and currency if needed
+        customer_doc = frappe.get_doc("Customer", tenant_doc.customer)
+        updates_made = False
+        if customer_doc.default_price_list != price_list_name:
+            customer_doc.default_price_list = price_list_name
+            updates_made = True
+        if customer_doc.default_currency != self.billing_currency:
             customer_doc.default_currency = self.billing_currency
-            if customer_doc.default_price_list != price_list_name:
-                customer_doc.default_price_list = price_list_name
-                customer_doc.save(ignore_permissions=True)
-                frappe.msgprint(_(f"✅ Updated default Price List for Customer: {customer_doc.name}"))
-        else:
-            frappe.msgprint(_("⚠️ Tenant is not linked to a Customer."), alert=True)
-            return
+            updates_made = True
+        if updates_made:
+            customer_doc.save(ignore_permissions=True)
+            frappe.msgprint(_(f"✅ Updated Customer <b>{customer_doc.name}</b> with default Price List and Currency."))
 
-        # 3. Add or update item prices for chargeable services
+        # 3. Add or update item prices
         for row in self.chargeable_services:
             item_code = row.service
             rate = row.rate
 
             if not rate:
-                frappe.msgprint(_(f"⚠️ No rate found for item {item_code}. Skipping."))
+                frappe.msgprint(_(f"⚠️ No rate specified for item <b>{item_code}</b>. Skipping."))
                 continue
 
             item_price_name = frappe.db.exists("Item Price", {
@@ -103,93 +138,60 @@ class LeaseAgreement(Document):
 
             if item_price_name:
                 item_price = frappe.get_doc("Item Price", item_price_name)
-                item_price.price_list_rate = rate
-                item_price.save(ignore_permissions=True)
-                frappe.msgprint(_(f"🔁 Updated price for item {item_code} in {price_list_name}"))
+                if item_price.price_list_rate != rate:
+                    item_price.price_list_rate = rate
+                    item_price.save(ignore_permissions=True)
+                    frappe.msgprint(_(f"🔁 Updated price for item <b>{item_code}</b> in <b>{price_list_name}</b>"))
             else:
-                item_price = frappe.get_doc({
+                frappe.get_doc({
                     "doctype": "Item Price",
                     "item_code": item_code,
                     "price_list": price_list_name,
                     "price_list_rate": rate,
                     "currency": self.billing_currency,
                     "customer": customer_name
-                })
-                item_price.insert(ignore_permissions=True)
-                frappe.msgprint(_(f"✅ Created new price for item {item_code} in {price_list_name}"))
+                }).insert(ignore_permissions=True)
+                frappe.msgprint(_(f"✅ Created price for item <b>{item_code}</b> in <b>{price_list_name}</b>"))
 
-        # 4. Create Sales Order and Payment Request
-        try:
-            sales_order = frappe.get_doc({
-                "doctype": "Sales Order",
-                "naming_series": "S.###.YY.",
-                "company": company,
-                "customer": tenant_doc.customer,
-                "currency": self.billing_currency,
-                "selling_price_list": price_list_name,
-                "transaction_date": frappe.utils.nowdate(),
-                "delivery_date": frappe.utils.nowdate(),
-                "items": [
-                    {
-                        "item_code": row.service,
-                        "qty": 1,
-                        "rate": row.rate,
-                        "delivery_date": frappe.utils.nowdate()
-                    }
-                    for row in self.chargeable_services
-                ]
-            })
-            sales_order.insert(ignore_permissions=True)
-            sales_order.submit()
-            self.sales_order_reference = sales_order.name
-            self.save(ignore_permissions=True)
+        # 4. Create Sales Order
+        sales_order = frappe.get_doc({
+            "doctype": "Sales Order",
+            "company": company,
+            "custom_lease_agreement": self.name,
+            "customer": tenant_doc.customer,
+            "currency": self.billing_currency,
+            "selling_price_list": price_list_name,
+            "transaction_date": frappe.utils.nowdate(),
+            "delivery_date": frappe.utils.nowdate(),
+            "items": [
+                {
+                    "item_code": row.service,
+                    "qty": 1,
+                    "rate": row.rate,
+                    "delivery_date": frappe.utils.nowdate()
+                }
+                for row in self.chargeable_services if row.rate
+            ]
+        })
+        sales_order.insert(ignore_permissions=True)
+        sales_order.submit()
+        frappe.msgprint(_(f"✅ Sales Order <b>{sales_order.name}</b> created and submitted."))
 
-        except Exception as e:
-            frappe.log_error(frappe.get_traceback(), "LeaseAgreement: Sales Order Error")
+        # 5. Create Payment Request
+        recipient_email = tenant_doc.email
+        if not recipient_email:
+            frappe.msgprint(_("⚠️ Tenant does not have an email address. Payment Request skipped."), alert=True)
+            return
 
-        try:
-            recipient_email = tenant_doc.email
-            if not recipient_email:
-                frappe.msgprint(_("⚠️ Tenant does not have an email. Skipping Payment Request creation."))
-                return
+        payment_request = make_payment_request(
+            dt="Sales Order",
+            dn=sales_order.name,
+            recipient_id=recipient_email,
+            submit_doc=True
+        )
+        frappe.msgprint(_(f"✅ Payment Request <b>{payment_request.name}</b> created and sent to <b>{recipient_email}</b>."))
 
-            payment_request = make_payment_request(
-                dt="Sales Order",
-                dn=sales_order.name,
-                recipient_id=recipient_email,
-                submit_doc=True
-            )
-            self.payment_request_reference = payment_request.name
-            self.save(ignore_permissions=True)
-            frappe.msgprint(_(f"✅ Created new Payment Request: {payment_request.name}"))
-
-        except Exception as e:
-            frappe.log_error(frappe.get_traceback(), "LeaseAgreement: Payment Request Error")
-            frappe.throw(_("❌ Could not create Payment Request."))
-
-    def on_cancel(self):
-        try:
-            # 1. Cancel or Delete the Payment Request
-            if self.payment_request_reference:
-                payment_request = frappe.get_doc("Payment Request", self.payment_request_reference)
-
-                if payment_request.docstatus == 0:
-                    payment_request.delete()
-                    frappe.msgprint(_(f"✅ Deleted Payment Request: {self.payment_request_reference}"))
-
-                elif payment_request.docstatus == 1:
-                    payment_request.cancel()
-                    frappe.msgprint(_(f"✅ Canceled Payment Request: {self.payment_request_reference}"))
-                frappe.db.set_value(self.doctype, self.name, "payment_request_reference", "")
-
-            # 2. Cancel the Sales Order
-            if self.sales_order_reference:
-                sales_order = frappe.get_doc("Sales Order", self.sales_order_reference)
-
-                if sales_order.docstatus == 1:
-                    sales_order.cancel()
-                frappe.db.set_value(self.doctype, self.name, "sales_order_reference", "")
-
-        except Exception:
-            frappe.log_error(frappe.get_traceback(), "LeaseAgreement: Error while cancelling Payment Request or Sales Order")
-            frappe.msgprint(_("⚠️ An error occurred during cancellation. Please check the error log."))
+        # TO DO:
+        # 1. Update Price List and Item Price Logic (1PL Per customer per company or just per LA)
+        # 2. Add on cancel method
+        # 3. THOUGHT -> Landlord (Company) should fetch logged in user??
