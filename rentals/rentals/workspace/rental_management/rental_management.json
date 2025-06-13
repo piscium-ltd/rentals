@@ -112,19 +112,9 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Deposit Certificate",
-   "link_count": 0,
-   "link_to": "Deposit Certificate",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2025-05-27 01:23:11.145042",
+ "modified": "2025-06-14 02:08:35.695064",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Rental Management",
