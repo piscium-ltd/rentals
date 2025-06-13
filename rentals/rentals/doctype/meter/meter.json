@@ -28,6 +28,7 @@
    "fieldname": "property",
    "fieldtype": "Link",
    "label": "Property",
+   "mandatory_depends_on": "eval:doc.meter_method == \"Full Property\"",
    "options": "Property"
   },
   {
@@ -35,6 +36,7 @@
    "fieldname": "unit",
    "fieldtype": "Link",
    "label": "Unit",
+   "mandatory_depends_on": "eval:doc.meter_method == \"Per Unit\"",
    "options": "Unit"
   },
   {
@@ -71,7 +73,7 @@
    "link_fieldname": "meter"
   }
  ],
- "modified": "2025-05-07 14:37:39.247373",
+ "modified": "2025-06-14 01:07:21.481758",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Meter",

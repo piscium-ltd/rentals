@@ -1,200 +1,130 @@
 import frappe
-
-DEPOSIT_CYCLE = "Once"
+from frappe.utils import getdate, nowdate
 
 @frappe.whitelist(allow_guest=True)
-def register_payment(**kwargs):
-    data = frappe.form_dict
-    lease_agreement_id = data.get("account_number")
-    amount_paid = float(data.get("amount", 0))
+def bank_payment_webhook(account_number, amount):
+    amount = float(amount)
+    today = getdate(nowdate())
 
-    if not lease_agreement_id or not amount_paid:
-        return {"error": "Missing lease_agreement_id or amount"}
+    lease = frappe.get_doc("Lease Agreement", account_number)
+    customer = frappe.get_value("Tenant", lease.tenant, "customer")
+    company = frappe.get_value("Landlord", lease.landlord, "company")
+    price_list = frappe.db.get_value("Customer", customer, "default_price_list")
+    currency = lease.billing_currency
 
-    try:
-        lease_agreement = frappe.get_doc("Lease Agreement", lease_agreement_id)
-    except frappe.DoesNotExistError:
-        return {"error": f"Lease Agreement {lease_agreement_id} not found"}
+    if not customer or not company:
+        frappe.throw("Customer or Company not found.")
 
-    # Check if a Payment Entry already exists
-    existing_payment = frappe.db.exists("Payment Entry", {
-        "custom_lease_agreement": lease_agreement_id
-    })
+    # Check for Sales Order (Onboarding Payment)
+    sales_order = frappe.db.get_value("Sales Order", {"custom_lease_agreement": lease.name}, "name")
+    created_invoices = []
 
-    if existing_payment:
-        return handle_invoice_payment(lease_agreement, amount_paid)
-    else:
-        return handle_sales_order_payment(lease_agreement, amount_paid)
+    if sales_order:
+        so_doc = frappe.get_doc("Sales Order", sales_order)
 
+        if so_doc.per_billed < 100:
+            once_items = []
+            recurring_items = []
 
-def handle_invoice_payment(lease_agreement, amount_paid):
-    invoices = frappe.get_all("Sales Invoice",
-        filters={
-            "custom_lease_agreement": lease_agreement.name,
-            "docstatus": 1,
-            "outstanding_amount": (">", 0)
-        },
-        fields=["name", "grand_total", "outstanding_amount", "customer", "company", "posting_date"],
-        order_by="posting_date asc"
-    )
+            for row in lease.chargeable_services:
+                item = {
+                    "item_code": row.service,
+                    "qty": 1,
+                    "rate": row.rate,
+                    "description": row.billing_cycle,
+                    "sales_order": so_doc.name,
+                    "so_detail": frappe.db.get_value("Sales Order Item",{"parent": so_doc.name, "item_code": row.service},"name")
+                }
+                if row.billing_cycle == "Once":
+                    once_items.append(item)
+                else:
+                    recurring_items.append(item)
 
-    if not invoices:
-        return {"error": "No unpaid Sales Invoices found for this Lease Agreement"}
+            # Create Deposit Certificate
+            if once_items:
+                invoice1 = frappe.get_doc({
+                    "doctype": "Sales Invoice",
+                    "customer": customer,
+                    "company": company,
+                    "currency": currency,
+                    "posting_date": today,
+                    "custom_lease_agreement": lease.name,
+                    "selling_price_list": price_list,
+                    "items": once_items,
+                    "remarks": "Deposit Certificate for onboarding"
+                })
+                invoice1.insert()
+                invoice1.submit()
+                created_invoices.append(invoice1.name)
 
-    total_allocated = 0
-    payment_references = []
+            # Create Recurring Services Invoice
+            if recurring_items:
+                invoice2 = frappe.get_doc({
+                    "doctype": "Sales Invoice",
+                    "customer": customer,
+                    "company": company,
+                    "currency": currency,
+                    "posting_date": today,
+                    "custom_lease_agreement": lease.name,
+                    "selling_price_list": price_list,
+                    "items": recurring_items,
+                    "remarks": "Initial recurring services invoice"
+                })
+                invoice2.insert()
+                invoice2.submit()
+                created_invoices.append(invoice2.name)
+
+    # Step 2: Pay outstanding invoices for this lease
+    invoices = frappe.get_all("Sales Invoice", filters={
+        "customer": customer,
+        "custom_lease_agreement": lease.name,
+        "outstanding_amount": [">", 0],
+        "docstatus": 1
+    }, fields=["name", "outstanding_amount"])
+
+    remaining_amount = amount
+    references = []
 
     for inv in invoices:
-        if total_allocated >= amount_paid:
+        if remaining_amount <= 0:
             break
-
-        allocatable = min(inv.outstanding_amount, amount_paid - total_allocated)
-
-        payment_references.append({
+        to_allocate = min(inv.outstanding_amount, remaining_amount)
+        references.append({
             "reference_doctype": "Sales Invoice",
             "reference_name": inv.name,
-            "total_amount": inv.grand_total,
-            "outstanding_amount": inv.outstanding_amount,
-            "allocated_amount": allocatable,
+            "allocated_amount": to_allocate
         })
+        remaining_amount -= to_allocate
 
-        total_allocated += allocatable
+    # Step 3: Create Payment Entry
+    pe = frappe.new_doc("Payment Entry")
+    pe.payment_type = "Receive"
+    pe.party_type = "Customer"
+    pe.party = customer
+    pe.posting_date = today
+    pe.paid_amount = amount
+    pe.received_amount = amount
+    pe.unallocated_amount = remaining_amount if remaining_amount > 0 else 0
+    pe.company = company
+    pe.target_exchange_rate = 1.0 
+    pe.currency = currency
+    pe.paid_to = frappe.get_cached_value("Company", company, "default_bank_account")
+    pe.custom_lease_agreement = lease.name
+    pe.reference_no = lease.name
+    pe.reference_date = today
 
-    if not payment_references:
-        return {"error": "No payment could be allocated"}
+    # Append references properly
+    for ref in references:
+        pe.append("references", ref)
 
-    payment_entry = frappe.get_doc({
-        "doctype": "Payment Entry",
-        "payment_type": "Receive",
-        "party_type": "Customer",
-        "party": invoices[0].customer,
-        "posting_date": frappe.utils.nowdate(),
-        "paid_from": frappe.get_value("Company", invoices[0].company, "default_receivable_account"),
-        "paid_to": frappe.get_value("Company", invoices[0].company, "default_bank_account"),
-        "received_amount": total_allocated,
-        "paid_amount": total_allocated,
-        "company": invoices[0].company,
-        "custom_lease_agreement": lease_agreement.name,
-        "reference_no": lease_agreement.name,
-        "reference_date": frappe.utils.nowdate(),
-        "references": payment_references
-    })
-
-    payment_entry.insert()
-    payment_entry.submit()
+    pe.insert(ignore_permissions=True)
+    pe.submit()
 
     return {
-        "lease_agreement": lease_agreement.name,
-        "payment_entry": payment_entry.name,
-        "invoices_paid": [ref["reference_name"] for ref in payment_references],
-        "total_allocated": total_allocated,
-        "remaining_unallocated": amount_paid - total_allocated
+        "message": "Payment processed successfully.",
+        "payment_entry": pe.name,
+        "invoices_paid": [r["reference_name"] for r in references],
+        "excess_amount": pe.unallocated_amount,
+        "created_invoices": created_invoices
     }
-
-
-def handle_sales_order_payment(lease_agreement, amount_paid):
-    sales_order_name = frappe.db.get_value("Sales Order", {
-        "custom_lease_agreement": lease_agreement.name
-    })
-
-    if not sales_order_name:
-        return {"error": "No Sales Order found for this Lease Agreement"}
-
-    sales_order = frappe.get_doc("Sales Order", sales_order_name)
-
-    payment_entry = create_payment_entry(
-        sales_order.customer,
-        sales_order.company,
-        sales_order,
-        lease_agreement.name,
-        amount_paid
-    )
-    payment_entry.insert()
-    payment_entry.submit()
-
-    deposit_services = []
-    regular_services = []
-
-    for cs in lease_agreement.chargeable_services:
-        item = {
-            "item_code": cs.item,
-            "item_name": cs.item_name,
-            "qty": cs.qty,
-            "rate": cs.rate,
-            "uom": cs.uom,
-            "warehouse": cs.warehouse,
-            "cost_center": cs.cost_center,
-            "sales_order": sales_order.name
-        }
-        if cs.billing_cycle == DEPOSIT_CYCLE:
-            deposit_services.append(item)
-        else:
-            regular_services.append(item)
-
-    created_docs = {
-        "payment_entry": payment_entry.name,
-        "sales_order": sales_order.name,
-        "lease_agreement": lease_agreement.name
-    }
-
-    if deposit_services:
-        deposit_invoice = create_sales_invoice(
-            lease_agreement, deposit_services, sales_order.customer, sales_order.company, sales_order.name
-        )
-        created_docs["deposit_certificate"] = deposit_invoice.name
-
-    if regular_services:
-        sales_invoice = create_sales_invoice(
-            lease_agreement, regular_services, sales_order.customer, sales_order.company, sales_order.name
-        )
-        created_docs["sales_invoice"] = sales_invoice.name
-
-    return created_docs
-
-
-def create_sales_invoice(lease_agreement, items, customer, company, sales_order_name):
-    invoice = frappe.new_doc("Sales Invoice")
-    invoice.update({
-        "customer": customer,
-        "company": company,
-        "custom_lease_agreement": lease_agreement.name,
-        "posting_date": frappe.utils.nowdate(),
-        "due_date": frappe.utils.nowdate(),
-        "debit_to": frappe.get_value("Company", company, "default_receivable_account"),
-        "allocate_advances_automatically": 1
-    })
-
-    for item in items:
-        item.update({
-            "sales_order": sales_order_name
-        })
-        invoice.append("items", item)
-
-    invoice.insert()
-    invoice.submit()
-    return invoice
-
-
-def create_payment_entry(party, company, reference_doc, lease_agreement_id, amount):
-    return frappe.get_doc({
-        "doctype": "Payment Entry",
-        "payment_type": "Receive",
-        "party_type": "Customer",
-        "party": party,
-        "posting_date": frappe.utils.nowdate(),
-        "paid_from": frappe.get_value("Company", company, "default_receivable_account"),
-        "paid_to": frappe.get_value("Company", company, "default_bank_account"),
-        "received_amount": amount,
-        "paid_amount": amount,
-        "company": company,
-        "reference_no": reference_doc.name,
-        "reference_date": frappe.utils.nowdate(),
-        "custom_lease_agreement": lease_agreement_id,
-        "references": [{
-            "reference_doctype": reference_doc.doctype,
-            "reference_name": reference_doc.name,
-            "total_amount": reference_doc.grand_total,
-            "outstanding_amount": reference_doc.outstanding_amount,
-            "allocated_amount": amount,
-        }]
-    })
+# TO DO : Handle excess payments
