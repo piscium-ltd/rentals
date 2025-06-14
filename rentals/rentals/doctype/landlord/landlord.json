@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:LAN-{##}",
+ "autoname": "format:LAN-{###}",
  "creation": "2025-04-14 22:28:13.618292",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -30,7 +30,6 @@
    "depends_on": "eval:doc.landlord_type == \"Individual\"",
    "fieldname": "full_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Full Name",
    "mandatory_depends_on": "eval:doc.landlord_type == \"Individual\""
@@ -118,7 +117,6 @@
    "depends_on": "eval:doc.landlord_type == \"Company\"",
    "fieldname": "company_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Company Name",
    "mandatory_depends_on": "eval:doc.landlord_type == \"Company\"",
@@ -128,6 +126,8 @@
    "fieldname": "company",
    "fieldtype": "Link",
    "hidden": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Company",
    "options": "Company",
    "read_only": 1
@@ -142,6 +142,7 @@
   {
    "fieldname": "abbr",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Abbr",
    "read_only": 1,
@@ -157,7 +158,7 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2025-06-11 15:37:35.576702",
+ "modified": "2025-06-14 23:11:53.699627",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Landlord",

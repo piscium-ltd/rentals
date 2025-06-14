@@ -15,22 +15,9 @@ def bank_payment_webhook(account_number, amount):
     if not customer or not company:
         frappe.throw("Customer or Company not found.")
 
-    # Get receivable account from Party Account
-    receivable_account = frappe.get_value("Party Account", {
-        "party": customer,
-        "company": company
-    }, "account")
-
-    # Fallback to default company receivable account
-    if not receivable_account:
-        receivable_account = frappe.get_value("Company", company, "default_receivable_account")
-        if not receivable_account:
-            frappe.throw(f"⚠️ No receivable account found for customer {customer} or company {company}.")
-
-    created_invoices = []
-
-    # Check for Sales Order (Onboarding Payment)
+    # Handle Sales Order (Onboarding Payment)
     sales_order = frappe.db.get_value("Sales Order", {"custom_lease_agreement": lease.name}, "name")
+    created_invoices = []
 
     if sales_order:
         so_doc = frappe.get_doc("Sales Order", sales_order)
@@ -47,8 +34,7 @@ def bank_payment_webhook(account_number, amount):
                     "description": row.billing_cycle,
                     "sales_order": so_doc.name,
                     "so_detail": frappe.db.get_value("Sales Order Item", {
-                        "parent": so_doc.name,
-                        "item_code": row.service
+                        "parent": so_doc.name, "item_code": row.service
                     }, "name")
                 }
                 if row.billing_cycle == "Once":
@@ -62,11 +48,12 @@ def bank_payment_webhook(account_number, amount):
                     "doctype": "Sales Invoice",
                     "customer": customer,
                     "company": company,
-                    "currency": currency,
+                    "due_date": today,
                     "posting_date": today,
-                    "custom_lease_agreement": lease.name,
+                    "debit_to": frappe.get_value("Company", company, "default_receivable_account"),
+                    "currency": currency,
                     "selling_price_list": price_list,
-                    "debit_to": receivable_account,
+                    "custom_lease_agreement": lease.name,
                     "items": once_items,
                     "remarks": "Deposit Certificate for onboarding"
                 })
@@ -80,11 +67,12 @@ def bank_payment_webhook(account_number, amount):
                     "doctype": "Sales Invoice",
                     "customer": customer,
                     "company": company,
-                    "currency": currency,
+                    "due_date": today,
                     "posting_date": today,
-                    "custom_lease_agreement": lease.name,
+                    "debit_to": frappe.get_value("Company", company, "default_receivable_account"),
+                    "currency": currency,
                     "selling_price_list": price_list,
-                    "debit_to": receivable_account,
+                    "custom_lease_agreement": lease.name,
                     "items": recurring_items,
                     "remarks": "Initial recurring services invoice"
                 })
@@ -92,7 +80,7 @@ def bank_payment_webhook(account_number, amount):
                 invoice2.submit()
                 created_invoices.append(invoice2.name)
 
-    # Step 2: Pay outstanding invoices for this lease
+    # Pay outstanding invoices for this lease
     invoices = frappe.get_all("Sales Invoice", filters={
         "customer": customer,
         "custom_lease_agreement": lease.name,
@@ -110,38 +98,38 @@ def bank_payment_webhook(account_number, amount):
         references.append({
             "reference_doctype": "Sales Invoice",
             "reference_name": inv.name,
+            "total_amount": inv.outstanding_amount,
+            "outstanding_amount": inv.outstanding_amount,
             "allocated_amount": to_allocate
         })
         remaining_amount -= to_allocate
 
     # Step 3: Create Payment Entry
-    pe = frappe.new_doc("Payment Entry")
-    pe.payment_type = "Receive"
-    pe.party_type = "Customer"
-    pe.party = customer
-    pe.posting_date = today
-    pe.paid_amount = amount
-    pe.received_amount = amount
-    pe.unallocated_amount = remaining_amount if remaining_amount > 0 else 0
-    pe.company = company
-    pe.target_exchange_rate = 1.0 
-    pe.currency = currency
-    pe.paid_from = receivable_account
-    pe.paid_to = frappe.get_cached_value("Company", company, "default_bank_account")
-    pe.custom_lease_agreement = lease.name
-    pe.reference_no = lease.name
-    pe.reference_date = today
+    payment_entry = frappe.new_doc("Payment Entry")
+    payment_entry.payment_type = "Receive"
+    payment_entry.party_type = "Customer"
+    payment_entry.party = customer
+    payment_entry.posting_date = today
+    payment_entry.paid_from = frappe.get_value("Company", company, "default_receivable_account")
+    payment_entry.paid_to = frappe.get_value("Company", company, "default_bank_account")
+    payment_entry.received_amount = amount
+    payment_entry.paid_amount = amount
+    payment_entry.unallocated_amount = remaining_amount if remaining_amount > 0 else 0
+    payment_entry.company = company
+    payment_entry.custom_lease_agreement = lease.name
+    payment_entry.reference_no = lease.name
+    payment_entry.reference_date = today
 
     for ref in references:
-        pe.append("references", ref)
+        payment_entry.append("references", ref)
 
-    pe.insert(ignore_permissions=True)
-    pe.submit()
+    payment_entry.insert()
+    payment_entry.submit()
 
     return {
         "message": "Payment processed successfully.",
-        "payment_entry": pe.name,
+        "payment_entry": payment_entry.name,
         "invoices_paid": [r["reference_name"] for r in references],
-        "excess_amount": pe.unallocated_amount,
+        "excess_amount": payment_entry.unallocated_amount,
         "created_invoices": created_invoices
     }
