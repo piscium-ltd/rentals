@@ -15,9 +15,23 @@ def bank_payment_webhook(account_number, amount):
     if not customer or not company:
         frappe.throw("Customer or Company not found.")
 
+    # Get receivable account from Party Account
+    receivable_account = frappe.get_value("Party Account", {
+        "party_type": "Customer",
+        "party": customer,
+        "company": company
+    }, "account")
+
+    # Fallback to default company receivable account
+    if not receivable_account:
+        receivable_account = frappe.get_value("Company", company, "default_receivable_account")
+        if not receivable_account:
+            frappe.throw(f"⚠️ No receivable account found for customer {customer} or company {company}.")
+
+    created_invoices = []
+
     # Check for Sales Order (Onboarding Payment)
     sales_order = frappe.db.get_value("Sales Order", {"custom_lease_agreement": lease.name}, "name")
-    created_invoices = []
 
     if sales_order:
         so_doc = frappe.get_doc("Sales Order", sales_order)
@@ -33,7 +47,10 @@ def bank_payment_webhook(account_number, amount):
                     "rate": row.rate,
                     "description": row.billing_cycle,
                     "sales_order": so_doc.name,
-                    "so_detail": frappe.db.get_value("Sales Order Item",{"parent": so_doc.name, "item_code": row.service},"name")
+                    "so_detail": frappe.db.get_value("Sales Order Item", {
+                        "parent": so_doc.name,
+                        "item_code": row.service
+                    }, "name")
                 }
                 if row.billing_cycle == "Once":
                     once_items.append(item)
@@ -50,7 +67,7 @@ def bank_payment_webhook(account_number, amount):
                     "posting_date": today,
                     "custom_lease_agreement": lease.name,
                     "selling_price_list": price_list,
-                    "debit_to": frappe.get_value("Customer", customer, "default_receivable_account"),
+                    "debit_to": receivable_account,
                     "items": once_items,
                     "remarks": "Deposit Certificate for onboarding"
                 })
@@ -68,7 +85,7 @@ def bank_payment_webhook(account_number, amount):
                     "posting_date": today,
                     "custom_lease_agreement": lease.name,
                     "selling_price_list": price_list,
-                    "debit_to": frappe.get_value("Customer", customer, "default_receivable_account"),
+                    "debit_to": receivable_account,
                     "items": recurring_items,
                     "remarks": "Initial recurring services invoice"
                 })
@@ -110,13 +127,12 @@ def bank_payment_webhook(account_number, amount):
     pe.company = company
     pe.target_exchange_rate = 1.0 
     pe.currency = currency
-    pe.paid_from = frappe.get_value("Company", company, "default_receivable_account"),
+    pe.paid_from = receivable_account
     pe.paid_to = frappe.get_cached_value("Company", company, "default_bank_account")
     pe.custom_lease_agreement = lease.name
     pe.reference_no = lease.name
     pe.reference_date = today
 
-    # Append references properly
     for ref in references:
         pe.append("references", ref)
 
@@ -130,4 +146,3 @@ def bank_payment_webhook(account_number, amount):
         "excess_amount": pe.unallocated_amount,
         "created_invoices": created_invoices
     }
-# TO DO : Handle excess payments
