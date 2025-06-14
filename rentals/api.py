@@ -17,7 +17,6 @@ def bank_payment_webhook(account_number, amount):
 
     # Get receivable account from Party Account
     receivable_account = frappe.get_value("Party Account", {
-        "party_type": "Customer",
         "party": customer,
         "company": company
     }, "account")
