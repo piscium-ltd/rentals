@@ -41,7 +41,6 @@
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Billing Date",
-   "read_only": 1,
    "reqd": 1
   }
  ],
@@ -49,7 +48,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-24 15:06:12.832300",
+ "modified": "2025-06-14 15:41:18.163262",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Chargeable Services",

@@ -19,17 +19,10 @@ class LeaseAgreement(Document):
         if not abbr:
             frappe.throw("Landlord abbreviation not found.")
 
-        # Define allowed digits (excluding 0, 1, 5)
-        allowed_digits = "2346789"
-
-        def generate_number():
-            return ''.join(random.choices(allowed_digits, k=7))
-
-        # Generate a unique name
-        for _ in range(100):  # attempt limit
-            random_number = generate_number()
-            name = f"{abbr}{random_number}"
-            if not frappe.db.exists("LeaseAgreement", name):
+        for _ in range(100):  # avoid infinite loop
+            prime_number = generate_prime_number()
+            name = f"{abbr}{prime_number}"
+            if not frappe.db.exists("Lease Agreement", name):
                 self.name = name
                 return
 
@@ -195,3 +188,20 @@ class LeaseAgreement(Document):
         # 1. Update Price List and Item Price Logic (1PL Per customer per company or just per LA)
         # 2. Add on cancel method
         # 3. THOUGHT -> Landlord (Company) should fetch logged in user??
+
+def is_prime(n):
+        if n < 2 or n % 2 == 0:
+            return n == 2
+        for a in (2, 3, 5, 7, 11):
+            if n == a:
+                return True
+            if pow(a, n - 1, n) != 1:
+                return False
+        return True
+
+def generate_prime_number():
+    for _ in range(1000):  # attempt limit
+        number = random.randint(1_000_000, 9_999_999)
+        if is_prime(number):
+            return str(number)
+    frappe.throw("Unable to generate prime number.")

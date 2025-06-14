@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+import random
 
 class Landlord(Document):
     def after_insert(self):
@@ -38,37 +39,15 @@ class Landlord(Document):
     def get_abbreviation(self):
         safe_charset = "ACDEFHJKMNPRTVWXY"
         BLACKLIST = {"FAP", "FAT", "WET", "WTF"}
-        base = len(safe_charset)
+        max_attempts = 5000  # Safety limit to prevent infinite loop
 
-        # Retrieve current counter from Rental Settings singleton
-        counter = frappe.db.get_single_value("Rental Settings", "last_used_counter") or 0
+        for _ in range(max_attempts):
+            abbr = ''.join(random.choices(safe_charset, k=3))
 
-        max_combinations = base ** 3
-        if counter >= max_combinations:
-            frappe.throw("No more abbreviations available.")
-
-        attempts = 0
-        while attempts < max_combinations:
-            # Convert counter to base-N abbreviation
-            temp = counter
-            abbr = ""
-            for _ in range(3):
-                abbr = safe_charset[temp % base] + abbr
-                temp //= base
-
-            # Skip blacklisted words
             if abbr in BLACKLIST:
-                counter += 1
-                attempts += 1
                 continue
 
-            # Check if abbreviation is unique
             if not frappe.db.exists("Company", {"abbr": abbr}):
-                # Save updated counter in Rental Settings
-                frappe.db.set_value("Rental Settings", None, "last_used_counter", counter + 1)
                 return abbr
 
-            counter += 1
-            attempts += 1
-
-        frappe.throw("Unable to generate unique abbreviation.")
+        frappe.throw("Unable to generate unique abbreviation after many attempts.")
