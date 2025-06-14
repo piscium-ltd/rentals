@@ -108,6 +108,7 @@ def bank_payment_webhook(account_number, amount):
     pe.company = company
     pe.target_exchange_rate = 1.0 
     pe.currency = currency
+    pe.paid_from = frappe.get_value("Company", company, "default_receivable_account"),
     pe.paid_to = frappe.get_cached_value("Company", company, "default_bank_account")
     pe.custom_lease_agreement = lease.name
     pe.reference_no = lease.name
