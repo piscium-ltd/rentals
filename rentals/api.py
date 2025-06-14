@@ -50,6 +50,7 @@ def bank_payment_webhook(account_number, amount):
                     "posting_date": today,
                     "custom_lease_agreement": lease.name,
                     "selling_price_list": price_list,
+                    "debit_to": frappe.get_value("Company", company, "default_receivable_account"),
                     "items": once_items,
                     "remarks": "Deposit Certificate for onboarding"
                 })
@@ -67,6 +68,7 @@ def bank_payment_webhook(account_number, amount):
                     "posting_date": today,
                     "custom_lease_agreement": lease.name,
                     "selling_price_list": price_list,
+                    "debit_to": frappe.get_value("Company", company, "default_receivable_account"),
                     "items": recurring_items,
                     "remarks": "Initial recurring services invoice"
                 })
