@@ -1,5 +1,6 @@
 import frappe
-from frappe.utils import nowdate, getdate, add_days, add_months, add_years
+from frappe.utils import getdate, nowdate, add_days, add_months, add_years
+from frappe import _
 
 def check_expired_leases():
     today = nowdate()
@@ -122,6 +123,11 @@ def generate_sales_invoices(lease_name=None, override_billing_date=False):
         invoice.submit()
         invoice_names.append(invoice.name)
 
+        try:
+            reconcile_customer_payments(customer, company)
+        except Exception as e:
+            frappe.logger().error(f"Auto-reconciliation failed for customer {customer}: {e}")
+
         # Update billing dates
         for service in updated_services:
             if service.billing_cycle == "Daily":
@@ -139,3 +145,27 @@ def generate_sales_invoices(lease_name=None, override_billing_date=False):
         "message": "Sales Invoices created successfully." if invoice_names else "No sales invoices were created.",
         "invoices": invoice_names
     }
+
+def reconcile_customer_payments(customer, company):
+    doc = frappe.new_doc("Payment Reconciliation")
+    doc.party_type = "Customer"
+    doc.party = customer
+    doc.company = company
+    doc.receivable_payable_account = frappe.get_value("Company", company, "default_receivable_account")
+
+    # Populate payments and invoices
+    doc.get_unreconciled_entries()
+
+    if not doc.invoices and not doc.payments:
+        frappe.logger().info(f"No unreconciled entries found for {customer}")
+        return
+
+    # Allocate entries
+    doc.allocate_entries({
+        "payments": [d.as_dict() for d in doc.payments],
+        "invoices": [d.as_dict() for d in doc.invoices]
+    })
+
+    doc.save()
+    doc.reconcile()
+    frappe.logger().info(f"Reconciliation completed for {customer}")
