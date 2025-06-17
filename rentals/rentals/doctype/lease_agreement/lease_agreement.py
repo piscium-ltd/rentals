@@ -75,14 +75,21 @@ class LeaseAgreement(Document):
         self.grand_total = total
 
     def on_submit(self):
-        # Fetch landlord and tenant documents
+        # Fetch required documents
+        unit_doc = frappe.get_doc("Unit", self.unit)
         landlord_doc = frappe.get_doc("Landlord", self.landlord)
         tenant_doc = frappe.get_doc("Tenant", self.tenant)
 
+        # Mark unit as occupied
+        unit_doc.status = "Occupied"
+        unit_doc.save()
+        frappe.msgprint(_(f"✅ Unit <b>{unit_doc.name}</b> marked as occupied."))
+
+        # Validate required links
         if not landlord_doc.company:
             frappe.msgprint(_("⚠️ Landlord is not linked to a Company."), alert=True)
             return
-        
+
         if not tenant_doc.customer:
             frappe.msgprint(_("⚠️ Tenant is not linked to a Customer."), alert=True)
             return
@@ -91,7 +98,7 @@ class LeaseAgreement(Document):
         customer_name = self.tenant_name
         price_list_name = f"{customer_name} Price List"
 
-        # 1. Ensure Price List exists
+        # Create price list if it doesn't exist
         if not frappe.db.exists("Price List", price_list_name):
             frappe.get_doc({
                 "doctype": "Price List",
@@ -102,26 +109,29 @@ class LeaseAgreement(Document):
             }).insert(ignore_permissions=True)
             frappe.msgprint(_(f"✅ Created new Price List: <b>{price_list_name}</b>"))
 
-        # 2. Update Customer's default price list and currency if needed
+        # Update customer default price list and currency
         customer_doc = frappe.get_doc("Customer", tenant_doc.customer)
-        updates_made = False
+        updated = False
+
         if customer_doc.default_price_list != price_list_name:
             customer_doc.default_price_list = price_list_name
-            updates_made = True
+            updated = True
+
         if customer_doc.default_currency != self.billing_currency:
             customer_doc.default_currency = self.billing_currency
-            updates_made = True
-        if updates_made:
+            updated = True
+
+        if updated:
             customer_doc.save(ignore_permissions=True)
             frappe.msgprint(_(f"✅ Updated Customer <b>{customer_doc.name}</b> with default Price List and Currency."))
 
-        # 3. Add or update item prices
+        # Create or update item prices
         for row in self.chargeable_services:
             item_code = row.service
             rate = row.rate
 
             if not rate:
-                frappe.msgprint(_(f"⚠️ No rate specified for item <b>{item_code}</b>. Skipping."))
+                frappe.msgprint(_(f"⚠️ No rate specified for item <b>{item_code}</b>. Skipping."), alert=True)
                 continue
 
             item_price_name = frappe.db.exists("Item Price", {
@@ -134,7 +144,7 @@ class LeaseAgreement(Document):
                 if item_price.price_list_rate != rate:
                     item_price.price_list_rate = rate
                     item_price.save(ignore_permissions=True)
-                    frappe.msgprint(_(f"🔁 Updated price for item <b>{item_code}</b> in <b>{price_list_name}</b>"))
+                    frappe.msgprint(_(f"🔁 Updated price for item <b>{item_code}</b> in <b>{price_list_name}</b>."))
             else:
                 frappe.get_doc({
                     "doctype": "Item Price",
@@ -144,9 +154,19 @@ class LeaseAgreement(Document):
                     "currency": self.billing_currency,
                     "customer": customer_name
                 }).insert(ignore_permissions=True)
-                frappe.msgprint(_(f"✅ Created price for item <b>{item_code}</b> in <b>{price_list_name}</b>"))
+                frappe.msgprint(_(f"✅ Created price for item <b>{item_code}</b> in <b>{price_list_name}</b>."))
 
-        # 4. Create Sales Order
+        # Create Sales Order
+        items = []
+        for row in self.chargeable_services:
+            if row.rate:
+                items.append({
+                    "item_code": row.service,
+                    "qty": 1,
+                    "rate": row.rate,
+                    "delivery_date": frappe.utils.nowdate()
+                })
+
         sales_order = frappe.get_doc({
             "doctype": "Sales Order",
             "company": company,
@@ -156,21 +176,13 @@ class LeaseAgreement(Document):
             "selling_price_list": price_list_name,
             "transaction_date": frappe.utils.nowdate(),
             "delivery_date": frappe.utils.nowdate(),
-            "items": [
-                {
-                    "item_code": row.service,
-                    "qty": 1,
-                    "rate": row.rate,
-                    "delivery_date": frappe.utils.nowdate()
-                }
-                for row in self.chargeable_services if row.rate
-            ]
+            "items": items
         })
         sales_order.insert(ignore_permissions=True)
         sales_order.submit()
         frappe.msgprint(_(f"✅ Sales Order <b>{sales_order.name}</b> created and submitted."))
 
-        # 5. Create Payment Request
+        # Create Payment Request
         recipient_email = tenant_doc.email
         if not recipient_email:
             frappe.msgprint(_("⚠️ Tenant does not have an email address. Payment Request skipped."), alert=True)
