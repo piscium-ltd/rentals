@@ -192,8 +192,23 @@ class LeaseAgreement(Document):
             dt="Sales Order",
             dn=sales_order.name,
             recipient_id=recipient_email,
-            submit_doc=True
+            return_doc=True,
+            submit_doc=False
         )
+
+        payment_request.subject = f"Payment Request for Account Number {self.name}"
+        payment_request.message = (
+            f"""
+            <p>Dear {self.tenant_name},</p>
+            <p>Requesting payment against Account Number {self.name} for amount Sh. {self.grand_total:,.0f}</p>
+            <p>If you have any questions, please get back to us.</p>
+            <p>Thank you for your business!</p>
+            """
+        )
+
+        payment_request.save()
+        payment_request.submit()
+
         frappe.msgprint(_(f"✅ Payment Request <b>{payment_request.name}</b> created and sent to <b>{recipient_email}</b>."))
 
         # TO DO:
