@@ -4,23 +4,22 @@
 import frappe
 from frappe.model.document import Document
 import random
+from frappe import _
 
 class Landlord(Document):
     def after_insert(self):
-        # Determine the company name based on landlord type
-        company_name = self.company_name if self.landlord_type == "Company" else self.full_name
-
-        if not company_name:
-            frappe.throw("Company Name or Full Name is required to create a Company.")
-
-        # Generate a unique abbreviation
+        # Generate and set a unique abbreviation
         abbr = self.get_abbreviation()
         self.db_set("abbr", abbr)
 
-        # Create Company if it doesn't exist
+        # Determine the company name based on landlord type
+        company_name = self.company_name if self.landlord_type == "Company" else abbr
+
+        # Check if the company already exists
         if not frappe.db.exists("Company", {"company_name": company_name}):
             default_company = frappe.db.get_single_value("Global Defaults", "default_company")
 
+            # Create the new company
             company = frappe.get_doc({
                 "doctype": "Company",
                 "company_name": company_name,
@@ -33,21 +32,23 @@ class Landlord(Document):
             })
             company.insert(ignore_permissions=True)
 
-        # Link the company to this landlord
+            frappe.msgprint(_("✅ Company <b>{0}</b> created successfully.").format(company_name))
+
+        # Link the landlord to the created or existing company
         self.db_set("company", company_name)
 
     def get_abbreviation(self):
         safe_charset = "ACDEFHJKMNPRTVWXY"
-        BLACKLIST = {"FAP", "FAT", "WET", "WTF"}
-        max_attempts = 5000  # Safety limit to prevent infinite loop
+        blacklist = {"FAP", "FAT", "WET", "WTF"}
+        max_attempts = 5000
 
         for _ in range(max_attempts):
             abbr = ''.join(random.choices(safe_charset, k=3))
 
-            if abbr in BLACKLIST:
+            if abbr in blacklist:
                 continue
 
             if not frappe.db.exists("Company", {"abbr": abbr}):
                 return abbr
 
-        frappe.throw("Unable to generate unique abbreviation after many attempts.")
+        frappe.throw(_("Unable to generate a unique abbreviation after many attempts."))

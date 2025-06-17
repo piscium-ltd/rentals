@@ -156,7 +156,7 @@ def reconcile_customer_payments(customer, company):
     # Populate payments and invoices
     doc.get_unreconciled_entries()
 
-    if not doc.invoices and not doc.payments:
+    if not doc.invoices or not doc.payments:
         frappe.logger().info(f"No unreconciled entries found for {customer}")
         return
 
