@@ -158,7 +158,7 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2025-06-14 23:11:53.699627",
+ "modified": "2025-06-20 14:59:54.434317",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Landlord",
@@ -181,5 +181,6 @@
  "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "abbr"
 }

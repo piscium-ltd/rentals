@@ -1,7 +1,6 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:LAGR-{YY}-{MM}-{##}",
  "creation": "2025-04-15 10:31:51.309295",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -115,6 +114,7 @@
   {
    "fieldname": "landlord",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Landlord",
    "options": "Landlord",
    "reqd": 1
@@ -251,7 +251,6 @@
    "fetch_from": "unit.unit_type",
    "fieldname": "unit_type",
    "fieldtype": "Read Only",
-   "in_list_view": 1,
    "label": "Unit Type"
   },
   {
@@ -370,11 +369,11 @@
    "link_fieldname": "lease_agreement"
   }
  ],
- "modified": "2025-06-17 12:38:33.181782",
+ "modified": "2025-06-20 14:43:53.617089",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",
- "naming_rule": "Expression",
+ "naming_rule": "By script",
  "owner": "Administrator",
  "permissions": [
   {

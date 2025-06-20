@@ -1,7 +1,7 @@
 {
  "app": "rentals",
  "charts": [],
- "content": "[{\"id\":\"pjHhpkXVyg\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Rentals Shortcuts</b>\",\"col\":12}},{\"id\":\"ZTrpBXTA0c\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement\",\"col\":4}},{\"id\":\"2ugBIUKXm4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Utility Rate\",\"col\":4}},{\"id\":\"uJNQznj-WF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":4}},{\"id\":\"GcpuGnJGhX\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"v0RCVd1VMd\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Reports &amp; Masters</b>\",\"col\":12}},{\"id\":\"s1ytWpZj60\",\"type\":\"card\",\"data\":{\"card_name\":\"Rentals Masters\",\"col\":6}},{\"id\":\"HHf7gVA8Tv\",\"type\":\"card\",\"data\":{\"card_name\":\"Rentals Shortcuts\",\"col\":6}}]",
+ "content": "[{\"id\":\"pjHhpkXVyg\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Rentals Shortcuts</b>\",\"col\":12}},{\"id\":\"ZTrpBXTA0c\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement\",\"col\":4}},{\"id\":\"uJNQznj-WF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":4}},{\"id\":\"gOKGVutiLh\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Termination\",\"col\":4}},{\"id\":\"GcpuGnJGhX\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"v0RCVd1VMd\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Reports &amp; Masters</b>\",\"col\":12}},{\"id\":\"n-qd04gJSr\",\"type\":\"card\",\"data\":{\"card_name\":\"Rentals Masters\",\"col\":6}},{\"id\":\"HHf7gVA8Tv\",\"type\":\"card\",\"data\":{\"card_name\":\"Rentals Shortcuts\",\"col\":6}}]",
  "creation": "2025-04-25 16:09:23.293045",
  "custom_blocks": [],
  "docstatus": 0,
@@ -18,11 +18,42 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Rentals Masters",
-   "link_count": 7,
+   "label": "Landlord",
+   "link_count": 0,
+   "link_to": "Landlord",
    "link_type": "DocType",
    "onboard": 0,
-   "type": "Card Break"
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Property",
+   "link_count": 0,
+   "link_to": "Property",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Unit",
+   "link_count": 0,
+   "link_to": "Unit",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tenant",
+   "link_count": 0,
+   "link_to": "Tenant",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -33,6 +64,64 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Utility Rate",
+   "link_count": 0,
+   "link_to": "Utility Rate",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Meter",
+   "link_count": 0,
+   "link_to": "Meter",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Lease Agreement Template",
+   "link_count": 0,
+   "link_to": "Lease Agreement Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rentals Shortcuts",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Utility Bill Logs",
+   "link_count": 0,
+   "link_to": "Utility Bill Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rentals Masters",
+   "link_count": 8,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
   },
   {
    "hidden": 0,
@@ -67,6 +156,36 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Tenant",
+   "link_count": 0,
+   "link_to": "Tenant",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Utility Provider",
+   "link_count": 0,
+   "link_to": "Utility Provider",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Utility Rate",
+   "link_count": 0,
+   "link_to": "Utility Rate",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Meter",
    "link_count": 0,
    "link_to": "Meter",
@@ -83,38 +202,9 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Tenant",
-   "link_count": 0,
-   "link_to": "Tenant",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Rentals Shortcuts",
-   "link_count": 2,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Utility Bill Logs",
-   "link_count": 0,
-   "link_to": "Utility Bill Log",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2025-06-14 02:08:35.695064",
+ "modified": "2025-06-20 14:17:22.399244",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Rental Management",
@@ -137,8 +227,8 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Utility Rate",
-   "link_to": "Utility Rate",
+   "label": "Lease Termination",
+   "link_to": "Lease Termination",
    "stats_filter": "[]",
    "type": "DocType"
   },
