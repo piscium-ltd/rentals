@@ -15,11 +15,23 @@ frappe.ui.form.on("Lease Agreement", {
 			},
 		}));
 
-		frm.set_query("service", "chargeable_services", () => ({
-			filters: {
-				item_group: "Rental Chargeable Services",
-			},
-		}));
+		frm.fields_dict.chargeable_services.grid.get_field("service").get_query = function (
+			doc,
+			cdt,
+			cdn
+		) {
+			let current_row = locals[cdt][cdn];
+			let selected_services = (doc.chargeable_services || [])
+				.filter((row) => row.name !== current_row.name && row.service)
+				.map((row) => row.service);
+
+			return {
+				filters: {
+					item_group: "Rental Chargeable Services",
+					name: ["not in", selected_services],
+				},
+			};
+		};
 
 		if (frm.doc.docstatus === 1) {
 			// only show for submitted leases
