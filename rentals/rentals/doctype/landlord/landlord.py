@@ -5,8 +5,15 @@ import frappe
 from frappe.model.document import Document
 import random
 from frappe import _
+import re
 
 class Landlord(Document):
+    def validate(self):
+        if self.kra_pin:
+            kra_pin = self.kra_pin.strip().upper()
+            if not re.fullmatch(r"[AP]\d{9}[A-Z]", kra_pin):
+                frappe.throw("❌ Invalid KRA PIN format. It should be like A123456789B or P051234567K.")
+
     def after_insert(self):
         # Generate and set a unique abbreviation
         abbr = self.get_abbreviation()

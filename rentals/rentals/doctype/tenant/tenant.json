@@ -1,16 +1,27 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:idpassport_no",
+ "autoname": "format:TNT-{###}",
  "creation": "2025-04-14 22:56:22.005078",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "full_name",
-  "idpassport_no",
+  "document_type",
+  "id_no",
+  "passport_no",
   "phone_number",
   "email",
-  "customer"
+  "customer",
+  "address_and_contact_tab",
+  "tenant_primary_address",
+  "primary_address",
+  "column_break_nafw",
+  "primary_contact",
+  "mobile_no",
+  "email_id",
+  "first_name",
+  "last_name"
  ],
  "fields": [
   {
@@ -23,18 +34,9 @@
   },
   {
    "fieldname": "phone_number",
-   "fieldtype": "Data",
+   "fieldtype": "Phone",
    "in_list_view": 1,
    "label": "Phone Number"
-  },
-  {
-   "fieldname": "idpassport_no",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "ID/Passport No",
-   "reqd": 1,
-   "unique": 1
   },
   {
    "fieldname": "email",
@@ -51,16 +53,93 @@
    "label": "Customer",
    "options": "Customer",
    "read_only": 1
+  },
+  {
+   "fieldname": "document_type",
+   "fieldtype": "Select",
+   "label": "Document Type",
+   "options": "National Identity Card\nPassport"
+  },
+  {
+   "depends_on": "eval:doc.document_type == \"National Identity Card\"",
+   "fieldname": "id_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "ID No",
+   "mandatory_depends_on": "eval:doc.document_type == \"National Identity Card\"",
+   "unique": 1
+  },
+  {
+   "depends_on": "eval:doc.document_type == \"Passport\"",
+   "fieldname": "passport_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Passport No ",
+   "mandatory_depends_on": "eval:doc.document_type == \"Passport\"",
+   "unique": 1
+  },
+  {
+   "fieldname": "address_and_contact_tab",
+   "fieldtype": "Tab Break",
+   "label": "Address and Contact"
+  },
+  {
+   "fieldname": "tenant_primary_address",
+   "fieldtype": "Link",
+   "label": "Tenant Primary Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "primary_address",
+   "fieldtype": "Text",
+   "label": "Primary Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_nafw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "primary_contact",
+   "fieldtype": "Link",
+   "label": "Primary Contact",
+   "options": "Contact"
+  },
+  {
+   "fetch_from": "primary_contact.mobile_no",
+   "fieldname": "mobile_no",
+   "fieldtype": "Read Only",
+   "label": "Mobile No"
+  },
+  {
+   "fetch_from": "primary_contact.email_id",
+   "fieldname": "email_id",
+   "fieldtype": "Read Only",
+   "label": "Email Id"
+  },
+  {
+   "fetch_from": "primary_contact.first_name",
+   "fieldname": "first_name",
+   "fieldtype": "Read Only",
+   "label": "First Name"
+  },
+  {
+   "fetch_from": "primary_contact.last_name",
+   "fieldname": "last_name",
+   "fieldtype": "Read Only",
+   "label": "Last Name "
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-07 14:39:06.854124",
+ "modified": "2025-07-04 00:26:19.148045",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Tenant",
- "naming_rule": "By fieldname",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

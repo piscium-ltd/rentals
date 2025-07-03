@@ -29,6 +29,11 @@ class LeaseAgreement(Document):
         frappe.throw("Unable to generate unique Lease Agreement name.")
 
     def validate(self):
+        # Check if Start Date is before End Date
+        if self.start_date and self.end_date:
+            if self.end_date <= self.start_date:
+                frappe.throw("❌ End Date must be after Start Date.")
+                
         # Check if there's an active lease already assigned to this unit
         active_leases = frappe.get_all(
             "Lease Agreement",

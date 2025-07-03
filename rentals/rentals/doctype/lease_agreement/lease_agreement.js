@@ -71,6 +71,12 @@ frappe.ui.form.on("Lease Agreement", {
 
 		calculate_grand_total(frm);
 	},
+	end_date: function (frm) {
+		validate_dates(frm);
+	},
+	start_date: function (frm) {
+		validate_dates(frm);
+	},
 });
 
 frappe.ui.form.on("Chargeable Services", {
@@ -110,4 +116,17 @@ function calculate_grand_total(frm) {
 		total += flt(row.rate);
 	});
 	frm.set_value("grand_total", total);
+}
+
+function validate_dates(frm) {
+	const start = frm.doc.start_date;
+	const end = frm.doc.end_date;
+
+	if (start && end && end <= start) {
+		frappe.msgprint({
+			title: "Date Validation",
+			message: "❌ End Date must be after Start Date.",
+			indicator: "red",
+		});
+	}
 }

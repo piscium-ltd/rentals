@@ -81,12 +81,17 @@ def bank_payment_webhook(account_number, amount):
                 created_invoices.append(invoice2.name)
 
     # Pay outstanding invoices for this lease
-    invoices = frappe.get_all("Sales Invoice", filters={
-        "customer": customer,
-        "custom_lease_agreement": lease.name,
-        "outstanding_amount": [">", 0],
-        "docstatus": 1
-    }, fields=["name", "outstanding_amount"])
+    invoices = frappe.get_all(
+        "Sales Invoice",
+        filters={
+            "customer": customer,
+            "custom_lease_agreement": lease.name,
+            "outstanding_amount": [">", 0],
+            "docstatus": 1
+        }, 
+        fields=["name", "outstanding_amount"],
+        order_by="posting_date asc"
+    )
 
     remaining_amount = amount
     references = []

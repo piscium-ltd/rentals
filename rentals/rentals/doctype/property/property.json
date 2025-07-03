@@ -8,13 +8,14 @@
  "field_order": [
   "property_name",
   "landlord",
+  "landlord_name",
   "premises_address"
  ],
  "fields": [
   {
    "fieldname": "landlord",
    "fieldtype": "Link",
-   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Landlord",
    "options": "Landlord",
    "reqd": 1
@@ -35,6 +36,13 @@
    "in_standard_filter": 1,
    "label": "Property Name",
    "reqd": 1
+  },
+  {
+   "fetch_from": "landlord.abbr",
+   "fieldname": "landlord_name",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Landlord Name"
   }
  ],
  "grid_page_length": 50,
@@ -45,7 +53,7 @@
    "link_fieldname": "property"
   }
  ],
- "modified": "2025-06-10 12:11:00.245708",
+ "modified": "2025-07-04 00:03:19.520712",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Property",
