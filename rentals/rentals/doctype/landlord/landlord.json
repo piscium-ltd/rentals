@@ -8,6 +8,7 @@
  "field_order": [
   "landlord_type",
   "full_name",
+  "email",
   "kra_pin",
   "abbr",
   "column_break_btax",
@@ -17,6 +18,7 @@
   "passport_no",
   "business_registration_certificate",
   "company",
+  "user",
   "address_and_contact_tab",
   "landlord_primary_address",
   "primary_address",
@@ -167,6 +169,20 @@
    "label": "Passport No",
    "mandatory_depends_on": "eval:doc.document_type == \"Passport\"",
    "non_negative": 1
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "options": "Email",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
@@ -177,7 +193,7 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2025-07-04 00:03:58.789551",
+ "modified": "2025-07-04 14:14:38.548894",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Landlord",

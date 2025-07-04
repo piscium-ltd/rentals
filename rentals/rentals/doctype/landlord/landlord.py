@@ -44,6 +44,34 @@ class Landlord(Document):
         # Link the landlord to the created or existing company
         self.db_set("company", company_name)
 
+        # Create user if email provided and not existing
+        if self.email and not frappe.db.exists("User", self.email):
+            user = frappe.get_doc({
+                "doctype": "User",
+                "email": self.email,
+                "first_name": self.full_name,
+                "enabled": 1
+            })
+            user.insert(ignore_permissions=True)
+
+            # Assign "Landlord" role (make sure this role exists)
+            frappe.set_user_roles(self.email, ["Landlord"])
+
+            # Link the landlord to the created user
+            self.db_set("user", user.name)
+
+            # Add a user permission so the landlord can only see their own record
+            frappe.get_doc({
+                "doctype": "User Permission",
+                "user": self.email,
+                "allow": "Landlord",
+                "for_value": self.name,
+            }).insert(ignore_permissions=True)
+
+            frappe.msgprint(_("👤 User <b>{0}</b> created and assigned 'Landlord' role.").format(self.email))
+
+        frappe.msgprint(_("✅ Landlord <b>{0}</b> created successfully.").format(self.name))
+
     def get_abbreviation(self):
         safe_charset = "ACDEFHJKMNPRTVWXY"
         blacklist = {"FAP", "FAT", "WET", "WTF"}
