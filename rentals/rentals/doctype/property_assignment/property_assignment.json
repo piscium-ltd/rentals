@@ -1,12 +1,17 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:PA-{YYYY}-{####}",
  "creation": "2025-07-04 15:27:55.714347",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "assignment_date",
   "agent",
-  "property"
+  "column_break_ywhw",
+  "property",
+  "landlord",
+  "amended_from"
  ],
  "fields": [
   {
@@ -15,7 +20,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Agent",
-   "options": "Agent"
+   "options": "Agent",
+   "reqd": 1
   },
   {
    "fieldname": "property",
@@ -23,16 +29,47 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Property",
-   "options": "Property"
+   "options": "Property",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "property.landlord",
+   "fieldname": "landlord",
+   "fieldtype": "Link",
+   "label": "Landlord",
+   "options": "Landlord",
+   "read_only": 1
+  },
+  {
+   "fieldname": "assignment_date",
+   "fieldtype": "Date",
+   "label": "Assignment Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_ywhw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Property Assignment",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2025-07-04 15:30:09.027623",
+ "modified": "2025-07-05 01:34:48.675401",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Property Assignment",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
