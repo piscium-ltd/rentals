@@ -3,29 +3,34 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils.password import update_password  
+from frappe import _
 
 class Agent(Document):
     def after_insert(self):
-        if not self.user and self.email:
-            if not frappe.db.exists("User", {"email": self.email}):
-                # Create User
-                user = frappe.get_doc({
-                    "doctype": "User",
-                    "email": self.email,
-                    "first_name": self.full_name,
-                })
-                user.insert(ignore_permissions=True)
+        self.create_user()
 
-                # ✅ Set a default password
-                update_password(self.email, "agent123")
+    def create_user(self):
+        if self.email and not frappe.db.exists("User", self.email):
+            user = frappe.get_doc({
+                "doctype": "User",
+                "email": self.email,
+                "first_name": self.full_name,
+                "send_welcome_email": 0,
+                "role_profiles": [
+                    {
+                        "role_profile": "Rentals"
+                    }
+                ]
+            })
+            user.insert(ignore_permissions=True)
 
-                # ✅ Assign the "Agent" role
-                user.add_roles("Agent")
+            self.db_set("user", user.name)
 
-                # ✅ Link user to this Agent record
-                self.user = user.name
-                self.db_update()
+            frappe.get_doc({
+                "doctype": "User Permission",
+                "user": user.name,
+                "allow": "Agent",
+                "for_value": self.name
+            }).insert(ignore_permissions=True)
 
-                # ✅ Pop-up confirmation
-                frappe.msgprint(f"✅ A new User <b>{self.user}</b> has been created and assigned the <b>Agent</b> role.")
+            frappe.msgprint(_("✅ User <b>{0}</b> created successfully.").format(user.name))

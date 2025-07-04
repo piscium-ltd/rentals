@@ -118,10 +118,20 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Rentals Masters",
-   "link_count": 8,
+   "link_count": 9,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Agent",
+   "link_count": 0,
+   "link_to": "Agent",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -204,7 +214,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-06-20 14:17:22.399244",
+ "modified": "2025-07-04 23:32:27.840053",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Rental Management",

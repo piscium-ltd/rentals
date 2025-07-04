@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class AgentPropertyAssignment(Document):
+class PropertyAssignment(Document):
 	pass

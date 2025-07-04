@@ -14,8 +14,7 @@
   "billing_currency",
   "section_break_djzt",
   "landlord_information_column",
-  "landlord_name",
-  "company_name",
+  "abbr",
   "address",
   "column_break_sbqh",
   "kra_pin",
@@ -123,7 +122,7 @@
    "fieldname": "tenant",
    "fieldtype": "Link",
    "in_standard_filter": 1,
-   "label": "Tenant ID No.",
+   "label": "Tenant",
    "options": "Tenant",
    "reqd": 1
   },
@@ -254,13 +253,6 @@
    "label": "Unit Type"
   },
   {
-   "fetch_from": "landlord.full_name",
-   "fieldname": "landlord_name",
-   "fieldtype": "Read Only",
-   "in_list_view": 1,
-   "label": "Landlord Name"
-  },
-  {
    "fetch_from": "tenant.phone_number",
    "fieldname": "tenant_phone_number",
    "fieldtype": "Read Only",
@@ -337,15 +329,15 @@
    "reqd": 1
   },
   {
-   "fetch_from": "landlord.company_name",
-   "fieldname": "company_name",
-   "fieldtype": "Read Only",
-   "in_list_view": 1,
-   "label": "Company Name"
-  },
-  {
    "fieldname": "column_break_rkwi",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "landlord.abbr",
+   "fieldname": "abbr",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Abbr"
   }
  ],
  "grid_page_length": 50,
@@ -369,7 +361,7 @@
    "link_fieldname": "lease_agreement"
   }
  ],
- "modified": "2025-06-20 14:43:53.617089",
+ "modified": "2025-07-05 00:20:30.224336",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

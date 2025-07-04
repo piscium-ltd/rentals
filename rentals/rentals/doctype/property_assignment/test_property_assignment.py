@@ -12,18 +12,18 @@ EXTRA_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
 IGNORE_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
 
 
-class UnitTestAgentPropertyAssignment(UnitTestCase):
+class UnitTestPropertyAssignment(UnitTestCase):
 	"""
-	Unit tests for AgentPropertyAssignment.
+	Unit tests for PropertyAssignment.
 	Use this class for testing individual functions and methods.
 	"""
 
 	pass
 
 
-class IntegrationTestAgentPropertyAssignment(IntegrationTestCase):
+class IntegrationTestPropertyAssignment(IntegrationTestCase):
 	"""
-	Integration tests for AgentPropertyAssignment.
+	Integration tests for PropertyAssignment.
 	Use this class for testing interactions between multiple components.
 	"""
 

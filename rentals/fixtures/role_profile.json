@@ -1,0 +1,143 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2025-04-15 17:41:16.994651",
+  "name": "Inventory",
+  "role_profile": "Inventory",
+  "roles": [
+   {
+    "role": "Stock User"
+   },
+   {
+    "role": "Stock Manager"
+   },
+   {
+    "role": "Item Manager"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2025-04-15 17:41:17.001745",
+  "name": "Manufacturing",
+  "role_profile": "Manufacturing",
+  "roles": [
+   {
+    "role": "Stock User"
+   },
+   {
+    "role": "Manufacturing User"
+   },
+   {
+    "role": "Manufacturing Manager"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2025-04-15 17:41:17.011435",
+  "name": "Accounts",
+  "role_profile": "Accounts",
+  "roles": [
+   {
+    "role": "Accounts User"
+   },
+   {
+    "role": "Accounts Manager"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2025-04-15 17:41:17.019010",
+  "name": "Sales",
+  "role_profile": "Sales",
+  "roles": [
+   {
+    "role": "Sales User"
+   },
+   {
+    "role": "Stock User"
+   },
+   {
+    "role": "Sales Manager"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2025-04-15 17:41:17.027031",
+  "name": "Purchase",
+  "role_profile": "Purchase",
+  "roles": [
+   {
+    "role": "Item Manager"
+   },
+   {
+    "role": "Stock User"
+   },
+   {
+    "role": "Purchase User"
+   },
+   {
+    "role": "Purchase Manager"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2025-07-04 23:23:18.536045",
+  "name": "Rentals",
+  "role_profile": "Rentals",
+  "roles": [
+   {
+    "role": "Accounts Manager"
+   },
+   {
+    "role": "Accounts User"
+   },
+   {
+    "role": "Dashboard Manager"
+   },
+   {
+    "role": "Item Manager"
+   },
+   {
+    "role": "Sales Manager"
+   },
+   {
+    "role": "Sales Master Manager"
+   },
+   {
+    "role": "Sales User"
+   },
+   {
+    "role": "Stock Manager"
+   },
+   {
+    "role": "Stock User"
+   },
+   {
+    "role": "Supplier"
+   },
+   {
+    "role": "Website Manager"
+   },
+   {
+    "role": "Workspace Manager"
+   },
+   {
+    "role": "Landlord"
+   },
+   {
+    "role": "Agent"
+   }
+  ]
+ }
+]

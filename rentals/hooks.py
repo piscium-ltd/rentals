@@ -237,4 +237,4 @@ scheduler_events = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
-fixtures = ["Item Group", "Custom Field"]
+fixtures = ["Item Group", "Custom Field", "Role", "Role Profile"]

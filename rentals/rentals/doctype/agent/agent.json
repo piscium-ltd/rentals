@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:email",
  "creation": "2025-07-04 01:02:33.903957",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -30,7 +31,8 @@
    "fieldtype": "Data",
    "label": "Email",
    "options": "Email",
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "full_name",
@@ -43,10 +45,11 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-04 15:38:50.788106",
+ "modified": "2025-07-04 23:45:48.442150",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Agent",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
