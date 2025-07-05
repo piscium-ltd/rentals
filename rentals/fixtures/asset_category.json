@@ -1,0 +1,20 @@
+[
+ {
+  "accounts": [
+   {
+    "accumulated_depreciation_account": "Accumulated Depreciation - PSL",
+    "capital_work_in_progress_account": "CWIP Account - PSL",
+    "company_name": "Piscium Solutions LTD",
+    "depreciation_expense_account": "Depreciation - PSL",
+    "fixed_asset_account": "Buildings - PSL"
+   }
+  ],
+  "asset_category_name": "Investment Property",
+  "docstatus": 0,
+  "doctype": "Asset Category",
+  "enable_cwip_accounting": 0,
+  "finance_books": [],
+  "modified": "2025-07-05 13:00:16.161104",
+  "name": "Investment Property"
+ }
+]
