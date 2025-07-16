@@ -58,20 +58,6 @@
     "expense_account": null,
     "income_account": null,
     "selling_cost_center": null
-   },
-   {
-    "buying_cost_center": null,
-    "company": "Htr res",
-    "default_discount_account": null,
-    "default_price_list": null,
-    "default_provisional_account": null,
-    "default_supplier": null,
-    "default_warehouse": null,
-    "deferred_expense_account": null,
-    "deferred_revenue_account": null,
-    "expense_account": null,
-    "income_account": "Sales - AAA",
-    "selling_cost_center": null
    }
   ],
   "item_group": "Utility",
@@ -80,7 +66,7 @@
   "lead_time_days": 0,
   "max_discount": 0.0,
   "min_order_qty": 0.0,
-  "modified": "2025-06-13 00:20:00.508078",
+  "modified": "2025-07-16 22:06:27.604766",
   "name": "Electricity",
   "naming_series": "STO-ITEM-.YYYY.-",
   "no_of_months": 0,
@@ -276,77 +262,7 @@
     "deferred_expense_account": null,
     "deferred_revenue_account": null,
     "expense_account": null,
-    "income_account": "Sales - PSL",
-    "selling_cost_center": null
-   },
-   {
-    "buying_cost_center": null,
-    "company": "Piscium Solutions LTD",
-    "default_discount_account": null,
-    "default_price_list": null,
-    "default_provisional_account": null,
-    "default_supplier": null,
-    "default_warehouse": "Stores - PSL",
-    "deferred_expense_account": null,
-    "deferred_revenue_account": null,
-    "expense_account": null,
-    "income_account": "Sales - PSL",
-    "selling_cost_center": null
-   },
-   {
-    "buying_cost_center": null,
-    "company": "Dan Kalutu",
-    "default_discount_account": null,
-    "default_price_list": null,
-    "default_provisional_account": null,
-    "default_supplier": null,
-    "default_warehouse": null,
-    "deferred_expense_account": null,
-    "deferred_revenue_account": null,
-    "expense_account": null,
-    "income_account": "Sales - DK",
-    "selling_cost_center": null
-   },
-   {
-    "buying_cost_center": null,
-    "company": "Htr res",
-    "default_discount_account": null,
-    "default_price_list": null,
-    "default_provisional_account": null,
-    "default_supplier": null,
-    "default_warehouse": null,
-    "deferred_expense_account": null,
-    "deferred_revenue_account": null,
-    "expense_account": null,
-    "income_account": "Sales - AAA",
-    "selling_cost_center": null
-   },
-   {
-    "buying_cost_center": null,
-    "company": "David Kamau",
-    "default_discount_account": null,
-    "default_price_list": null,
-    "default_provisional_account": null,
-    "default_supplier": null,
-    "default_warehouse": null,
-    "deferred_expense_account": null,
-    "deferred_revenue_account": null,
-    "expense_account": null,
-    "income_account": "Sales - JTX",
-    "selling_cost_center": null
-   },
-   {
-    "buying_cost_center": null,
-    "company": "XMA",
-    "default_discount_account": null,
-    "default_price_list": null,
-    "default_provisional_account": null,
-    "default_supplier": null,
-    "default_warehouse": null,
-    "deferred_expense_account": null,
-    "deferred_revenue_account": null,
-    "expense_account": null,
-    "income_account": "Sales - XMA",
+    "income_account": null,
     "selling_cost_center": null
    }
   ],
@@ -356,7 +272,7 @@
   "lead_time_days": 0,
   "max_discount": 0.0,
   "min_order_qty": 0.0,
-  "modified": "2025-06-11 23:41:34.486502",
+  "modified": "2025-07-16 22:05:42.027013",
   "name": "Deposit",
   "naming_series": "STO-ITEM-.YYYY.-",
   "no_of_months": 0,
@@ -379,10 +295,6 @@
   "taxes": [],
   "total_projected_qty": 0.0,
   "uoms": [
-   {
-    "conversion_factor": 1.0,
-    "uom": "Nos"
-   },
    {
     "conversion_factor": 1.0,
     "uom": "Nos"
@@ -453,63 +365,7 @@
     "deferred_expense_account": null,
     "deferred_revenue_account": null,
     "expense_account": null,
-    "income_account": "Sales - PSL",
-    "selling_cost_center": null
-   },
-   {
-    "buying_cost_center": null,
-    "company": "Piscium Solutions LTD",
-    "default_discount_account": null,
-    "default_price_list": null,
-    "default_provisional_account": null,
-    "default_supplier": null,
-    "default_warehouse": "Stores - PSL",
-    "deferred_expense_account": null,
-    "deferred_revenue_account": null,
-    "expense_account": null,
     "income_account": null,
-    "selling_cost_center": null
-   },
-   {
-    "buying_cost_center": null,
-    "company": "Htr res",
-    "default_discount_account": null,
-    "default_price_list": null,
-    "default_provisional_account": null,
-    "default_supplier": null,
-    "default_warehouse": null,
-    "deferred_expense_account": null,
-    "deferred_revenue_account": null,
-    "expense_account": null,
-    "income_account": "Sales - AAA",
-    "selling_cost_center": null
-   },
-   {
-    "buying_cost_center": null,
-    "company": "David Kamau",
-    "default_discount_account": null,
-    "default_price_list": null,
-    "default_provisional_account": null,
-    "default_supplier": null,
-    "default_warehouse": null,
-    "deferred_expense_account": null,
-    "deferred_revenue_account": null,
-    "expense_account": null,
-    "income_account": "Sales - JTX",
-    "selling_cost_center": null
-   },
-   {
-    "buying_cost_center": null,
-    "company": "XMA",
-    "default_discount_account": null,
-    "default_price_list": null,
-    "default_provisional_account": null,
-    "default_supplier": null,
-    "default_warehouse": null,
-    "deferred_expense_account": null,
-    "deferred_revenue_account": null,
-    "expense_account": null,
-    "income_account": "Sales - XMA",
     "selling_cost_center": null
    }
   ],
@@ -519,7 +375,7 @@
   "lead_time_days": 0,
   "max_discount": 0.0,
   "min_order_qty": 0.0,
-  "modified": "2025-06-11 23:07:06.874763",
+  "modified": "2025-07-16 22:06:07.311930",
   "name": "Rent",
   "naming_series": "STO-ITEM-.YYYY.-",
   "no_of_months": 0,
@@ -542,10 +398,6 @@
   "taxes": [],
   "total_projected_qty": 0.0,
   "uoms": [
-   {
-    "conversion_factor": 1.0,
-    "uom": "Nos"
-   },
    {
     "conversion_factor": 1.0,
     "uom": "Nos"
