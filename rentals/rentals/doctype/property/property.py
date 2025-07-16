@@ -10,7 +10,7 @@ class Property(Document):
         try:
             asset = frappe.get_doc({
                 "doctype": "Asset",
-				"item_code": "Rental Property",
+                "item_code": "Rental Property",
                 "asset_name": self.property_name,
                 "asset_category": "Investment Property",
                 "company": company,
@@ -21,6 +21,7 @@ class Property(Document):
             })
             asset.insert(ignore_permissions=True)
             asset.submit()
+            self.db_set("asset", asset.name)
             frappe.msgprint(f"✅ Asset <b>{asset.name}</b> created successfully.")
-        except Exception as e:
+        except Exception:
             frappe.log_error(frappe.get_traceback(), f"Property.after_insert: Asset creation failed for {self.name}")

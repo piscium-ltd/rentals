@@ -1,0 +1,43 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-07-16 23:18:32.151373",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "valuation_date",
+  "valued_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "valuation_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Valuation Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "valued_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Valued Amount",
+   "non_negative": 1,
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-07-16 23:20:29.559689",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Valuation History",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
