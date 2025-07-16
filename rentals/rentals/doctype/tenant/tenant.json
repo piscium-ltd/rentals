@@ -6,13 +6,17 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "full_name",
-  "document_type",
-  "id_no",
-  "passport_no",
-  "phone_number",
+  "tenant_type",
   "email",
   "customer",
+  "status",
+  "column_break_ilqo",
+  "full_name",
+  "company_name",
+  "phone_number",
+  "is_related_party",
+  "section_break_myis",
+  "kyc_documents",
   "address_and_contact_tab",
   "tenant_primary_address",
   "primary_address",
@@ -25,12 +29,13 @@
  ],
  "fields": [
   {
+   "depends_on": "eval:doc.tenant_type == \"Individual\"",
    "fieldname": "full_name",
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Full Name",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.tenant_type == \"Individual\""
   },
   {
    "fieldname": "phone_number",
@@ -52,34 +57,9 @@
    "fieldtype": "Link",
    "hidden": 1,
    "label": "Customer",
+   "no_copy": 1,
    "options": "Customer",
    "read_only": 1
-  },
-  {
-   "fieldname": "document_type",
-   "fieldtype": "Select",
-   "label": "Document Type",
-   "options": "National Identity Card\nPassport"
-  },
-  {
-   "depends_on": "eval:doc.document_type == \"National Identity Card\"",
-   "fieldname": "id_no",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "ID No",
-   "mandatory_depends_on": "eval:doc.document_type == \"National Identity Card\"",
-   "unique": 1
-  },
-  {
-   "depends_on": "eval:doc.document_type == \"Passport\"",
-   "fieldname": "passport_no",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Passport No ",
-   "mandatory_depends_on": "eval:doc.document_type == \"Passport\"",
-   "unique": 1
   },
   {
    "fieldname": "address_and_contact_tab",
@@ -131,12 +111,55 @@
    "fieldname": "last_name",
    "fieldtype": "Read Only",
    "label": "Last Name "
+  },
+  {
+   "default": "Individual",
+   "fieldname": "tenant_type",
+   "fieldtype": "Select",
+   "label": "Tenant Type",
+   "options": "Individual\nCompany",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_myis",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "kyc_documents",
+   "fieldtype": "Table",
+   "label": "KYC Documents",
+   "options": "KYC Document",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.tenant_type == \"Company\"",
+   "fieldname": "company_name",
+   "fieldtype": "Data",
+   "label": "Company Name",
+   "mandatory_depends_on": "eval:doc.tenant_type == \"Company\""
+  },
+  {
+   "fieldname": "column_break_ilqo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_related_party",
+   "fieldtype": "Check",
+   "label": "Is Related Party"
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nInactive"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-04 23:46:23.038630",
+ "modified": "2025-07-17 00:23:08.685288",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Tenant",

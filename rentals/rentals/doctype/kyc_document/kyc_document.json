@@ -1,0 +1,50 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-07-16 23:53:05.049477",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "identification_document",
+  "attach_fwtg",
+  "expiry_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "attach_fwtg",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "Attachment",
+   "reqd": 1
+  },
+  {
+   "fieldname": "identification_document",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Identification Document",
+   "options": "National Identity Card\n\u202dPassport\n\u202dCompany\u202c \u202dRegistration",
+   "reqd": 1
+  },
+  {
+   "fieldname": "expiry_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Expiry Date"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-07-17 00:16:32.239968",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "KYC Document",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

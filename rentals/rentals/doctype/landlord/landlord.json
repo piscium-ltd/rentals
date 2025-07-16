@@ -20,7 +20,7 @@
   "passport_no",
   "kra_pin",
   "company",
-  "related_party_flag",
+  "is_related_party",
   "address_and_contact_tab",
   "landlord_primary_address",
   "primary_address",
@@ -184,12 +184,6 @@
    "unique": 1
   },
   {
-   "default": "0",
-   "fieldname": "related_party_flag",
-   "fieldtype": "Check",
-   "label": "Is Related Party"
-  },
-  {
    "fieldname": "landlord_group",
    "fieldtype": "Link",
    "label": "Landlord Group",
@@ -202,6 +196,12 @@
    "in_list_view": 1,
    "label": "Status",
    "options": "Active\nInactive"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_related_party",
+   "fieldtype": "Check",
+   "label": "Is Related Party"
   }
  ],
  "grid_page_length": 50,
@@ -212,7 +212,7 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2025-07-16 22:54:17.884749",
+ "modified": "2025-07-17 00:21:16.589183",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Landlord",
