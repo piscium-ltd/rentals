@@ -11,7 +11,7 @@ frappe.ui.form.on("Lease Agreement", {
 		frm.set_query("unit", () => ({
 			filters: {
 				property: frm.doc.property,
-				status: "Available",
+				status: "Vacant",
 			},
 		}));
 

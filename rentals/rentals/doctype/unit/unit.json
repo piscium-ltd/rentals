@@ -1,16 +1,18 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{property}-{house_no}",
+ "autoname": "format:{property_name}-{house_no}",
  "creation": "2025-04-14 22:31:18.928175",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "property",
   "landlord",
+  "status",
+  "column_break_drrt",
   "unit_type",
   "house_no",
-  "status"
+  "property_name"
  ],
  "fields": [
   {
@@ -20,7 +22,8 @@
    "in_standard_filter": 1,
    "label": "Property",
    "options": "Property",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "unit_type",
@@ -49,13 +52,25 @@
    "reqd": 1
   },
   {
+   "default": "Vacant",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Available\nOccupied",
+   "options": "Vacant\nOccupied",
    "read_only": 1
+  },
+  {
+   "fetch_from": "property.property_name",
+   "fieldname": "property_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Property Name"
+  },
+  {
+   "fieldname": "column_break_drrt",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
@@ -66,7 +81,7 @@
    "link_fieldname": "unit"
   }
  ],
- "modified": "2025-06-17 12:51:56.314278",
+ "modified": "2025-07-17 19:41:23.812554",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Unit",
@@ -92,7 +107,7 @@
  "states": [
   {
    "color": "Green",
-   "title": "Available"
+   "title": "Vacant"
   },
   {
    "color": "Blue",

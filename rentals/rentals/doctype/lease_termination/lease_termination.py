@@ -12,11 +12,11 @@ class LeaseTermination(Document):
         lease.status = "Terminated"
         lease.save()
 
-        frappe.msgprint(f"✅ Lease Agreement <b>{lease.name}</b> has been <b>Terminated</b>.")
+        frappe.msgprint(f"✅ Lease Agreement <b>{lease.name}</b> has been <b>Terminated</b>.",indicator="green", alert=True)
 
-        # Update unit status to Available
+        # Update unit status to Vacant
         unit = frappe.get_doc("Unit", self.unit)
-        unit.status = "Available"
+        unit.status = "Vacant"
         unit.save()
 
-        frappe.msgprint(f"✅ Unit <b>{unit.name}</b> is <b>Available</b>.")
+        frappe.msgprint(f"✅ Unit <b>{unit.name}</b> is now <b>Vacant</b>.",indicator="green", alert=True)

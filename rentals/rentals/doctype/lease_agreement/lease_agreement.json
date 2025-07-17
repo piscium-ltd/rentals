@@ -22,9 +22,9 @@
   "section_break_czzi",
   "tenant_information_column",
   "tenant_name",
-  "tenant_email",
-  "column_break_fmhz",
   "tenant_phone_number",
+  "column_break_fmhz",
+  "tenant_email",
   "property_details_section",
   "property",
   "property_name",
@@ -437,7 +437,7 @@
    "link_fieldname": "lease_agreement"
   }
  ],
- "modified": "2025-07-17 07:13:57.878560",
+ "modified": "2025-07-17 19:33:32.299524",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",
