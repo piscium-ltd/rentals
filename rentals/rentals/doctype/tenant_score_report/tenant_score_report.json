@@ -1,0 +1,144 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-07-17 07:52:31.674463",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tenant",
+  "overall_score_and_risk_profile_section",
+  "tenant_score",
+  "report_generated_on",
+  "column_break_kctx",
+  "risk_level",
+  "detailed_metrics_section",
+  "avg_payment_delay",
+  "number_of_late_payment",
+  "total_tenancy_duration_months",
+  "column_break_qoeh",
+  "number_of_lease_held",
+  "number_of_early_termination",
+  "data_source_used",
+  "score_breakdown_section",
+  "table_ivtm"
+ ],
+ "fields": [
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tenant",
+   "options": "Tenant",
+   "reqd": 1
+  },
+  {
+   "fieldname": "overall_score_and_risk_profile_section",
+   "fieldtype": "Section Break",
+   "label": "Overall Score and Risk Profile"
+  },
+  {
+   "fieldname": "tenant_score",
+   "fieldtype": "Int",
+   "label": "Tenant Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_kctx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "risk_level",
+   "fieldtype": "Select",
+   "label": "Risk Level",
+   "options": "Low\nMedium\nHigh",
+   "read_only": 1
+  },
+  {
+   "fieldname": "report_generated_on",
+   "fieldtype": "Datetime",
+   "label": "Report Generated On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "detailed_metrics_section",
+   "fieldtype": "Section Break",
+   "label": "Detailed Metrics"
+  },
+  {
+   "fieldname": "avg_payment_delay",
+   "fieldtype": "Float",
+   "label": "Avg. Payment Delay (Days)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "number_of_late_payment",
+   "fieldtype": "Int",
+   "label": "Number of Late Payment",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_tenancy_duration_months",
+   "fieldtype": "Int",
+   "label": "Total Tenancy Duration (Months)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_qoeh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "number_of_lease_held",
+   "fieldtype": "Int",
+   "label": "Number of Lease Held",
+   "read_only": 1
+  },
+  {
+   "fieldname": "number_of_early_termination",
+   "fieldtype": "Int",
+   "label": "Number of Early Termination",
+   "read_only": 1
+  },
+  {
+   "fieldname": "data_source_used",
+   "fieldtype": "Small Text",
+   "label": "Data Source Used",
+   "read_only": 1
+  },
+  {
+   "fieldname": "score_breakdown_section",
+   "fieldtype": "Section Break",
+   "label": "Score Breakdown"
+  },
+  {
+   "fieldname": "table_ivtm",
+   "fieldtype": "Table",
+   "options": "Score Component"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-17 08:03:25.098629",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Tenant Score Report",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,203 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-07-17 07:22:07.045661",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "landlord",
+  "report_generated_on",
+  "overall_performance_score_section",
+  "score",
+  "column_break_vfga",
+  "risk_grade",
+  "section_break_ckub",
+  "liquidity_section_column",
+  "current_ratio",
+  "column_break_edxt",
+  "rent_collection_rate",
+  "leverage_and_solvency_section",
+  "debt_to_equity_ratio",
+  "column_break_ozbb",
+  "loan_to_value_ratio",
+  "portfolio_section",
+  "portfolio_occupancy_rate",
+  "column_break_lbdy",
+  "average_tenant_score",
+  "lease_expirynext_12m",
+  "profitability_and_projections_section",
+  "net_operating_incomenoi",
+  "projected_noi_next_12m",
+  "column_break_rjtw",
+  "capitalization_rate",
+  "cash_on_cash_return"
+ ],
+ "fields": [
+  {
+   "fieldname": "landlord",
+   "fieldtype": "Link",
+   "label": "Landlord",
+   "options": "Landlord"
+  },
+  {
+   "fieldname": "report_generated_on",
+   "fieldtype": "Datetime",
+   "label": "Report Generated On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "overall_performance_score_section",
+   "fieldtype": "Section Break",
+   "label": "Overall Performance Score"
+  },
+  {
+   "fieldname": "score",
+   "fieldtype": "Int",
+   "label": "Overall Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_vfga",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "risk_grade",
+   "fieldtype": "Select",
+   "label": "Risk Grade",
+   "options": "Prime\nNear Prime\nSubprime",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_ckub",
+   "fieldtype": "Section Break",
+   "label": "Liquidity Analysis"
+  },
+  {
+   "fieldname": "liquidity_section_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "current_ratio",
+   "fieldtype": "Float",
+   "label": "Current Ratio",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rent_collection_rate",
+   "fieldtype": "Float",
+   "label": "Rent Collection Rate(%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_edxt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "leverage_and_solvency_section",
+   "fieldtype": "Section Break",
+   "label": "Leverage and Solvency"
+  },
+  {
+   "fieldname": "debt_to_equity_ratio",
+   "fieldtype": "Float",
+   "label": "Debt to Equity Ratio",
+   "read_only": 1
+  },
+  {
+   "fieldname": "loan_to_value_ratio",
+   "fieldtype": "Float",
+   "label": "Loan to Value (LVR) Ratio(%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ozbb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "portfolio_section",
+   "fieldtype": "Section Break",
+   "label": "Portfolio\u202c \u202dHealth and\u202c \u202dRevenue\u202c \u202dStability\u202c"
+  },
+  {
+   "fieldname": "portfolio_occupancy_rate",
+   "fieldtype": "Float",
+   "label": "Portfolio Occupancy Rate(%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "average_tenant_score",
+   "fieldtype": "Int",
+   "label": "Average Tenant Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "lease_expirynext_12m",
+   "fieldtype": "Float",
+   "label": "Lease Expiry(Next 12m)(%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_lbdy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "profitability_and_projections_section",
+   "fieldtype": "Section Break",
+   "label": "Profitability and Projections"
+  },
+  {
+   "fieldname": "net_operating_incomenoi",
+   "fieldtype": "Currency",
+   "label": "Net Operating Income(NOI)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "projected_noi_next_12m",
+   "fieldtype": "Currency",
+   "label": "Projected NOI (Next 12m)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "capitalization_rate",
+   "fieldtype": "Float",
+   "label": "Capitalization Rate(%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cash_on_cash_return",
+   "fieldtype": "Float",
+   "label": "Cash on Cash Return",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_rjtw",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-17 07:48:26.538704",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Landlord Score Card",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
