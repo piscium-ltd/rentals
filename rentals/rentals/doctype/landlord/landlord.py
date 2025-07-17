@@ -9,91 +9,125 @@ from frappe.model.document import Document
 
 class Landlord(Document):
     def validate(self):
+        """Validate KRA PIN format."""
         if self.kra_pin:
-            kra_pin = self.kra_pin.strip().upper()
-            if not re.fullmatch(r"[AP]\d{9}[A-Z]", kra_pin):
-                frappe.throw(_("❌ Invalid KRA PIN format. Use format like <b>A123456789B</b> or <b>P051234567K</b>."))
-            self.kra_pin = kra_pin
+            self.kra_pin = self.kra_pin.strip().upper()
+            if not re.fullmatch(r"[AP]\d{9}[A-Z]", self.kra_pin):
+                frappe.throw(
+                    _("❌ Invalid KRA PIN format. Use format like <b>A123456789B</b> or <b>P051234567K</b>.")
+                )
 
     def after_insert(self):
-        # Set abbreviation
-        abbr = self.get_abbreviation()
-        self.db_set("abbr", abbr)
+        """Handle post-insert tasks: abbreviation, company, and user creation."""
+        try:
+            abbr = self._get_abbreviation()
+            self.db_set("abbr", abbr)
 
-        # Set company name based on landlord type
-        company_name = self.company_name if self.landlord_type == "Company" else abbr
+            company_name = self.company_name if self.landlord_type == "Company" else abbr
 
-        # Create company if it doesn't exist
-        if not frappe.db.exists("Company", {"company_name": company_name}):
-            self.create_company(company_name, abbr)
+            # Create company if it doesn't exist
+            if not frappe.db.exists("Company", {"company_name": company_name}):
+                self._create_company(company_name, abbr)
 
-        self.db_set("company", company_name)
+            self.db_set("company", company_name)
+            # Create user if email is provided and user doesn't exist
+            if self.email and not frappe.db.exists("User", self.email):
+                display_name = company_name if self.landlord_type == "Company" else self.full_name
+                self._create_user(display_name)
 
-        # Create user if it doesn't exist
-        if self.email and not frappe.db.exists("User", self.email):
-            self.create_user(company_name if self.landlord_type == "Company" else self.full_name)
+        except Exception as e:
+            frappe.log_error(message=frappe.get_traceback(), title="Landlord after_insert Error")
+            frappe.throw(_("❌ An error occurred while setting up landlord details. Please check logs."))
 
-    def create_company(self, company_name, abbr):
-        default_company = frappe.db.get_single_value("Global Defaults", "default_company")
+    # -------------------------------
+    # Private Helper Methods
+    # -------------------------------
 
-        company = frappe.get_doc({
-            "doctype": "Company",
-            "company_name": company_name,
-            "abbr": abbr,
-            "default_currency": "KES",
-            "country": "Kenya",
-            "tax_id": self.kra_pin,
-            "create_chart_of_accounts_based_on": "Existing Company",
-            "existing_company": default_company
-        })
-        company.insert(ignore_permissions=True)
+    def _create_company(self, company_name, abbr):
+        """Create a new Company and link it to the landlord."""
+        try:
+            defaults = self._get_global_defaults()
 
-        frappe.msgprint(_("✅ Company <b>{0}</b> created successfully.").format(company_name))
+            company = frappe.get_doc({
+                "doctype": "Company",
+                "company_name": company_name,
+                "abbr": abbr,
+                "default_currency": defaults.get("default_currency", "KES"),
+                "country": defaults.get("country", "Kenya"),
+                "tax_id": self.kra_pin,
+                "create_chart_of_accounts_based_on": "Existing Company",
+                "existing_company": defaults.get("default_company")
+            })
+            company.insert(ignore_permissions=True)
 
-    def create_user(self, name):
-        user = frappe.get_doc({
-            "doctype": "User",
-            "email": self.email,
-            "first_name": name,
-            "send_welcome_email": 0,
-            "role_profiles": [
-                {
-                    "role_profile": "Rentals"
-                }
-            ]
-        })
-        user.insert(ignore_permissions=True)
+            frappe.msgprint(
+                _("✅ Landlord created successfully and linked to Company <b>{0}</b>.").format(company_name),
+                indicator="green", alert=True
+            )
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "Company Creation Failed")
+            frappe.throw(_("❌ Failed to create associated Company for this Landlord. Check error logs."))
 
-        self.db_set("user", user.name)
+    def _create_user(self, name):
+        """Create a user for the landlord and assign permissions."""
+        try:
+            user = frappe.get_doc({
+                "doctype": "User",
+                "email": self.email,
+                "first_name": name,
+                "send_welcome_email": 0,
+                "role_profiles": [{"role_profile": "Rentals"}]
+            })
+            user.insert(ignore_permissions=True)
+            self.db_set("user", user.name)
 
-        # Permission to view their own Landlord record
-        frappe.get_doc({
-            "doctype": "User Permission",
-            "user": user.name,
-            "allow": "Landlord",
-            "for_value": self.name,
-        }).insert(ignore_permissions=True)
+            # Assign permissions
+            self._assign_user_permission(user.name, "Landlord", self.name)
+            self._assign_user_permission(user.name, "Company", self.company)
 
-        # Additional permission to view their associated Company
-        frappe.get_doc({
-            "doctype": "User Permission",
-            "user": user.name,
-            "allow": "Company",
-            "for_value": self.company,
-        }).insert(ignore_permissions=True)
+            frappe.msgprint(_("✅ User <b>{0}</b> created successfully.").format(user.name),indicator="green", alert=True)
 
-        frappe.msgprint(_("✅ User <b>{0}</b> created successfully.").format(user.name))
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "User Creation Failed")
+            frappe.throw(_("❌ Failed to create user for this Landlord. Check error logs."))
 
-    def get_abbreviation(self):
+    def _assign_user_permission(self, user, doctype, value):
+        """Assign user permission for a specific doctype and value."""
+        try:
+            frappe.get_doc({
+                "doctype": "User Permission",
+                "user": user,
+                "allow": doctype,
+                "for_value": value,
+            }).insert(ignore_permissions=True)
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), f"Failed to assign permission for {doctype}")
+            # Don't throw here; continue with next steps to avoid breaking flow
+
+    def _get_abbreviation(self):
+        """Generate a unique 3-letter abbreviation."""
         safe_charset = "ACDEFHJKMNPRTVWXY"
         blacklist = {"FAP", "FAT", "WET", "WTF"}
         max_attempts = 5000
 
-        for _ in range(max_attempts):
-            abbr = ''.join(random.choices(safe_charset, k=3))
-            if abbr in blacklist:
-                continue
-            if not frappe.db.exists("Company", {"abbr": abbr}):
-                return abbr
+        try:
+            for _ in range(max_attempts):
+                abbr = ''.join(random.choices(safe_charset, k=3))
+                if abbr not in blacklist and not frappe.db.exists("Company", {"abbr": abbr}):
+                    return abbr
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "Abbreviation Generation Failed")
 
         frappe.throw(_("❌ Unable to generate a unique abbreviation after {0} attempts.").format(max_attempts))
+
+    def _get_global_defaults(self):
+        """Fetch global defaults once to reduce DB calls."""
+        try:
+            return {
+                "default_company": frappe.db.get_single_value("Global Defaults", "default_company"),
+                "default_currency": frappe.db.get_single_value("Global Defaults", "default_currency"),
+                "country": frappe.db.get_single_value("Global Defaults", "country"),
+            }
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "Global Defaults Fetch Failed")
+            return {}
