@@ -35,10 +35,21 @@
   "house_no",
   "contract_period_section",
   "start_date",
+  "lease_incentive",
+  "prorate_first_invoice",
   "column_break_svbg",
   "end_date",
+  "next_invoice_date",
+  "prorate_last_invoice",
+  "recurring_charges_section",
+  "base_rental_amount",
+  "column_break_hqwg",
+  "billing_frequency",
   "section_break_aqzz",
   "chargeable_services",
+  "deposits_and_other_terms_section",
+  "security_deposits",
+  "contingent_rent_terms",
   "section_break_guxm",
   "column_break_rkwi",
   "column_break_tvde",
@@ -56,7 +67,8 @@
  "fields": [
   {
    "fieldname": "section_break_rxt3",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Core Lease Details"
   },
   {
    "fieldname": "amended_from",
@@ -115,6 +127,7 @@
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Landlord",
+   "no_copy": 1,
    "options": "Landlord",
    "reqd": 1
   },
@@ -142,12 +155,12 @@
   {
    "fieldname": "contract_period_section",
    "fieldtype": "Section Break",
-   "label": "Lease Terms"
+   "label": "Lease Term and Financials"
   },
   {
    "fieldname": "start_date",
    "fieldtype": "Date",
-   "label": "Start Date",
+   "label": "Lease Start Date",
    "reqd": 1
   },
   {
@@ -157,7 +170,7 @@
   {
    "fieldname": "end_date",
    "fieldtype": "Date",
-   "label": "End Date",
+   "label": "Lease End Date",
    "reqd": 1
   },
   {
@@ -338,6 +351,69 @@
    "fieldtype": "Read Only",
    "in_list_view": 1,
    "label": "Abbr"
+  },
+  {
+   "fieldname": "lease_incentive",
+   "fieldtype": "Currency",
+   "label": "Total Lease Incentive"
+  },
+  {
+   "default": "0",
+   "fieldname": "prorate_first_invoice",
+   "fieldtype": "Check",
+   "label": "Prorate First Invoice"
+  },
+  {
+   "fieldname": "next_invoice_date",
+   "fieldtype": "Date",
+   "label": "Next Invoice Date",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "prorate_last_invoice",
+   "fieldtype": "Check",
+   "label": "Prorate Last Invoice"
+  },
+  {
+   "fieldname": "recurring_charges_section",
+   "fieldtype": "Section Break",
+   "label": "Recurring Charges"
+  },
+  {
+   "fieldname": "base_rental_amount",
+   "fieldtype": "Currency",
+   "label": "Base Rental Amount",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_hqwg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "billing_frequency",
+   "fieldtype": "Select",
+   "label": "Billing Frequency",
+   "options": "Monthly\nQuarterly\nAnnually",
+   "reqd": 1
+  },
+  {
+   "fieldname": "deposits_and_other_terms_section",
+   "fieldtype": "Section Break",
+   "label": "Deposits and Other Terms"
+  },
+  {
+   "fieldname": "security_deposits",
+   "fieldtype": "Table",
+   "label": "Security Deposits",
+   "options": "Security Deposit"
+  },
+  {
+   "fieldname": "contingent_rent_terms",
+   "fieldtype": "Table",
+   "label": "Contingent Rent Terms",
+   "options": "Contingent Rent Term"
   }
  ],
  "grid_page_length": 50,
@@ -361,7 +437,7 @@
    "link_fieldname": "lease_agreement"
   }
  ],
- "modified": "2025-07-05 00:20:30.224336",
+ "modified": "2025-07-17 07:13:57.878560",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",
