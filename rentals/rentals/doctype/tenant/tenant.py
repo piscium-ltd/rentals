@@ -2,24 +2,40 @@
 # For license information, please see license.txt
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 
 
 class Tenant(Document):
     def after_insert(self):
-        # Check if customer is already linked
-        if not self.customer:
-            # Check if a customer with the same name already exists
-            existing = frappe.db.exists("Customer", {"customer_name": self.full_name})
-            if not existing:
-                # Create a new Customer document
-                customer = frappe.get_doc({
-                    "doctype": "Customer",
-                    "customer_name": self.full_name,
-                    "customer_type": "Individual",
-                    "email_id": self.email or ""
-                })
-                customer.insert(ignore_permissions=True)
-                self.customer = customer.name
-                self.db_update()
-                frappe.msgprint(f"✅ A new Customer <b>{self.customer}</b> has been created.")
+        """Create a Customer record for this Tenant and link it."""
+        try:
+            customer = self._create_customer()
+            self.db_set("customer", customer.name)
+
+            frappe.msgprint(
+                _("✅ Tenant created successfully and linked to Customer <b>{0}</b>.").format(customer.customer_name),
+                indicator="green", alert=True
+            )
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "Tenant after_insert Error")
+            frappe.throw(_("❌ Failed to create and link Customer for Tenant. Check error logs."))
+
+    def _create_customer(self):
+        """Create a new Customer for this Tenant."""
+        try:
+            customer_name = self.full_name if self.tenant_type == "Individual" else self.company_name
+            customer_group = frappe.db.get_single_value('Selling Settings', 'customer_group') or "All Customer Groups"
+
+            customer = frappe.get_doc({
+                "doctype": "Customer",
+                "customer_name": customer_name,
+                "customer_type": self.tenant_type,
+                "email_id": self.email,
+                "customer_group": customer_group
+            })
+            customer.insert(ignore_permissions=True)
+            return customer
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "Customer Creation Failed")
+            frappe.throw(_("❌ Failed to create Customer for Tenant. Check error logs."))
