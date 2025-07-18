@@ -88,21 +88,23 @@
    "reqd": 1
   },
   {
-   "depends_on": "eval:doc.accounting_model=='Fair Value Model'",
    "fieldname": "current_fair_value",
    "fieldtype": "Currency",
-   "label": "Current Fair Value"
+   "label": "Current Fair Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_valuation_date",
+   "fieldtype": "Date",
+   "label": "Last Valuation Date",
+   "read_only": 1
   },
   {
    "depends_on": "eval:doc.accounting_model=='Fair Value Model'",
-   "fieldname": "last_valuation_date",
-   "fieldtype": "Date",
-   "label": "Last Valuation Date"
-  },
-  {
    "fieldname": "valuation_history",
    "fieldtype": "Table",
    "label": "Valuation History",
+   "mandatory_depends_on": "eval:doc.accounting_model=='Fair Value Model'",
    "options": "Valuation History"
   },
   {
@@ -164,7 +166,7 @@
    "link_fieldname": "property"
   }
  ],
- "modified": "2025-07-16 23:35:40.347121",
+ "modified": "2025-07-18 01:54:32.300695",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Property",
