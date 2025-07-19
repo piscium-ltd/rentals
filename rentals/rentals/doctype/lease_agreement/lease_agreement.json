@@ -28,7 +28,7 @@
   "property_details_section",
   "property",
   "property_name",
-  "property_address",
+  "location",
   "column_break_gppq",
   "unit",
   "unit_type",
@@ -232,12 +232,6 @@
    "label": "Tenant Name"
   },
   {
-   "fetch_from": "property.premises_address",
-   "fieldname": "property_address",
-   "fieldtype": "Read Only",
-   "label": "Property Address"
-  },
-  {
    "fetch_from": "property.property_name",
    "fieldname": "property_name",
    "fieldtype": "Read Only",
@@ -414,6 +408,12 @@
    "fieldtype": "Table",
    "label": "Contingent Rent Terms",
    "options": "Contingent Rent Term"
+  },
+  {
+   "fetch_from": "property.location",
+   "fieldname": "location",
+   "fieldtype": "Read Only",
+   "label": "Location"
   }
  ],
  "grid_page_length": 50,
@@ -437,7 +437,7 @@
    "link_fieldname": "lease_agreement"
   }
  ],
- "modified": "2025-07-17 19:33:32.299524",
+ "modified": "2025-07-19 23:45:42.427733",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

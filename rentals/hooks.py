@@ -156,9 +156,9 @@ scheduler_events = {
 # 	"weekly": [
 # 		"rentals.tasks.weekly"
 # 	],
-# 	"monthly": [
-# 		"rentals.tasks.monthly"
-# 	],
+	"monthly": [
+		"rentals.tasks.monthly.automated_impairment_check"
+	],
 }
 
 # Testing

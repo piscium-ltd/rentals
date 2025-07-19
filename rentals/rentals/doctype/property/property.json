@@ -20,10 +20,10 @@
   "section_break_dekj",
   "valuation_history",
   "impairment_assessment_parameters_section",
-  "enable_automated_impairment_check",
-  "occupancy_rate_threshold_",
+  "occupancy_rate_threshold",
+  "fair_value_decline_threshold",
   "column_break_qrqf",
-  "fair_value_decline_threshold_",
+  "enable_automated_impairment_check",
   "trigger_impairment_review",
   "section_break_qxfn",
   "qualitative_impairment_indicator"
@@ -85,7 +85,8 @@
    "fieldtype": "Select",
    "label": "Accounting Model",
    "options": "Cost Model\nFair Value Model",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "current_fair_value",
@@ -127,16 +128,6 @@
    "label": "Enable Automated Impairment Check"
   },
   {
-   "fieldname": "occupancy_rate_threshold_",
-   "fieldtype": "Float",
-   "label": "Occupancy Rate Threshold (%)"
-  },
-  {
-   "fieldname": "fair_value_decline_threshold_",
-   "fieldtype": "Float",
-   "label": "Fair Value Decline Threshold (%)"
-  },
-  {
    "default": "0",
    "fieldname": "trigger_impairment_review",
    "fieldtype": "Check",
@@ -156,6 +147,17 @@
   {
    "fieldname": "column_break_qrqf",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "occupancy_rate_threshold",
+   "fieldtype": "Float",
+   "label": "Occupancy Rate Threshold (%)"
+  },
+  {
+   "depends_on": "eval:doc.accounting_model=='Fair Value Model'",
+   "fieldname": "fair_value_decline_threshold",
+   "fieldtype": "Float",
+   "label": "Fair Value Decline Threshold (%)"
   }
  ],
  "grid_page_length": 50,
@@ -166,7 +168,7 @@
    "link_fieldname": "property"
   }
  ],
- "modified": "2025-07-18 01:54:32.300695",
+ "modified": "2025-07-20 00:43:19.015450",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Property",

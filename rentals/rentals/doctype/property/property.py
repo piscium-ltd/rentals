@@ -64,12 +64,8 @@ class Property(Document):
         if self.is_new() or self.accounting_model != "Fair Value Model":
             return
 
-        previous_doc = self.get_doc_before_save()
-        if not previous_doc:
-            return
-
-        previous_fair_value = previous_doc.current_fair_value or 0
-        current_fair_value = self.current_fair_value or 0
+        current_fair_value = self.valuation_history[-1].valued_amount
+        previous_fair_value = self.valuation_history[-2].valued_amount
         change_in_value = current_fair_value - previous_fair_value
 
         if abs(change_in_value) < 0.01:
