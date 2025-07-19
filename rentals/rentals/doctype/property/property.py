@@ -19,7 +19,7 @@ class Property(Document):
         company = frappe.db.get_value("Landlord", self.landlord, "company")
         try:
             # Ensure Asset Category accounts table has a row for this company
-            # self.ensure_company_in_asset_category(company)
+            self.ensure_company_in_asset_category(company)
 
             # Create Asset
             asset = frappe.get_doc({
@@ -120,7 +120,7 @@ class Property(Document):
 
         # Add new row in accounts child table
         category.append("accounts", {
-            "company": company,
+            "company_name": company,
             "fixed_asset_account": f"Buildings - {company_abbr}",
             "accumulated_depreciation_account": f"Accumulated Depreciation - {company_abbr}",
             "depreciation_expense_account": f"Depreciation - {company_abbr}",
