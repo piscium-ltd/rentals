@@ -61,7 +61,7 @@ class Property(Document):
 
     def on_update(self):
         """Automates Journal Entry for fair value adjustments."""
-        if self.is_new() or self.accounting_model != "Fair Value Model":
+        if self.accounting_model != "Fair Value Model" or len(self.valuation_history) < 2:
             return
 
         current_fair_value = self.valuation_history[-1].valued_amount
