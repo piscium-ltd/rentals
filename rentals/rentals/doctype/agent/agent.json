@@ -9,7 +9,10 @@
   "full_name",
   "email",
   "phone_no",
-  "user"
+  "column_break_kwle",
+  "abbr",
+  "user",
+  "company"
  ],
  "fields": [
   {
@@ -40,12 +43,37 @@
    "in_list_view": 1,
    "label": "Full Name",
    "reqd": 1
+  },
+  {
+   "fieldname": "column_break_kwle",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "abbr",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Abbr",
+   "read_only": 1,
+   "set_only_once": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Company",
+   "no_copy": 1,
+   "options": "Company",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-04 23:45:48.442150",
+ "modified": "2025-07-28 20:25:50.066203",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Agent",

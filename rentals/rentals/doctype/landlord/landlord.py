@@ -102,7 +102,6 @@ class Landlord(Document):
             }).insert(ignore_permissions=True)
         except Exception:
             frappe.log_error(frappe.get_traceback(), f"Failed to assign permission for {doctype}")
-            # Don't throw here; continue with next steps to avoid breaking flow
 
     def _get_abbreviation(self):
         """Generate a unique 3-letter abbreviation."""
