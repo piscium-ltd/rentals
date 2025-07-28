@@ -11,13 +11,13 @@ from erpnext.accounts.doctype.payment_request.payment_request import make_paymen
 
 class LeaseAgreement(Document):
     def autoname(self):
-        if not self.landlord:
-            frappe.throw("Landlord must be set before generating name.")
+        if not self.company:
+            frappe.throw("Company must be set before generating name.")
 
-        # Get abbreviation from linked Landlord
-        abbr = frappe.db.get_value("Landlord", self.landlord, "abbr")
+        # Get abbreviation from Company
+        abbr = frappe.db.get_value("Company", self.company, "abbr")
         if not abbr:
-            frappe.throw("Landlord abbreviation not found.")
+            frappe.throw("Abbreviation not found in the Company record.")
 
         for _ in range(100):  # avoid infinite loop
             prime_number = generate_prime_number()
@@ -46,7 +46,7 @@ class LeaseAgreement(Document):
             fields=["name", "tenant", "start_date", "end_date"]
         )
 
-        if active_leases:
+        if active_leases and self.agency_type != "Full Agency":
             # Get the first active lease from the result
             active_lease = active_leases[0]
             lease_url = frappe.utils.get_url(f"app/lease-agreement/{active_lease.name}")
@@ -55,6 +55,17 @@ class LeaseAgreement(Document):
             frappe.throw(_(f"Unit {self.unit} is already assigned to a tenant. Please check the existing agreement: <a href='{lease_url}'>{active_lease.name}</a>."))
 
     def before_save(self):
+        # Set Property Assignment if not already set
+        if not self.property_assignment and self.property:
+            assignment = frappe.get_all(
+                "Property Assignment",
+                filters={"property": self.property},
+                fields=["name"],
+                limit_page_length=1
+            )
+            if assignment:
+                self.property_assignment = assignment[0].name
+
         # Calculate Grand Total from child table
         total = 0
         base_date = getdate(today())
@@ -82,24 +93,19 @@ class LeaseAgreement(Document):
     def on_submit(self):
         # Fetch required documents
         unit_doc = frappe.get_doc("Unit", self.unit)
-        landlord_doc = frappe.get_doc("Landlord", self.landlord)
         tenant_doc = frappe.get_doc("Tenant", self.tenant)
 
         # Mark unit as occupied
-        unit_doc.status = "Occupied"
-        unit_doc.save()
-        frappe.msgprint(_(f"✅ Unit <b>{unit_doc.name}</b> marked as occupied."))
+        if unit_doc.status != "Occupied":
+            unit_doc.status = "Occupied"
+            unit_doc.save()
+            frappe.msgprint(_(f"✅ Unit <b>{unit_doc.name}</b> marked as occupied."))
 
         # Validate required links
-        if not landlord_doc.company:
-            frappe.msgprint(_("⚠️ Landlord is not linked to a Company."), alert=True)
-            return
-
         if not tenant_doc.customer:
             frappe.msgprint(_("⚠️ Tenant is not linked to a Customer."), alert=True)
             return
 
-        company = landlord_doc.company
         customer_name = self.tenant_name
         price_list_name = f"{customer_name} Price List"
 
@@ -174,7 +180,7 @@ class LeaseAgreement(Document):
 
         sales_order = frappe.get_doc({
             "doctype": "Sales Order",
-            "company": company,
+            "company": self.company,
             "custom_lease_agreement": self.name,
             "customer": tenant_doc.customer,
             "currency": self.billing_currency,
@@ -216,10 +222,24 @@ class LeaseAgreement(Document):
 
         frappe.msgprint(_(f"✅ Payment Request <b>{payment_request.name}</b> created and sent to <b>{recipient_email}</b>."))
 
-        # TO DO:
-        # 1. Update Price List and Item Price Logic (1PL Per customer per company or just per LA)
-        # 2. Add on cancel method
-        # 3. THOUGHT -> Landlord (Company) should fetch logged in user??
+        # Create another Lease Agreement if Full Agency
+        if self.agency_type == "Full Agency" and not self.get("__is_duplicate"):
+            landlord_company = frappe.db.get_value("Landlord", self.landlord, "company")
+            if not landlord_company:
+                frappe.msgprint(_("⚠️ Landlord is not linked to a Company. Skipping duplicate Lease Agreement."), alert=True)
+                return
+
+            # Copy the current document
+            duplicate = frappe.copy_doc(self)
+            duplicate.company = landlord_company
+            duplicate.name = None
+            duplicate.set("__is_duplicate", True)
+            duplicate.insert(ignore_permissions=True)
+            duplicate.submit()
+            frappe.msgprint(_(
+                f"✅ Duplicate Lease Agreement <b>{duplicate.name}</b> created for landlord's company."
+            ))
+
 
 def is_prime(n):
         if n < 2 or n % 2 == 0:

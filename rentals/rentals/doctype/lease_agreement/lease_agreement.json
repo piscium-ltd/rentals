@@ -12,6 +12,7 @@
   "column_break_lbif",
   "tenant",
   "billing_currency",
+  "company",
   "section_break_djzt",
   "landlord_information_column",
   "abbr",
@@ -29,10 +30,19 @@
   "property",
   "property_name",
   "location",
+  "property_assignment",
   "column_break_gppq",
   "unit",
   "unit_type",
   "house_no",
+  "agent_details_section",
+  "agent",
+  "agent_name",
+  "agent_abbr",
+  "agent_phone_number",
+  "column_break_xsnz",
+  "agency_type",
+  "agent_email",
   "contract_period_section",
   "start_date",
   "lease_incentive",
@@ -251,7 +261,8 @@
    "in_standard_filter": 1,
    "label": "Unit",
    "options": "Unit",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "unit.unit_type",
@@ -343,7 +354,6 @@
    "fetch_from": "landlord.abbr",
    "fieldname": "abbr",
    "fieldtype": "Read Only",
-   "in_list_view": 1,
    "label": "Abbr"
   },
   {
@@ -414,6 +424,71 @@
    "fieldname": "location",
    "fieldtype": "Read Only",
    "label": "Location"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "property_assignment",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Property Assignment",
+   "options": "Property Assignment"
+  },
+  {
+   "depends_on": "eval: doc.property_assignment",
+   "fieldname": "agent_details_section",
+   "fieldtype": "Section Break",
+   "label": "Agent Details"
+  },
+  {
+   "fetch_from": "property_assignment.agent",
+   "fieldname": "agent",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "in_standard_filter": 1,
+   "label": "Agent",
+   "options": "Agent"
+  },
+  {
+   "fetch_from": "agent.full_name",
+   "fieldname": "agent_name",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Agent Name"
+  },
+  {
+   "fieldname": "column_break_xsnz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "property_assignment.agency_type",
+   "fieldname": "agency_type",
+   "fieldtype": "Read Only",
+   "label": "Agency Type"
+  },
+  {
+   "fieldname": "agent_phone_number",
+   "fieldtype": "Read Only",
+   "label": "Phone Number"
+  },
+  {
+   "fetch_from": "agent.email",
+   "fieldname": "agent_email",
+   "fieldtype": "Read Only",
+   "label": "Agent Email"
+  },
+  {
+   "fetch_from": "agent.abbr",
+   "fieldname": "agent_abbr",
+   "fieldtype": "Read Only",
+   "label": "Abbr"
   }
  ],
  "grid_page_length": 50,
@@ -437,7 +512,7 @@
    "link_fieldname": "lease_agreement"
   }
  ],
- "modified": "2025-07-19 23:45:42.427733",
+ "modified": "2025-07-29 01:48:49.913527",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

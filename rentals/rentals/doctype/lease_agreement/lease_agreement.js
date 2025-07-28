@@ -71,6 +71,24 @@ frappe.ui.form.on("Lease Agreement", {
 
 		calculate_grand_total(frm);
 	},
+	property: function (frm) {
+		frappe.call({
+			method: "frappe.client.get_list",
+			args: {
+				doctype: "Property Assignment",
+				filters: {
+					property: frm.doc.property,
+				},
+				fields: ["name"],
+				limit_page_length: 1,
+			},
+			callback: function (r) {
+				if (r.message && r.message.length > 0) {
+					frm.set_value("property_assignment", r.message[0].name);
+				}
+			},
+		});
+	},
 	end_date: function (frm) {
 		validate_dates(frm);
 	},
