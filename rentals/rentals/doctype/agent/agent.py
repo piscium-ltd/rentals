@@ -40,15 +40,15 @@ class Agent(Document):
             self._create_supplier(company_name)
 
         except Exception as e:
-            frappe.log_error(message=frappe.get_traceback(), title="Landlord after_insert Error")
-            frappe.throw(_("❌ An error occurred while setting up landlord details. Please check logs."))
+            frappe.log_error(message=frappe.get_traceback(), title="Agent after_insert Error")
+            frappe.throw(_("❌ An error occurred while setting up Agent details. Please check logs."))
 
     # -------------------------------
     # Private Helper Methods
     # -------------------------------
 
     def _create_company(self, company_name, abbr):
-        """Create a new Company and link it to the landlord."""
+        """Create a new Company and link it to the Agent."""
         try:
             defaults = self._get_global_defaults()
 
@@ -65,15 +65,15 @@ class Agent(Document):
             company.insert(ignore_permissions=True)
 
             frappe.msgprint(
-                _("✅ Landlord created successfully and linked to Company <b>{0}</b>.").format(company_name),
+                _("✅ Agent created successfully and linked to Company <b>{0}</b>.").format(company_name),
                 indicator="green", alert=True
             )
         except Exception:
             frappe.log_error(frappe.get_traceback(), "Company Creation Failed")
-            frappe.throw(_("❌ Failed to create associated Company for this Landlord. Check error logs."))
+            frappe.throw(_("❌ Failed to create associated Company for this Agent. Check error logs."))
 
     def _create_user(self, name):
-        """Create a user for the landlord and assign permissions."""
+        """Create a user for the Agent and assign permissions."""
         try:
             user = frappe.get_doc({
                 "doctype": "User",
@@ -93,7 +93,7 @@ class Agent(Document):
 
         except Exception:
             frappe.log_error(frappe.get_traceback(), "User Creation Failed")
-            frappe.throw(_("❌ Failed to create user for this Landlord. Check error logs."))
+            frappe.throw(_("❌ Failed to create user for this Agent. Check error logs."))
 
     def _assign_user_permission(self, user, doctype, value):
         """Assign user permission for a specific doctype and value."""
@@ -108,7 +108,7 @@ class Agent(Document):
             frappe.log_error(frappe.get_traceback(), f"Failed to assign permission for {doctype}")
 
     def _create_customer(self, customer_name):
-        """Create a Customer for the Landlord."""
+        """Create a Customer for the Agent."""
         try:
             if not frappe.db.exists("Customer", {"customer_name": customer_name}):
                 customer = frappe.get_doc({
@@ -123,10 +123,10 @@ class Agent(Document):
                 self.db_set("customer", customer.name)
         except Exception:
             frappe.log_error(frappe.get_traceback(), "Customer Creation Failed")
-            frappe.throw(_("❌ Failed to create Customer for this Landlord. Check logs."))
+            frappe.throw(_("❌ Failed to create Customer for this Agent. Check logs."))
 
     def _create_supplier(self, supplier_name):
-        """Create a Supplier for the Landlord."""
+        """Create a Supplier for the Agent."""
         try:
             if not frappe.db.exists("Supplier", {"supplier_name": supplier_name}):
                 supplier = frappe.get_doc({
@@ -141,7 +141,7 @@ class Agent(Document):
                 self.db_set("supplier", supplier.name)
         except Exception:
             frappe.log_error(frappe.get_traceback(), "Supplier Creation Failed")
-            frappe.throw(_("❌ Failed to create Supplier for this Landlord. Check logs."))
+            frappe.throw(_("❌ Failed to create Supplier for this Agent. Check logs."))
 
     def _get_abbreviation(self):
         """Generate a unique 3-letter abbreviation."""
