@@ -3,39 +3,66 @@
 
 import frappe
 import random
+
 from frappe.model.document import Document
 from frappe import _
-from frappe.utils import today, add_days, add_months, add_years, getdate
+from frappe.utils import (
+    today, add_days, add_months, add_years, getdate, nowdate, get_url
+)
 from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
+
+BILLING_CYCLE_DAYS = {
+    "Once": 0,
+    "Daily": 1,
+    "Weekly": 7,
+    "Monthly": "monthly",
+    "Annually": "annually"
+}
 
 
 class LeaseAgreement(Document):
     def autoname(self):
-        if not self.company:
-            frappe.throw("Company must be set before generating name.")
+        """Generate a unique name using company abbreviation and a Luhn-valid 7-digit number."""
+        self._ensure_company_exists()
+        abbr = self._get_company_abbreviation()
 
-        # Get abbreviation from Company
-        abbr = frappe.db.get_value("Company", self.company, "abbr")
-        if not abbr:
-            frappe.throw("Abbreviation not found in the Company record.")
-
-        for _ in range(100):  # avoid infinite loop
-            prime_number = generate_prime_number()
-            name = f"{abbr}{prime_number}"
+        for _ in range(100):
+            number = generate_luhn_number(7)
+            name = f"{abbr}{number}"
             if not frappe.db.exists("Lease Agreement", name):
                 self.name = name
                 return
 
-        frappe.throw("Unable to generate unique Lease Agreement name.")
+        frappe.throw("Unable to generate a unique Lease Agreement name after 100 attempts.")
+
+    def _ensure_company_exists(self):
+        """Ensure the company field is populated before generating a name."""
+        if not self.company:
+            frappe.throw("Company must be set before generating the Lease Agreement name.")
+
+    def _get_company_abbreviation(self):
+        """Return the company abbreviation from the Company record."""
+        abbr = frappe.db.get_value("Company", self.company, "abbr")
+        if not abbr:
+            frappe.throw("No abbreviation found for the selected company.")
+        return abbr
 
     def validate(self):
-        # Check if Start Date is before End Date
-        if self.start_date and self.end_date:
-            if self.end_date <= self.start_date:
-                frappe.throw("❌ End Date must be after Start Date.")
-                
-        # Check if there's an active lease already assigned to this unit
-        active_leases = frappe.get_all(
+        """Run date validations and ensure the unit is not already leased."""
+        self._validate_date_range()
+        self._check_for_active_lease()
+
+    def _validate_date_range(self):
+        """Ensure end date is after start date."""
+        if self.start_date and self.end_date and self.end_date <= self.start_date:
+            frappe.throw("End Date must be after Start Date.")
+
+    def _check_for_active_lease(self):
+        """Prevent leasing a unit that already has an active lease."""
+        if not self.unit:
+            return
+
+        existing = frappe.get_all(
             "Lease Agreement",
             filters={
                 "unit": self.unit,
@@ -43,217 +70,289 @@ class LeaseAgreement(Document):
                 "docstatus": ["!=", 2],
                 "name": ["!=", self.name]
             },
-            fields=["name", "tenant", "start_date", "end_date"]
+            fields=["name"]
         )
 
-        if active_leases and self.agency_type != "Full Agency":
-            # Get the first active lease from the result
-            active_lease = active_leases[0]
-            lease_url = frappe.utils.get_url(f"app/lease-agreement/{active_lease.name}")
-            
-            # Throw an informative error with a clickable link to the existing lease
-            frappe.throw(_(f"Unit {self.unit} is already assigned to a tenant. Please check the existing agreement: <a href='{lease_url}'>{active_lease.name}</a>."))
+        if existing and self.agency_type != "Full Agency":
+            lease_url = get_url(f"/app/lease-agreement/{existing[0].name}")
+            frappe.throw(_(
+                f"Unit {self.unit} is already assigned. See agreement: "
+                f"<a href='{lease_url}'>{existing[0].name}</a>."
+            ))
 
     def before_save(self):
-        # Set Property Assignment if not already set
-        if not self.property_assignment and self.property:
-            assignment = frappe.get_all(
-                "Property Assignment",
-                filters={"property": self.property},
-                fields=["name"],
-                limit_page_length=1
-            )
-            if assignment:
-                self.property_assignment = assignment[0].name
+        """Set default customer, property assignment, and compute totals before saving."""
+        self._set_customer_if_missing()
+        self._set_property_assignment_if_missing()
+        self._compute_grand_total_and_billing_dates()
 
-        # Calculate Grand Total from child table
+    def _set_customer_if_missing(self):
+        """Set customer from linked tenant, if not already set."""
+        if not self.tenant or self.customer:
+            return
+
+        customer = frappe.db.get_value("Tenant", self.tenant, "customer")
+        if customer:
+            self.customer = customer
+
+    def _set_property_assignment_if_missing(self):
+        """Set property assignment from available property assignments."""
+        if not self.property or self.property_assignment:
+            return
+
+        assignment = frappe.get_all(
+            "Property Assignment",
+            filters={"property": self.property},
+            fields=["name"],
+            limit_page_length=1
+        )
+
+        if assignment:
+            self.property_assignment = assignment[0].name
+
+    def _compute_grand_total_and_billing_dates(self):
+        """Calculate the grand total and assign billing dates for all chargeable services."""
         total = 0
         base_date = getdate(today())
 
         for row in self.chargeable_services:
             total += row.rate
-
-            # Only set billing date if not already set
             if not row.billing_date:
-                if row.billing_cycle == "Once":
-                    row.billing_date = base_date
-                elif row.billing_cycle == "Daily":
-                    row.billing_date = add_days(base_date, 1)
-                elif row.billing_cycle == "Weekly":
-                    row.billing_date = add_days(base_date, 7)
-                elif row.billing_cycle == "Monthly":
-                    row.billing_date = add_months(base_date, 1)
-                elif row.billing_cycle == "Annually":
-                    row.billing_date = add_years(base_date, 1)
-                else:
-                    row.billing_date = base_date
+                row.billing_date = self._get_billing_date(row.billing_cycle, base_date)
 
         self.grand_total = total
 
+    def _get_billing_date(self, cycle, base_date):
+        """Return next billing date based on the billing cycle."""
+        if cycle == "Monthly":
+            return add_months(base_date, 1)
+        elif cycle == "Annually":
+            return add_years(base_date, 1)
+        else:
+            return add_days(base_date, BILLING_CYCLE_DAYS.get(cycle, 0))
+
     def on_submit(self):
-        # Fetch required documents
-        unit_doc = frappe.get_doc("Unit", self.unit)
-        tenant_doc = frappe.get_doc("Tenant", self.tenant)
+        """Handle unit occupation, customer setup, and create sales and payment documents."""
+        self._mark_unit_as_occupied()
+        self._create_price_list_and_update_customer()
+        sales_order = self._create_sales_order()
+        self._create_payment_request(sales_order)
+        self._create_duplicate_if_full_agency()
 
-        # Mark unit as occupied
-        if unit_doc.status != "Occupied":
-            unit_doc.status = "Occupied"
-            unit_doc.save()
-            frappe.msgprint(_(f"✅ Unit <b>{unit_doc.name}</b> marked as occupied."))
+    def _mark_unit_as_occupied(self):
+        """Mark the leased unit as occupied if not already."""
+        unit = frappe.get_doc("Unit", self.unit)
+        if unit.status != "Occupied":
+            unit.status = "Occupied"
+            unit.save()
+            frappe.msgprint(
+                _(f"Unit <b>{unit.name}</b> marked as occupied."),
+                alert=True,
+                indicator="green"
+            )
 
-        # Validate required links
-        if not tenant_doc.customer:
-            frappe.msgprint(_("⚠️ Tenant is not linked to a Customer."), alert=True)
-            return
+    def _create_price_list_and_update_customer(self):
+        """Ensure price list exists and update customer defaults."""
+        price_list = f"{self.customer} Price List"
+        self._create_price_list_if_missing(price_list)
+        self._update_customer_defaults(self.customer, price_list)
 
-        customer_name = self.tenant_name
-        price_list_name = f"{customer_name} Price List"
+        for row in self.chargeable_services:
+            self._sync_item_price(row, price_list, self.customer)
 
-        # Create price list if it doesn't exist
-        if not frappe.db.exists("Price List", price_list_name):
+    def _create_price_list_if_missing(self, name):
+        """Create a new Price List if one does not already exist."""
+        if not frappe.db.exists("Price List", name):
             frappe.get_doc({
                 "doctype": "Price List",
-                "price_list_name": price_list_name,
+                "price_list_name": name,
                 "currency": self.billing_currency,
                 "selling": 1,
                 "enabled": 1
             }).insert(ignore_permissions=True)
-            frappe.msgprint(_(f"✅ Created new Price List: <b>{price_list_name}</b>"))
 
-        # Update customer default price list and currency
-        customer_doc = frappe.get_doc("Customer", tenant_doc.customer)
+            frappe.msgprint(
+                _(f"Created new Price List: <b>{name}</b>"),
+                alert=True,
+                indicator="green"
+            )
+
+    def _update_customer_defaults(self, customer_name, price_list):
+        """Update the customer's default price list and currency if needed."""
+        customer = frappe.get_doc("Customer", customer_name)
         updated = False
 
-        if customer_doc.default_price_list != price_list_name:
-            customer_doc.default_price_list = price_list_name
+        if customer.default_price_list != price_list:
+            customer.default_price_list = price_list
             updated = True
 
-        if customer_doc.default_currency != self.billing_currency:
-            customer_doc.default_currency = self.billing_currency
+        if customer.default_currency != self.billing_currency:
+            customer.default_currency = self.billing_currency
             updated = True
 
         if updated:
-            customer_doc.save(ignore_permissions=True)
-            frappe.msgprint(_(f"✅ Updated Customer <b>{customer_doc.name}</b> with default Price List and Currency."))
+            customer.save(ignore_permissions=True)
+            frappe.msgprint(
+                _(f"Updated customer <b>{customer.name}</b> defaults."),
+                alert=True,
+                indicator="green"
+            )
 
-        # Create or update item prices
-        for row in self.chargeable_services:
-            item_code = row.service
-            rate = row.rate
+    def _sync_item_price(self, row, price_list, customer_name):
+        """Ensure item price is accurate for each chargeable service."""
+        if not row.rate:
+            frappe.msgprint(
+                _(f"No rate set for item <b>{row.service}</b>. Skipping."),
+                alert=True
+            )
+            return
 
-            if not rate:
-                frappe.msgprint(_(f"⚠️ No rate specified for item <b>{item_code}</b>. Skipping."), alert=True)
-                continue
+        item_price_name = frappe.db.exists("Item Price", {
+            "item_code": row.service,
+            "price_list": price_list
+        })
 
-            item_price_name = frappe.db.exists("Item Price", {
-                "item_code": item_code,
-                "price_list": price_list_name
-            })
+        if item_price_name:
+            item_price = frappe.get_doc("Item Price", item_price_name)
+            if item_price.price_list_rate != row.rate:
+                item_price.price_list_rate = row.rate
+                item_price.save(ignore_permissions=True)
+                frappe.msgprint(
+                    _(f"Updated price for <b>{row.service}</b>."),
+                    alert=True,
+                    indicator="green"
+                )
+        else:
+            frappe.get_doc({
+                "doctype": "Item Price",
+                "item_code": row.service,
+                "price_list": price_list,
+                "price_list_rate": row.rate,
+                "currency": self.billing_currency,
+                "customer": customer_name
+            }).insert(ignore_permissions=True)
 
-            if item_price_name:
-                item_price = frappe.get_doc("Item Price", item_price_name)
-                if item_price.price_list_rate != rate:
-                    item_price.price_list_rate = rate
-                    item_price.save(ignore_permissions=True)
-                    frappe.msgprint(_(f"🔁 Updated price for item <b>{item_code}</b> in <b>{price_list_name}</b>."))
-            else:
-                frappe.get_doc({
-                    "doctype": "Item Price",
-                    "item_code": item_code,
-                    "price_list": price_list_name,
-                    "price_list_rate": rate,
-                    "currency": self.billing_currency,
-                    "customer": customer_name
-                }).insert(ignore_permissions=True)
-                frappe.msgprint(_(f"✅ Created price for item <b>{item_code}</b> in <b>{price_list_name}</b>."))
+            frappe.msgprint(
+                _(f"Created price for <b>{row.service}</b>."),
+                alert=True,
+                indicator="green"
+            )
 
-        # Create Sales Order
-        items = []
-        for row in self.chargeable_services:
-            if row.rate:
-                items.append({
-                    "item_code": row.service,
-                    "qty": 1,
-                    "rate": row.rate,
-                    "delivery_date": frappe.utils.nowdate()
-                })
+    def _create_sales_order(self):
+        """Create a Sales Order using the chargeable services."""
+        items = [{
+            "item_code": row.service,
+            "qty": 1,
+            "rate": row.rate,
+            "delivery_date": nowdate()
+        } for row in self.chargeable_services if row.rate]
 
         sales_order = frappe.get_doc({
             "doctype": "Sales Order",
             "company": self.company,
             "custom_lease_agreement": self.name,
-            "customer": tenant_doc.customer,
+            "customer": self.customer,
             "currency": self.billing_currency,
-            "selling_price_list": price_list_name,
-            "transaction_date": frappe.utils.nowdate(),
-            "delivery_date": frappe.utils.nowdate(),
+            "selling_price_list": f"{self.customer} Price List",
+            "transaction_date": nowdate(),
+            "delivery_date": nowdate(),
             "items": items
         })
         sales_order.insert(ignore_permissions=True)
         sales_order.submit()
-        frappe.msgprint(_(f"✅ Sales Order <b>{sales_order.name}</b> created and submitted."))
 
-        # Create Payment Request
-        recipient_email = tenant_doc.email
-        if not recipient_email:
-            frappe.msgprint(_("⚠️ Tenant does not have an email address. Payment Request skipped."), alert=True)
+        frappe.msgprint(
+            _(f"Sales Order <b>{sales_order.name}</b> created."),
+            alert=True,
+            indicator="green"
+        )
+        return sales_order
+
+    def _create_payment_request(self, sales_order):
+        """Create a Payment Request and email it to the customer."""
+        email = frappe.db.get_value("Customer", self.customer, "email_id")
+        if not email:
+            frappe.msgprint(_("Tenant has no email. Payment Request skipped."), alert=True)
             return
 
         payment_request = make_payment_request(
             dt="Sales Order",
             dn=sales_order.name,
-            recipient_id=recipient_email,
+            recipient_id=email,
             return_doc=True,
             submit_doc=False
         )
-
-        payment_request.subject = f"Payment Request for Account Number {self.name}"
+        payment_request.subject = f"Payment Request for Lease {self.name}"
         payment_request.message = (
-            f"""
-            <p>Dear {self.tenant_name},</p>
-            <p>Requesting payment against Account Number {self.name} for amount Sh. {self.grand_total:,.0f}</p>
-            <p>If you have any questions, please get back to us.</p>
-            <p>Thank you for your business!</p>
-            """
+            f"<p>Dear {self.customer},</p>"
+            f"<p>Please make payment for Account Number <b>{self.name}</b> totaling "
+            f"<b>Sh. {self.grand_total:,.0f}</b>.</p><p>Thank you.</p>"
         )
-
         payment_request.save()
         payment_request.submit()
 
-        frappe.msgprint(_(f"✅ Payment Request <b>{payment_request.name}</b> created and sent to <b>{recipient_email}</b>."))
+        frappe.msgprint(
+            _(f"Payment Request <b>{payment_request.name}</b> sent to <b>{email}</b>."),
+            alert=True,
+            indicator="green"
+        )
 
-        # Create another Lease Agreement if Full Agency
-        if self.agency_type == "Full Agency" and not self.get("__is_duplicate"):
-            landlord_company = frappe.db.get_value("Landlord", self.landlord, "company")
-            if not landlord_company:
-                frappe.msgprint(_("⚠️ Landlord is not linked to a Company. Skipping duplicate Lease Agreement."), alert=True)
-                return
+    def _create_duplicate_if_full_agency(self):
+        """Duplicate the Lease Agreement for the landlord if this is a full agency case."""
+        if self.agency_type != "Full Agency" or self.get("__is_duplicate"):
+            return
 
-            # Copy the current document
-            duplicate = frappe.copy_doc(self)
-            duplicate.company = landlord_company
-            duplicate.name = None
-            duplicate.set("__is_duplicate", True)
-            duplicate.insert(ignore_permissions=True)
-            duplicate.submit()
-            frappe.msgprint(_(
-                f"✅ Duplicate Lease Agreement <b>{duplicate.name}</b> created for landlord's company."
-            ))
+        landlord_company = frappe.db.get_value("Landlord", self.landlord, "company")
+        if not landlord_company:
+            frappe.msgprint(_("Landlord is not linked to a company. Skipping duplicate."))
+            return
+
+        agent_customer = frappe.db.get_value("Agent", self.agent, "customer")
+        if not agent_customer:
+            frappe.msgprint(_("Agent is not linked to a customer. Skipping duplicate."))
+            return
+
+        duplicate = frappe.copy_doc(self)
+        duplicate.customer = agent_customer
+        duplicate.company = landlord_company
+        duplicate.name = None
+        duplicate.set("__is_duplicate", True)
+        duplicate.insert(ignore_permissions=True)
+        duplicate.submit()
+
+        frappe.msgprint(
+            _(f"Duplicate Lease Agreement <b>{duplicate.name}</b> created."),
+            alert=True,
+            indicator="green"
+        )
 
 
-def is_prime(n):
-        if n < 2 or n % 2 == 0:
-            return n == 2
-        for a in (2, 3, 5, 7, 11):
-            if n == a:
-                return True
-            if pow(a, n - 1, n) != 1:
-                return False
-        return True
+def generate_luhn_number(num_digits):
+    """
+    Generate a random number string of specified length that passes the Luhn algorithm.
+    The last digit is a check digit.
+    """
+    if num_digits < 2:
+        raise ValueError("Length must be at least 2 to include a check digit.")
 
-def generate_prime_number():
-    for _ in range(1000):  # attempt limit
-        number = random.randint(1_000_000, 9_999_999)
-        if is_prime(number):
-            return str(number)
-    frappe.throw("Unable to generate prime number.")
+    base = [random.randint(0, 9) for _ in range(num_digits - 1)]
+    check_digit = calculate_luhn_check_digit(base)
+    return ''.join(map(str, base + [check_digit]))
+
+
+def calculate_luhn_check_digit(digits):
+    """
+    Calculate the Luhn check digit for a list of digits.
+    This digit ensures the full number passes the Luhn checksum.
+    """
+    total = 0
+    reverse_digits = digits[::-1]
+
+    for i, digit in enumerate(reverse_digits):
+        if i % 2 == 0:
+            doubled = digit * 2
+            total += doubled if doubled < 10 else sum(map(int, str(doubled)))
+        else:
+            total += digit
+
+    return (10 - (total % 10)) % 10

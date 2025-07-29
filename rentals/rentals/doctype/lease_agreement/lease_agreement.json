@@ -13,6 +13,7 @@
   "tenant",
   "billing_currency",
   "company",
+  "customer",
   "section_break_djzt",
   "landlord_information_column",
   "abbr",
@@ -36,13 +37,11 @@
   "unit_type",
   "house_no",
   "agent_details_section",
-  "agent",
-  "agent_name",
-  "agent_abbr",
-  "agent_phone_number",
-  "column_break_xsnz",
   "agency_type",
+  "agent_abbr",
+  "column_break_xsnz",
   "agent_email",
+  "agent",
   "contract_period_section",
   "start_date",
   "lease_incentive",
@@ -457,13 +456,6 @@
    "options": "Agent"
   },
   {
-   "fetch_from": "agent.full_name",
-   "fieldname": "agent_name",
-   "fieldtype": "Read Only",
-   "in_list_view": 1,
-   "label": "Agent Name"
-  },
-  {
    "fieldname": "column_break_xsnz",
    "fieldtype": "Column Break"
   },
@@ -472,11 +464,6 @@
    "fieldname": "agency_type",
    "fieldtype": "Read Only",
    "label": "Agency Type"
-  },
-  {
-   "fieldname": "agent_phone_number",
-   "fieldtype": "Read Only",
-   "label": "Phone Number"
   },
   {
    "fetch_from": "agent.email",
@@ -489,6 +476,13 @@
    "fieldname": "agent_abbr",
    "fieldtype": "Read Only",
    "label": "Abbr"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Customer",
+   "options": "Customer"
   }
  ],
  "grid_page_length": 50,
@@ -512,7 +506,7 @@
    "link_fieldname": "lease_agreement"
   }
  ],
- "modified": "2025-07-29 01:48:49.913527",
+ "modified": "2025-07-30 01:11:41.466745",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

@@ -114,6 +114,7 @@ class Agent(Document):
                 customer = frappe.get_doc({
                     "doctype": "Customer",
                     "customer_name": customer_name,
+                    "email_id": self.email,
                     "customer_type": "Company" if self.agent_type == "Company" else "Individual"
                 })
                 customer.insert(ignore_permissions=True)

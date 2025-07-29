@@ -71,6 +71,15 @@ frappe.ui.form.on("Lease Agreement", {
 
 		calculate_grand_total(frm);
 	},
+	tenant: function (frm) {
+		if (frm.doc.tenant) {
+			frappe.db.get_value("Tenant", frm.doc.tenant, "customer", (r) => {
+				if (r && r.customer) {
+					frm.set_value("customer", r.customer);
+				}
+			});
+		}
+	},
 	property: function (frm) {
 		frappe.call({
 			method: "frappe.client.get_list",

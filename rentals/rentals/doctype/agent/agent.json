@@ -8,28 +8,22 @@
  "field_order": [
   "agent_type",
   "full_name",
-  "company_name",
   "email",
-  "phone_no",
-  "customer",
-  "supplier",
-  "column_break_kwle",
   "abbr",
+  "status",
   "user",
-  "company",
+  "customer",
+  "column_break_kwle",
+  "company_name",
   "document_type",
   "id_no",
   "passport_no",
-  "kra_pin"
+  "kra_pin",
+  "is_related_party",
+  "company",
+  "supplier"
  ],
  "fields": [
-  {
-   "fieldname": "phone_no",
-   "fieldtype": "Phone",
-   "in_list_view": 1,
-   "label": "Phone No",
-   "reqd": 1
-  },
   {
    "fieldname": "user",
    "fieldtype": "Link",
@@ -49,7 +43,6 @@
    "depends_on": "eval:doc.agent_type == \"Individual\"",
    "fieldname": "full_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Full Name",
    "mandatory_depends_on": "eval:doc.agent_type == \"Individual\""
   },
@@ -61,7 +54,6 @@
    "fieldname": "abbr",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Abbr",
    "read_only": 1,
    "set_only_once": 1,
@@ -88,10 +80,8 @@
    "depends_on": "eval:doc.agent_type == \"Company\"",
    "fieldname": "company_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Company Name",
-   "mandatory_depends_on": "eval:doc.agent_type == \"Company\"",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.agent_type == \"Company\""
   },
   {
    "depends_on": "eval:doc.agent_type == \"Individual\"",
@@ -104,11 +94,13 @@
    "depends_on": "eval:doc.document_type == \"National Identity Card\" && doc.agent_type == \"Individual\"",
    "fieldname": "id_no",
    "fieldtype": "Int",
-   "label": "ID NO"
+   "label": "ID No",
+   "mandatory_depends_on": "eval:doc.document_type == \"National Identity Card\" && doc.agent_type == \"Individual\""
   },
   {
    "fieldname": "kra_pin",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "KRA PIN",
    "reqd": 1
   },
@@ -116,7 +108,8 @@
    "depends_on": "eval:doc.document_type == \"Passport\" && doc.agent_type == \"Individual\"",
    "fieldname": "passport_no",
    "fieldtype": "Int",
-   "label": "Passport No"
+   "label": "Passport No",
+   "mandatory_depends_on": "eval:doc.document_type == \"Passport\" && doc.agent_type == \"Individual\""
   },
   {
    "fieldname": "customer",
@@ -131,12 +124,26 @@
    "hidden": 1,
    "label": "Supplier",
    "options": "Supplier"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Active\nInactive"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_related_party",
+   "fieldtype": "Check",
+   "label": "Is Related Party"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-30 00:18:13.787841",
+ "modified": "2025-07-30 01:03:26.352824",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Agent",
@@ -160,5 +167,5 @@
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
- "title_field": "full_name"
+ "title_field": "abbr"
 }

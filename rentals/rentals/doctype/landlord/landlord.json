@@ -20,8 +20,8 @@
   "id_no",
   "passport_no",
   "kra_pin",
-  "company",
   "is_related_party",
+  "company",
   "supplier",
   "address_and_contact_tab",
   "landlord_primary_address",
@@ -38,7 +38,6 @@
    "depends_on": "eval:doc.landlord_type == \"Individual\"",
    "fieldname": "full_name",
    "fieldtype": "Data",
-   "in_standard_filter": 1,
    "label": "Full Name",
    "mandatory_depends_on": "eval:doc.landlord_type == \"Individual\""
   },
@@ -118,7 +117,6 @@
    "depends_on": "eval:doc.landlord_type == \"Company\"",
    "fieldname": "company_name",
    "fieldtype": "Data",
-   "in_standard_filter": 1,
    "label": "Company Name",
    "mandatory_depends_on": "eval:doc.landlord_type == \"Company\"",
    "unique": 1
@@ -138,7 +136,6 @@
    "fieldname": "abbr",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Abbr",
    "read_only": 1,
    "set_only_once": 1,
@@ -156,7 +153,6 @@
    "depends_on": "eval:doc.document_type == \"National Identity Card\" && doc.landlord_type == \"Individual\"",
    "fieldname": "id_no",
    "fieldtype": "Int",
-   "in_standard_filter": 1,
    "label": "ID No",
    "mandatory_depends_on": "eval:doc.document_type == \"National Identity Card\" && doc.landlord_type == \"Individual\"",
    "non_negative": 1
@@ -165,7 +161,6 @@
    "depends_on": "eval:doc.document_type == \"Passport\"",
    "fieldname": "passport_no",
    "fieldtype": "Int",
-   "in_standard_filter": 1,
    "label": "Passport No",
    "mandatory_depends_on": "eval:doc.document_type == \"Passport\"",
    "non_negative": 1
@@ -196,6 +191,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Status",
    "options": "Active\nInactive"
   },
@@ -228,7 +224,7 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2025-07-29 23:16:14.791721",
+ "modified": "2025-07-30 01:06:05.624579",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Landlord",
