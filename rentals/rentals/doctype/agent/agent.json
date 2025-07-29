@@ -6,13 +6,21 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "agent_type",
   "full_name",
+  "company_name",
   "email",
   "phone_no",
+  "customer",
+  "supplier",
   "column_break_kwle",
   "abbr",
   "user",
-  "company"
+  "company",
+  "document_type",
+  "id_no",
+  "passport_no",
+  "kra_pin"
  ],
  "fields": [
   {
@@ -38,11 +46,12 @@
    "unique": 1
   },
   {
+   "depends_on": "eval:doc.agent_type == \"Individual\"",
    "fieldname": "full_name",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Full Name",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.agent_type == \"Individual\""
   },
   {
    "fieldname": "column_break_kwle",
@@ -68,12 +77,66 @@
    "no_copy": 1,
    "options": "Company",
    "read_only": 1
+  },
+  {
+   "fieldname": "agent_type",
+   "fieldtype": "Select",
+   "label": "Agent Type",
+   "options": "Company\nIndividual"
+  },
+  {
+   "depends_on": "eval:doc.agent_type == \"Company\"",
+   "fieldname": "company_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Company Name",
+   "mandatory_depends_on": "eval:doc.agent_type == \"Company\"",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.agent_type == \"Individual\"",
+   "fieldname": "document_type",
+   "fieldtype": "Select",
+   "label": "Document Type",
+   "options": "National Identity Card\nPassport"
+  },
+  {
+   "depends_on": "eval:doc.document_type == \"National Identity Card\" && doc.agent_type == \"Individual\"",
+   "fieldname": "id_no",
+   "fieldtype": "Int",
+   "label": "ID NO"
+  },
+  {
+   "fieldname": "kra_pin",
+   "fieldtype": "Data",
+   "label": "KRA PIN",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.document_type == \"Passport\" && doc.agent_type == \"Individual\"",
+   "fieldname": "passport_no",
+   "fieldtype": "Int",
+   "label": "Passport No"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Supplier",
+   "options": "Supplier"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-28 20:25:50.066203",
+ "modified": "2025-07-30 00:18:13.787841",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Agent",

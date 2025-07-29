@@ -18,7 +18,7 @@ class Landlord(Document):
                 )
 
     def after_insert(self):
-        """Handle post-insert tasks: abbreviation, company, and user creation."""
+        """Handle post-insert tasks: abbreviation, company, user, customer, and supplier creation."""
         try:
             abbr = self._get_abbreviation()
             self.db_set("abbr", abbr)
@@ -34,6 +34,10 @@ class Landlord(Document):
             if self.email and not frappe.db.exists("User", self.email):
                 display_name = company_name if self.landlord_type == "Company" else self.full_name
                 self._create_user(display_name)
+
+            # Create Customer and Supplier
+            self._create_customer(company_name)
+            self._create_supplier(company_name)
 
         except Exception as e:
             frappe.log_error(message=frappe.get_traceback(), title="Landlord after_insert Error")
@@ -102,6 +106,42 @@ class Landlord(Document):
             }).insert(ignore_permissions=True)
         except Exception:
             frappe.log_error(frappe.get_traceback(), f"Failed to assign permission for {doctype}")
+
+    def _create_customer(self, customer_name):
+        """Create a Customer for the Landlord."""
+        try:
+            if not frappe.db.exists("Customer", {"customer_name": customer_name}):
+                customer = frappe.get_doc({
+                    "doctype": "Customer",
+                    "customer_name": customer_name,
+                    "customer_type": "Company" if self.landlord_type == "Company" else "Individual"
+                })
+                customer.insert(ignore_permissions=True)
+                frappe.msgprint(
+                _("✅ Customer created successfully <b>{0}</b>.").format(customer_name),indicator="green", alert=True
+            )
+                self.db_set("customer", customer.name)
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "Customer Creation Failed")
+            frappe.throw(_("❌ Failed to create Customer for this Landlord. Check logs."))
+
+    def _create_supplier(self, supplier_name):
+        """Create a Supplier for the Landlord."""
+        try:
+            if not frappe.db.exists("Supplier", {"supplier_name": supplier_name}):
+                supplier = frappe.get_doc({
+                    "doctype": "Supplier",
+                    "supplier_name": supplier_name,
+                    "supplier_type": "Company" if self.landlord_type == "Company" else "Individual"
+                })
+                supplier.insert(ignore_permissions=True)
+                frappe.msgprint(
+                _("✅ Supplier created successfully <b>{0}</b>.").format(supplier_name),indicator="green", alert=True
+            )
+                self.db_set("supplier", supplier.name)
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "Supplier Creation Failed")
+            frappe.throw(_("❌ Failed to create Supplier for this Landlord. Check logs."))
 
     def _get_abbreviation(self):
         """Generate a unique 3-letter abbreviation."""

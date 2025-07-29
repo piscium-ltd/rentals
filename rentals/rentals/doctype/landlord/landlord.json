@@ -13,6 +13,7 @@
   "abbr",
   "status",
   "user",
+  "customer",
   "column_break_btax",
   "company_name",
   "document_type",
@@ -21,6 +22,7 @@
   "kra_pin",
   "company",
   "is_related_party",
+  "supplier",
   "address_and_contact_tab",
   "landlord_primary_address",
   "primary_address",
@@ -202,6 +204,20 @@
    "fieldname": "is_related_party",
    "fieldtype": "Check",
    "label": "Is Related Party"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Supplier",
+   "options": "Supplier"
   }
  ],
  "grid_page_length": 50,
@@ -212,7 +228,7 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2025-07-17 00:21:16.589183",
+ "modified": "2025-07-29 23:16:14.791721",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Landlord",

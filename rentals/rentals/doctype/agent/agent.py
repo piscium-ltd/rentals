@@ -3,17 +3,27 @@
 
 import frappe
 import random
-from frappe.model.document import Document
+import re
 from frappe import _
+from frappe.model.document import Document
 
 class Agent(Document):
+    def validate(self):
+        """Validate KRA PIN format."""
+        if self.kra_pin:
+            self.kra_pin = self.kra_pin.strip().upper()
+            if not re.fullmatch(r"[AP]\d{9}[A-Z]", self.kra_pin):
+                frappe.throw(
+                    _("❌ Invalid KRA PIN format. Use format like <b>A123456789B</b> or <b>P051234567K</b>.")
+                )
+
     def after_insert(self):
-        """After Agent is inserted, generate abbreviation, create company, create user."""
+        """Handle post-insert tasks: abbreviation, company, user, customer, and supplier creation."""
         try:
             abbr = self._get_abbreviation()
             self.db_set("abbr", abbr)
 
-            company_name = abbr
+            company_name = self.company_name if self.agent_type == "Company" else abbr
 
             # Create company if it doesn't exist
             if not frappe.db.exists("Company", {"company_name": company_name}):
@@ -22,17 +32,23 @@ class Agent(Document):
             self.db_set("company", company_name)
             # Create user if email is provided and user doesn't exist
             if self.email and not frappe.db.exists("User", self.email):
-                self._create_user(self.full_name)
-        except Exception:
-            frappe.log_error(frappe.get_traceback(), "Agent after_insert Error")
-            frappe.throw(_("❌ Failed to set up Agent. Please check error logs."))
+                display_name = company_name if self.agent_type == "Company" else self.full_name
+                self._create_user(display_name)
+
+            # Create Customer and Supplier
+            self._create_customer(company_name)
+            self._create_supplier(company_name)
+
+        except Exception as e:
+            frappe.log_error(message=frappe.get_traceback(), title="Landlord after_insert Error")
+            frappe.throw(_("❌ An error occurred while setting up landlord details. Please check logs."))
 
     # -------------------------------
     # Private Helper Methods
     # -------------------------------
 
     def _create_company(self, company_name, abbr):
-        """Create a new Company and link it to the agent."""
+        """Create a new Company and link it to the landlord."""
         try:
             defaults = self._get_global_defaults()
 
@@ -42,21 +58,22 @@ class Agent(Document):
                 "abbr": abbr,
                 "default_currency": defaults.get("default_currency", "KES"),
                 "country": defaults.get("country", "Kenya"),
+                "tax_id": self.kra_pin,
                 "create_chart_of_accounts_based_on": "Existing Company",
                 "existing_company": defaults.get("default_company")
             })
             company.insert(ignore_permissions=True)
 
             frappe.msgprint(
-                _("✅ Agent created successfully and linked to Company <b>{0}</b>.").format(company_name),
+                _("✅ Landlord created successfully and linked to Company <b>{0}</b>.").format(company_name),
                 indicator="green", alert=True
             )
         except Exception:
             frappe.log_error(frappe.get_traceback(), "Company Creation Failed")
-            frappe.throw(_("❌ Failed to create associated Company for this Agent."))
+            frappe.throw(_("❌ Failed to create associated Company for this Landlord. Check error logs."))
 
     def _create_user(self, name):
-        """Create User for Agent and assign permissions."""
+        """Create a user for the landlord and assign permissions."""
         try:
             user = frappe.get_doc({
                 "doctype": "User",
@@ -68,17 +85,18 @@ class Agent(Document):
             user.insert(ignore_permissions=True)
             self.db_set("user", user.name)
 
-            self._assign_user_permission(user.name, "Agent", self.name)
+            # Assign permissions
+            self._assign_user_permission(user.name, "agent", self.name)
             self._assign_user_permission(user.name, "Company", self.company)
 
-            frappe.msgprint(_("✅ User <b>{0}</b> created successfully.").format(user.name), indicator="green", alert=True)
+            frappe.msgprint(_("✅ User <b>{0}</b> created successfully.").format(user.name),indicator="green", alert=True)
 
         except Exception:
-            frappe.log_error(frappe.get_traceback(), "Agent User Creation Failed")
-            frappe.throw(_("❌ Failed to create User for this Agent."))
+            frappe.log_error(frappe.get_traceback(), "User Creation Failed")
+            frappe.throw(_("❌ Failed to create user for this Landlord. Check error logs."))
 
     def _assign_user_permission(self, user, doctype, value):
-        """Assign permission to a user for a doctype."""
+        """Assign user permission for a specific doctype and value."""
         try:
             frappe.get_doc({
                 "doctype": "User Permission",
@@ -88,6 +106,42 @@ class Agent(Document):
             }).insert(ignore_permissions=True)
         except Exception:
             frappe.log_error(frappe.get_traceback(), f"Failed to assign permission for {doctype}")
+
+    def _create_customer(self, customer_name):
+        """Create a Customer for the Landlord."""
+        try:
+            if not frappe.db.exists("Customer", {"customer_name": customer_name}):
+                customer = frappe.get_doc({
+                    "doctype": "Customer",
+                    "customer_name": customer_name,
+                    "customer_type": "Company" if self.agent_type == "Company" else "Individual"
+                })
+                customer.insert(ignore_permissions=True)
+                frappe.msgprint(
+                _("✅ Customer created successfully <b>{0}</b>.").format(customer_name),indicator="green", alert=True
+            )
+                self.db_set("customer", customer.name)
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "Customer Creation Failed")
+            frappe.throw(_("❌ Failed to create Customer for this Landlord. Check logs."))
+
+    def _create_supplier(self, supplier_name):
+        """Create a Supplier for the Landlord."""
+        try:
+            if not frappe.db.exists("Supplier", {"supplier_name": supplier_name}):
+                supplier = frappe.get_doc({
+                    "doctype": "Supplier",
+                    "supplier_name": supplier_name,
+                    "supplier_type": "Company" if self.agent_type == "Company" else "Individual"
+                })
+                supplier.insert(ignore_permissions=True)
+                frappe.msgprint(
+                _("✅ Supplier created successfully <b>{0}</b>.").format(supplier_name),indicator="green", alert=True
+            )
+                self.db_set("supplier", supplier.name)
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "Supplier Creation Failed")
+            frappe.throw(_("❌ Failed to create Supplier for this Landlord. Check logs."))
 
     def _get_abbreviation(self):
         """Generate a unique 3-letter abbreviation."""
@@ -106,7 +160,7 @@ class Agent(Document):
         frappe.throw(_("❌ Unable to generate a unique abbreviation after {0} attempts.").format(max_attempts))
 
     def _get_global_defaults(self):
-        """Fetch global defaults like company, currency, country."""
+        """Fetch global defaults once to reduce DB calls."""
         try:
             return {
                 "default_company": frappe.db.get_single_value("Global Defaults", "default_company"),
