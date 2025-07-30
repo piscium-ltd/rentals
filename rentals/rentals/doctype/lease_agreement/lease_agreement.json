@@ -52,17 +52,23 @@
   "prorate_last_invoice",
   "recurring_charges_section",
   "base_rental_amount",
+  "item",
   "column_break_hqwg",
-  "billing_frequency",
+  "billing_cycle",
+  "column_break_bpgo",
+  "billing_date",
   "section_break_aqzz",
   "chargeable_services",
+  "chargeable_services_sub_total",
   "deposits_and_other_terms_section",
   "security_deposits",
-  "contingent_rent_terms",
+  "security_deposits_sub_total",
   "section_break_guxm",
   "column_break_rkwi",
   "column_break_tvde",
   "grand_total",
+  "section_break_llyu",
+  "contingent_rent_terms",
   "authorised_by_section",
   "signee",
   "obligations_and_clauses_tab",
@@ -342,8 +348,7 @@
    "fieldname": "chargeable_services",
    "fieldtype": "Table",
    "label": "Chargeable Services",
-   "options": "Chargeable Services",
-   "reqd": 1
+   "options": "Chargeable Services"
   },
   {
    "fieldname": "column_break_rkwi",
@@ -395,18 +400,12 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "billing_frequency",
-   "fieldtype": "Select",
-   "label": "Billing Frequency",
-   "options": "Monthly\nQuarterly\nAnnually",
-   "reqd": 1
-  },
-  {
    "fieldname": "deposits_and_other_terms_section",
    "fieldtype": "Section Break",
    "label": "Deposits and Other Terms"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "security_deposits",
    "fieldtype": "Table",
    "label": "Security Deposits",
@@ -431,7 +430,8 @@
    "in_standard_filter": 1,
    "label": "Company",
    "options": "Company",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "property_assignment",
@@ -483,6 +483,52 @@
    "hidden": 1,
    "label": "Customer",
    "options": "Customer"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "chargeable_services_sub_total",
+   "fieldtype": "Currency",
+   "label": "Chargeable Services Sub Total",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "security_deposits_sub_total",
+   "fieldtype": "Currency",
+   "label": "Security Deposits Sub Total",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_llyu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Monthly",
+   "fieldname": "billing_cycle",
+   "fieldtype": "Select",
+   "label": "Billing Cycle",
+   "options": "Daily\nMonthly\nQuarterly\nAnnually",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_bpgo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "billing_date",
+   "fieldtype": "Date",
+   "label": "Next Billing Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Item",
+   "options": "Item"
   }
  ],
  "grid_page_length": 50,
@@ -506,7 +552,7 @@
    "link_fieldname": "lease_agreement"
   }
  ],
- "modified": "2025-07-30 01:11:41.466745",
+ "modified": "2025-07-30 23:05:55.708344",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",

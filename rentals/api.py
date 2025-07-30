@@ -101,8 +101,9 @@ def handle_full_agency_invoices(lease, currency):
     """
     try:
         landlord_company = frappe.db.get_value("Landlord", lease.landlord, "company")
+        agent_company = frappe.db.get_value("Agent", lease.agent, "company")
         agent_customer = frappe.db.get_value("Agent", lease.agent, "customer")
-        agent_supplier = frappe.db.get_value("Agent", lease.agent, "supplier")
+        landlord_supplier = frappe.db.get_value("Landlord", lease.landlord, "supplier")
         agent_price_list = frappe.db.get_value("Customer", agent_customer, "default_price_list")
 
         if not all([landlord_company, agent_customer, agent_supplier, agent_price_list]):
@@ -123,7 +124,7 @@ def handle_full_agency_invoices(lease, currency):
         created = []
         if recurring_items:
             created.append(create_sales_invoice(agent_customer, landlord_company, lease, recurring_items, currency, agent_price_list, "Invoice for onboarding"))
-            created.append(create_purchase_invoice(agent_supplier, landlord_company, lease, recurring_items, currency, agent_price_list, "Invoice for onboarding"))
+            created.append(create_purchase_invoice(landlord_supplier, agent_company, lease, recurring_items, currency, agent_price_list, "Invoice for onboarding"))
 
         return created
 

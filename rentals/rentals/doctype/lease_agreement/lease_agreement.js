@@ -32,6 +32,23 @@ frappe.ui.form.on("Lease Agreement", {
 				},
 			};
 		};
+		frm.fields_dict.security_deposits.grid.get_field("security_type").get_query = function (
+			doc,
+			cdt,
+			cdn
+		) {
+			let current_row = locals[cdt][cdn];
+			let selected_security_type = (doc.security_deposits || [])
+				.filter((row) => row.name !== current_row.name && row.security_type)
+				.map((row) => row.security_type);
+
+			return {
+				filters: {
+					item_group: "Rental Security Deposits",
+					name: ["not in", selected_security_type],
+				},
+			};
+		};
 
 		if (frm.doc.docstatus === 1) {
 			// only show for submitted leases
@@ -103,6 +120,21 @@ frappe.ui.form.on("Lease Agreement", {
 	},
 	start_date: function (frm) {
 		validate_dates(frm);
+	},
+	billing_cycle: function (frm) {
+		let today = frappe.datetime.get_today();
+		let next_date;
+		if (frm.doc.billing_cycle === "Daily") {
+			next_date = frappe.datetime.add_days(today, 1);
+		} else if (frm.doc.billing_cycle === "Monthly") {
+			next_date = frappe.datetime.add_months(today, 1);
+		} else if (frm.doc.billing_cycle === "Quaterly") {
+			next_date = frappe.datetime.add_months(today, 3);
+		} else if (frm.doc.billing_cycle === "Annually") {
+			next_date = frappe.datetime.add_years(today, 1);
+		}
+
+		frappe.set_value("billing_date", next_date);
 	},
 });
 
