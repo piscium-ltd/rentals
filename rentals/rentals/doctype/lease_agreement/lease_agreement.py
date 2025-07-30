@@ -168,6 +168,7 @@ class LeaseAgreement(Document):
                 "price_list_name": name,
                 "currency": self.billing_currency,
                 "selling": 1,
+                "buying": 1,
                 "enabled": 1
             }).insert(ignore_permissions=True)
 
