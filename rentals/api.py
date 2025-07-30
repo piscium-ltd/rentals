@@ -54,50 +54,96 @@ def bank_payment_webhook(account_number, amount):
         frappe.log_error(frappe.get_traceback(), "Bank Payment Webhook Error")
         frappe.throw(f"An error occurred while processing the payment: {str(e)}")
 
-
 def handle_sales_order_invoices(lease, sales_order, customer, company, currency, price_list):
     """
-    Creates sales invoices for 'Once' and recurring services based on a Sales Order.
+    Generate Sales Invoices for deposit and recurring services from a Sales Order.
     """
     try:
         so_doc = frappe.get_doc("Sales Order", sales_order)
         if so_doc.per_billed >= 100:
             return []
 
-        once_items, recurring_items = [], []
+        # Prepare security deposits for deposit certificate
+        deposit_items = []
+        for row in lease.security_deposits:
+            so_detail = frappe.db.get_value(
+                "Sales Order Item",
+                {"parent": so_doc.name, "item_code": row.security_type},
+                "name"
+            )
+            if so_detail:
+                deposit_items.append({
+                    "item_code": row.security_type,
+                    "qty": 1,
+                    "rate": row.rate,
+                    "description": "Security Deposit",
+                    "sales_order": so_doc.name,
+                    "so_detail": so_detail
+                })
 
-        # Categorize chargeable services
+        # Prepare rent + chargeable services for recurring invoice
+        recurring_items = []
+
+        # Add rent item
+        if lease.rent_item and lease.base_rental_amount:
+            so_detail = frappe.db.get_value(
+                "Sales Order Item",
+                {"parent": so_doc.name, "item_code": lease.rent_item},
+                "name"
+            )
+            if so_detail:
+                recurring_items.append({
+                    "item_code": lease.rent_item,
+                    "qty": 1,
+                    "rate": lease.base_rental_amount,
+                    "description": "Base Rent",
+                    "sales_order": so_doc.name,
+                    "so_detail": so_detail
+                })
+
+        # Add chargeable services
         for row in lease.chargeable_services:
-            item = {
-                "item_code": row.service,
-                "qty": 1,
-                "rate": row.rate,
-                "description": row.billing_cycle,
-                "sales_order": so_doc.name,
-                "so_detail": frappe.db.get_value(
-                    "Sales Order Item", {"parent": so_doc.name, "item_code": row.service}, "name"
-                )
-            }
-            (once_items if row.billing_cycle == "Once" else recurring_items).append(item)
+            so_detail = frappe.db.get_value(
+                "Sales Order Item",
+                {"parent": so_doc.name, "item_code": row.service},
+                "name"
+            )
+            if so_detail:
+                recurring_items.append({
+                    "item_code": row.service,
+                    "qty": 1,
+                    "rate": row.rate,
+                    "description": row.billing_cycle,
+                    "sales_order": so_doc.name,
+                    "so_detail": so_detail
+                })
 
         created = []
-        if once_items:
-            created.append(create_sales_invoice(customer, company, lease, once_items, currency, price_list, "Deposit Certificate for onboarding"))
+
+        if deposit_items:
+            created.append(create_sales_invoice(
+                customer, company, lease, deposit_items,
+                currency, price_list,
+                "Deposit Certificate for onboarding"
+            ))
 
         if recurring_items:
-            created.append(create_sales_invoice(customer, company, lease, recurring_items, currency, price_list, "Initial recurring services invoice"))
+            created.append(create_sales_invoice(
+                customer, company, lease, recurring_items,
+                currency, price_list,
+                "Initial recurring services invoice"
+            ))
 
         return created
 
-    except Exception as e:
+    except Exception:
         frappe.log_error(frappe.get_traceback(), "Sales Order Invoice Creation Error")
         frappe.msgprint("Error creating sales order invoices.")
         return []
 
-
 def handle_full_agency_invoices(lease, currency):
     """
-    Creates sales and purchase invoices when the agency type is 'Full Agency'.
+    Creates sales and purchase invoices for rent item if agency type is 'Full Agency'.
     """
     try:
         landlord_company = frappe.db.get_value("Landlord", lease.landlord, "company")
@@ -106,25 +152,40 @@ def handle_full_agency_invoices(lease, currency):
         landlord_supplier = frappe.db.get_value("Landlord", lease.landlord, "supplier")
         agent_price_list = frappe.db.get_value("Customer", agent_customer, "default_price_list")
 
-        if not all([landlord_company, agent_customer, agent_supplier, agent_price_list]):
+        if not all([landlord_company, agent_company, agent_customer, landlord_supplier, agent_price_list]):
             frappe.msgprint("Missing linked company, customer, supplier or price list.")
             return []
 
-        # Filter only recurring services
-        recurring_items = [
-            {
-                "item_code": row.service,
-                "qty": 1,
-                "rate": row.rate,
-                "description": row.billing_cycle
-            }
-            for row in lease.chargeable_services if row.billing_cycle != "Once"
-        ]
+        if not lease.rent_item or not lease.base_rental_amount:
+            frappe.msgprint("Missing rent item or base rental amount.")
+            return []
+
+        rent_item = [{
+            "item_code": lease.rent_item,
+            "qty": 1,
+            "rate": lease.base_rental_amount,
+            "description": "Rent"
+        }]
 
         created = []
-        if recurring_items:
-            created.append(create_sales_invoice(agent_customer, landlord_company, lease, recurring_items, currency, agent_price_list, "Invoice for onboarding"))
-            created.append(create_purchase_invoice(landlord_supplier, agent_company, lease, recurring_items, currency, agent_price_list, "Invoice for onboarding"))
+        created.append(create_sales_invoice(
+            agent_customer,
+            landlord_company,
+            lease,
+            rent_item,
+            currency,
+            agent_price_list,
+            "Rent invoice to Agent"
+        ))
+        created.append(create_purchase_invoice(
+            landlord_supplier,
+            agent_company,
+            lease,
+            rent_item,
+            currency,
+            agent_price_list,
+            "Rent invoice from Landlord"
+        ))
 
         return created
 
@@ -132,7 +193,6 @@ def handle_full_agency_invoices(lease, currency):
         frappe.log_error(frappe.get_traceback(), "Full Agency Invoice Error")
         frappe.msgprint("Failed to create full agency invoices.")
         return []
-
 
 def create_sales_invoice(customer, company, lease, items, currency, price_list, remarks):
     """
@@ -156,7 +216,6 @@ def create_sales_invoice(customer, company, lease, items, currency, price_list, 
     invoice.submit()
     return invoice.name
 
-
 def create_purchase_invoice(supplier, company, lease, items, currency, price_list, remarks):
     """
     Creates and submits a purchase invoice.
@@ -178,7 +237,6 @@ def create_purchase_invoice(supplier, company, lease, items, currency, price_lis
     invoice.insert()
     invoice.submit()
     return invoice.name
-
 
 def allocate_payment_to_invoices(lease, customer, amount):
     """
@@ -215,7 +273,6 @@ def allocate_payment_to_invoices(lease, customer, amount):
         remaining -= to_allocate
 
     return references, remaining
-
 
 def create_payment_entry(lease, customer, company, amount, unallocated, references, posting_date):
     """
