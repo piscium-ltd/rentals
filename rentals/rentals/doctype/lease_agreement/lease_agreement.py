@@ -7,18 +7,9 @@ import random
 from frappe.model.document import Document
 from frappe import _
 from frappe.utils import (
-    today, add_days, add_months, add_years, getdate, nowdate, get_url
+    today, add_days, add_months, getdate, nowdate, get_url, flt
 )
 from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
-
-BILLING_CYCLE_DAYS = {
-    "Once": 0,
-    "Daily": 1,
-    "Weekly": 7,
-    "Monthly": "monthly",
-    "Annually": "annually"
-}
-
 
 class LeaseAgreement(Document):
     def autoname(self):
@@ -81,55 +72,83 @@ class LeaseAgreement(Document):
             ))
 
     def before_save(self):
-        """Set default customer, property assignment, and compute totals before saving."""
+        """Set default customer, property assignment, compute dates and calculate totals before saving."""
+        self._set_rent_item_if_missing()
         self._set_customer_if_missing()
         self._set_property_assignment_if_missing()
-        self._compute_grand_total_and_billing_dates()
+        self._compute_billing_dates()
+        self._calculate_chargeable_services_subtotal()
+        self._calculate_security_deposits_subtotal()
+        self._calculate_grand_total()
+
+    def _set_rent_item_if_missing(self):
+        """Set the item field to 'Rent' if it is not already set."""
+        if not self.rent_item:
+            self.rent_item = "Rent"
 
     def _set_customer_if_missing(self):
         """Set customer from linked tenant, if not already set."""
-        if not self.tenant or self.customer:
-            return
-
-        customer = frappe.db.get_value("Tenant", self.tenant, "customer")
-        if customer:
-            self.customer = customer
+        if self.tenant and not self.customer:
+            self.customer = frappe.db.get_value("Tenant", self.tenant, "customer")
 
     def _set_property_assignment_if_missing(self):
         """Set property assignment from available property assignments."""
-        if not self.property or self.property_assignment:
-            return
+        if self.property and not self.property_assignment:
+            assignment = frappe.get_all(
+                "Property Assignment",
+                filters={"property": self.property},
+                fields=["name"],
+                limit_page_length=1
+            )
+            if assignment:
+                self.property_assignment = assignment[0].name
 
-        assignment = frappe.get_all(
-            "Property Assignment",
-            filters={"property": self.property},
-            fields=["name"],
-            limit_page_length=1
-        )
+    def _compute_billing_dates(self):
+        """Set billing_date for self and all chargeable services without a billing_date."""
+        today_date = getdate(today())
 
-        if assignment:
-            self.property_assignment = assignment[0].name
-
-    def _compute_grand_total_and_billing_dates(self):
-        """Calculate the grand total and assign billing dates for all chargeable services."""
-        total = 0
-        base_date = getdate(today())
+        if self.billing_cycle and not self.billing_date:
+            self.billing_date = self._get_billing_date(self.billing_cycle, today_date)
 
         for row in self.chargeable_services:
-            total += row.rate
-            if not row.billing_date:
-                row.billing_date = self._get_billing_date(row.billing_cycle, base_date)
+            if row.billing_cycle and not row.billing_date:
+                row.billing_date = self._get_billing_date(row.billing_cycle, today_date)
 
-        self.grand_total = total
-
-    def _get_billing_date(self, cycle, base_date):
+    def _get_billing_date(self, cycle, base_date=None):
         """Return next billing date based on the billing cycle."""
-        if cycle == "Monthly":
-            return add_months(base_date, 1)
-        elif cycle == "Annually":
-            return add_years(base_date, 1)
-        else:
-            return add_days(base_date, BILLING_CYCLE_DAYS.get(cycle, 0))
+        base_date = base_date or getdate(today())
+
+        match cycle:
+            case "Once":
+                return base_date
+            case "Daily":
+                return add_days(base_date, 1)
+            case "Weekly":
+                return add_days(base_date, 7)
+            case "Monthly":
+                return add_months(base_date, 1)
+            case "Quarterly":
+                return add_months(base_date, 3)
+            case "Annually":
+                return add_months(base_date, 12)
+            case _:
+                return None
+
+    def _calculate_chargeable_services_subtotal(self):
+        """Compute total for chargeable services and update subtotal field."""
+        self.chargeable_services_subtotal = sum(flt(row.rate) for row in self.chargeable_services)
+
+    def _calculate_security_deposits_subtotal(self):
+        """Compute total for security deposits and update subtotal field."""
+        self.security_deposits_subtotal = sum(flt(row.rate) for row in self.security_deposits)
+
+    def _calculate_grand_total(self):
+        """Compute grand total from base rent, chargeable services, and security deposits."""
+        self.grand_total = sum([
+            flt(self.base_rental_amount),
+            flt(self.chargeable_services_subtotal),
+            flt(self.security_deposits_subtotal),
+        ])
 
     def on_submit(self):
         """Handle unit occupation, customer setup, and create sales and payment documents."""
@@ -240,16 +259,44 @@ class LeaseAgreement(Document):
             )
 
     def _create_sales_order(self):
-        """Create a Sales Order using the chargeable services."""
+        """Create a Sales Order with rent, chargeable services, and security deposits."""
         if self.get("__is_duplicate"):
             return
 
-        items = [{
-            "item_code": row.service,
-            "qty": 1,
-            "rate": row.rate,
-            "delivery_date": nowdate()
-        } for row in self.chargeable_services if row.rate]
+        items = []
+
+        # Add rent item
+        if self.rent_item and self.base_rental_amount:
+            items.append({
+                "item_code": self.rent_item,
+                "qty": 1,
+                "rate": self.base_rental_amount,
+                "delivery_date": nowdate()
+            })
+
+        # Add chargeable services
+        for row in self.chargeable_services:
+            if row.service and row.rate:
+                items.append({
+                    "item_code": row.service,
+                    "qty": 1,
+                    "rate": row.rate,
+                    "delivery_date": nowdate()
+                })
+
+        # Add security deposits
+        for row in self.security_deposits:
+            if row.security_type and row.rate:
+                items.append({
+                    "item_code": row.security_type,
+                    "qty": 1,
+                    "rate": row.rate,
+                    "delivery_date": nowdate()
+                })
+
+        if not items:
+            frappe.msgprint(_("No items to add to Sales Order. Skipping creation."))
+            return
 
         sales_order = frappe.get_doc({
             "doctype": "Sales Order",
@@ -333,7 +380,6 @@ class LeaseAgreement(Document):
             indicator="green"
         )
 
-
 def generate_luhn_number(num_digits):
     """
     Generate a random number string of specified length that passes the Luhn algorithm.
@@ -345,7 +391,6 @@ def generate_luhn_number(num_digits):
     base = [random.randint(0, 9) for _ in range(num_digits - 1)]
     check_digit = calculate_luhn_check_digit(base)
     return ''.join(map(str, base + [check_digit]))
-
 
 def calculate_luhn_check_digit(digits):
     """

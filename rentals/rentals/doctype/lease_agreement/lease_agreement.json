@@ -52,17 +52,17 @@
   "prorate_last_invoice",
   "recurring_charges_section",
   "base_rental_amount",
-  "item",
+  "rent_item",
   "column_break_hqwg",
   "billing_cycle",
   "column_break_bpgo",
   "billing_date",
   "section_break_aqzz",
   "chargeable_services",
-  "chargeable_services_sub_total",
+  "chargeable_services_subtotal",
   "deposits_and_other_terms_section",
   "security_deposits",
-  "security_deposits_sub_total",
+  "security_deposits_subtotal",
   "section_break_guxm",
   "column_break_rkwi",
   "column_break_tvde",
@@ -485,31 +485,14 @@
    "options": "Customer"
   },
   {
-   "allow_on_submit": 1,
-   "fieldname": "chargeable_services_sub_total",
-   "fieldtype": "Currency",
-   "label": "Chargeable Services Sub Total",
-   "non_negative": 1,
-   "read_only": 1
-  },
-  {
-   "allow_on_submit": 1,
-   "fieldname": "security_deposits_sub_total",
-   "fieldtype": "Currency",
-   "label": "Security Deposits Sub Total",
-   "non_negative": 1,
-   "read_only": 1
-  },
-  {
    "fieldname": "section_break_llyu",
    "fieldtype": "Section Break"
   },
   {
-   "default": "Monthly",
    "fieldname": "billing_cycle",
    "fieldtype": "Select",
    "label": "Billing Cycle",
-   "options": "Daily\nMonthly\nQuarterly\nAnnually",
+   "options": "\nDaily\nMonthly\nQuarterly\nAnnually",
    "reqd": 1
   },
   {
@@ -524,10 +507,26 @@
    "reqd": 1
   },
   {
-   "fieldname": "item",
+   "allow_on_submit": 1,
+   "fieldname": "chargeable_services_subtotal",
+   "fieldtype": "Currency",
+   "label": "Chargeable Services Subtotal",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "security_deposits_subtotal",
+   "fieldtype": "Currency",
+   "label": "Security Deposits Subtotal",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "rent_item",
    "fieldtype": "Link",
    "hidden": 1,
-   "label": "Item",
+   "label": "Rent Item",
    "options": "Item"
   }
  ],
@@ -552,7 +551,7 @@
    "link_fieldname": "lease_agreement"
   }
  ],
- "modified": "2025-07-30 23:05:55.708344",
+ "modified": "2025-07-31 01:12:41.584280",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",
