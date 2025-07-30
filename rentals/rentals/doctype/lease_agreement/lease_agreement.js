@@ -169,12 +169,8 @@ function get_billing_date(cycle) {
 	const today_date = frappe.datetime.get_today();
 
 	switch (cycle) {
-		case "Once":
-			return today_date;
 		case "Daily":
 			return frappe.datetime.add_days(today_date, 1);
-		case "Weekly":
-			return frappe.datetime.add_days(today_date, 7);
 		case "Monthly":
 			return frappe.datetime.add_months(today_date, 1);
 		case "Quarterly":

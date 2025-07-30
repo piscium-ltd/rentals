@@ -25,7 +25,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Billing Cycle",
-   "options": "\nOnce\nDaily\nWeekly\nMonthly\nAnnually",
+   "options": "\nDaily\nMonthly\nQuarterly\nAnnually",
    "reqd": 1
   },
   {
@@ -48,7 +48,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-05 00:39:50.074366",
+ "modified": "2025-07-31 02:18:06.854156",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Chargeable Services",

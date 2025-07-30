@@ -119,12 +119,8 @@ class LeaseAgreement(Document):
         base_date = base_date or getdate(today())
 
         match cycle:
-            case "Once":
-                return base_date
             case "Daily":
                 return add_days(base_date, 1)
-            case "Weekly":
-                return add_days(base_date, 7)
             case "Monthly":
                 return add_months(base_date, 1)
             case "Quarterly":
