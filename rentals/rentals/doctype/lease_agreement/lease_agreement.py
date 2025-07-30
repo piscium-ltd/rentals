@@ -240,6 +240,9 @@ class LeaseAgreement(Document):
 
     def _create_sales_order(self):
         """Create a Sales Order using the chargeable services."""
+        if self.get("__is_duplicate"):
+            return
+
         items = [{
             "item_code": row.service,
             "qty": 1,
@@ -270,6 +273,9 @@ class LeaseAgreement(Document):
 
     def _create_payment_request(self, sales_order):
         """Create a Payment Request and email it to the customer."""
+        if self.get("__is_duplicate"):
+            return
+
         email = frappe.db.get_value("Customer", self.customer, "email_id")
         if not email:
             frappe.msgprint(_("Tenant has no email. Payment Request skipped."), alert=True)
