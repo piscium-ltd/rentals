@@ -72,15 +72,14 @@ frappe.ui.form.on("Lease Agreement", {
 							const links = r.message.invoices
 								.map((inv) => {
 									const url = `/app/sales-invoice/${inv}`;
-									window.open(url, "_blank");
 									return `<a href="${url}" target="_blank">${inv}</a>`;
 								})
 								.join("<br>");
 
 							frappe.msgprint({
-								title: __("Sales Invoice(s) Created"),
+								title: __(r.message.message),
 								indicator: "green",
-								message: __(r.message.message + "<br><br>" + links),
+								message: __("<b>" + links + "<b>"),
 							});
 
 							frm.reload_doc();
