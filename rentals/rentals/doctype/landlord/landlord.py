@@ -80,7 +80,7 @@ class Landlord(Document):
                 "email": self.email,
                 "first_name": name,
                 "send_welcome_email": 0,
-                "role_profiles": [{"role_profile": "Rentals"}]
+                "role_profile_name": [{"role_profile": "Rentals"}]
             })
             user.insert(ignore_permissions=True)
             self.db_set("user", user.name)
