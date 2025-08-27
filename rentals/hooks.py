@@ -237,4 +237,12 @@ scheduler_events = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
-fixtures = ["Item", "Item Group", "Custom Field", "Role", "Role Profile", "Asset Category"]
+fixtures = ["Item", "Item Group","Role", "Role Profile", "Asset Category",
+    {
+        "dt": "Custom Field",
+        "filters": [
+            ["dt", "in", ["Payment Entry", "Purchase Invoice", "Sales Invoice", "Sales Order"]]
+        ]
+    },
+    
+]
