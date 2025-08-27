@@ -30,7 +30,8 @@ class Property(Document):
                 "company": company,
                 "location": self.location,
                 "is_existing_asset": 1,
-                "available_for_use_date": today(),
+                "purchase_date": today(),
+				"available_for_use_date": today(),
                 "gross_purchase_amount": self.current_fair_value or 1,
             })
 
