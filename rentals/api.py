@@ -229,7 +229,7 @@ def create_sales_invoice(customer, company, lease, items, currency, price_list, 
         "remarks": remarks
     })
     invoice.insert(ignore_permissions=True)
-    invoice.submit(ignore_permissions=True)
+    invoice.submit()
     return invoice.name
 
 def create_purchase_invoice(supplier, company, lease, items, currency, price_list, remarks):
@@ -249,7 +249,7 @@ def create_purchase_invoice(supplier, company, lease, items, currency, price_lis
         "remarks": remarks
     })
     invoice.insert(ignore_permissions=True)
-    invoice.submit(ignore_permissions=True)
+    invoice.submit()
     return invoice.name
 
 def allocate_payment_to_invoices(lease, customer, amount):
@@ -302,5 +302,5 @@ def create_payment_entry(lease, customer, company, amount, unallocated, referenc
         "references": references
     })
     payment_entry.insert(ignore_permissions=True)
-    payment_entry.submit(ignore_permissions=True)
+    payment_entry.submit()
     return payment_entry
