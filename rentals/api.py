@@ -301,7 +301,9 @@ def create_payment_entry(lease, customer, company, amount, unallocated, referenc
         "custom_lease_agreement": lease.name,
         "reference_no": lease.name,
         "reference_date": posting_date,
-        "references": references
+        "references": references,
+        "target_exchange_rate": 1,
+        "source_exchange_rate": 1,
     })
     frappe.set_user("Administrator")
     payment_entry.insert()
