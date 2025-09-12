@@ -304,6 +304,8 @@ def create_payment_entry(lease, customer, company, amount, unallocated, referenc
         "references": references
     })
     payment_entry.flags.ignore_permissions = True
+    payment_entry.flags.ignore_links = True
+    payment_entry.flags.ignore_mandatory = True
     payment_entry.insert(ignore_permissions=True)
     payment_entry.submit()
     return payment_entry
