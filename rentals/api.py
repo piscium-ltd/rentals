@@ -228,6 +228,7 @@ def create_sales_invoice(customer, company, lease, items, currency, price_list, 
         "items": items,
         "remarks": remarks
     })
+    invoice.flags.ignore_permissions = True
     invoice.insert(ignore_permissions=True)
     invoice.submit()
     return invoice.name
@@ -248,6 +249,7 @@ def create_purchase_invoice(supplier, company, lease, items, currency, price_lis
         "items": items,
         "remarks": remarks
     })
+    invoice.flags.ignore_permissions = True
     invoice.insert(ignore_permissions=True)
     invoice.submit()
     return invoice.name
@@ -302,6 +304,6 @@ def create_payment_entry(lease, customer, company, amount, unallocated, referenc
         "references": references
     })
     payment_entry.flags.ignore_permissions = True
-    payment_entry.insert()
+    payment_entry.insert(ignore_permissions=True)
     payment_entry.submit()
     return payment_entry
