@@ -2,13 +2,54 @@ import frappe
 from frappe.utils import getdate, nowdate
 
 @frappe.whitelist(allow_guest=True)
-def bank_payment_webhook(account_number, amount):
-    """
-    Webhook to process incoming bank payments for a lease agreement.
+def payment_validation():
+    """M-Pesa C2B Validation URL handler."""
+    try:
+        data = frappe.local.form_dict
+        account_number = data.get("BillRefNumber")
 
-    Creates sales and purchase invoices if needed and allocates the payment 
-    to outstanding invoices related to the lease agreement.
-    """
+        if frappe.db.exists("Lease Agreement", account_number):
+            return {"ResultCode": 0, "ResultDesc": "Accepted"}
+        return {"ResultCode": "C2B00012", "ResultDesc": "Invalid Account Number"}
+
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "M-Pesa C2B Validation Error")
+        return {"ResultCode": "C2B00016", "ResultDesc": f"Validation error: {str(e)}"}
+
+@frappe.whitelist(allow_guest=True)
+def payment_confirmation():
+    """M-Pesa C2B Confirmation URL handler."""
+    try:
+        data = frappe.local.form_dict
+        account_number = data.get("BillRefNumber")
+        amount = data.get("TransAmount")
+        mpesa_receipt = data.get("TransID")
+        phone_number = data.get("MSISDN")
+
+        if not account_number:
+            return {"ResultCode": "C2B00012", "ResultDesc": "Invalid Account Number"}
+        if not amount:
+            return {"ResultCode": "C2B00013", "ResultDesc": "Invalid Amount"}
+
+        # Process the payment
+        result = payment_webhook(account_number, amount)
+
+        # Attach metadata to Payment Entry
+        if result.get("payment_entry"):
+            frappe.db.set_value("Payment Entry", result["payment_entry"], {
+                "reference_no": mpesa_receipt,
+                "reference_date": getdate(nowdate()),
+                "remarks": f"M-Pesa payment from {phone_number}"
+            })
+
+        return {"ResultCode": 0, "ResultDesc": "Confirmation received successfully"}
+
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "M-Pesa C2B Confirmation Error")
+        return {"ResultCode": "C2B00016", "ResultDesc": f"Processing error: {str(e)}"}
+
+def payment_webhook(account_number, amount):
+    """Core webhook that processes payments for a Lease Agreement."""
     try:
         amount = float(amount)
         posting_date = getdate(nowdate())
@@ -23,7 +64,7 @@ def bank_payment_webhook(account_number, amount):
         currency = lease.billing_currency
         created_invoices = []
 
-        # Check if a sales order exists and generate relevant invoices
+        # Handle Sales Order invoices
         sales_order = frappe.db.get_value("Sales Order", {"custom_lease_agreement": lease.name}, "name")
         if sales_order:
             created_invoices += handle_sales_order_invoices(
@@ -34,10 +75,10 @@ def bank_payment_webhook(account_number, amount):
             if lease.agency_type == "Full Agency":
                 created_invoices += handle_full_agency_invoices(lease, currency)
 
-        # Allocate payment to outstanding invoices
+        # Allocate payment to invoices
         references, unallocated = allocate_payment_to_invoices(lease, customer, amount)
 
-        # Create the payment entry
+        # Create Payment Entry
         payment_entry = create_payment_entry(
             lease, customer, company, amount, unallocated, references, posting_date
         )
@@ -52,19 +93,18 @@ def bank_payment_webhook(account_number, amount):
 
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Bank Payment Webhook Error")
-        frappe.throw(f"An error occurred while processing the payment: {str(e)}")
+        frappe.throw(f"Error while processing payment: {str(e)}")
 
 def handle_sales_order_invoices(lease, sales_order, customer, company, currency, price_list):
-    """
-    Generate Sales Invoices for deposit and recurring services from a Sales Order.
-    """
+    """Generate invoices (deposit + recurring) from Sales Order linked to Lease."""
     try:
         so_doc = frappe.get_doc("Sales Order", sales_order)
         if so_doc.per_billed >= 100:
             return []
 
-        # Prepare security deposits for deposit certificate
-        deposit_items = []
+        deposit_items, recurring_items, created = [], [], []
+
+        # Security deposits
         for row in lease.security_deposits:
             so_detail = frappe.db.get_value(
                 "Sales Order Item",
@@ -81,10 +121,7 @@ def handle_sales_order_invoices(lease, sales_order, customer, company, currency,
                     "so_detail": so_detail
                 })
 
-        # Prepare rent + chargeable services for recurring invoice
-        recurring_items = []
-
-        # Add rent item
+        # Rent
         if lease.rent_item and lease.base_rental_amount:
             so_detail = frappe.db.get_value(
                 "Sales Order Item",
@@ -101,7 +138,7 @@ def handle_sales_order_invoices(lease, sales_order, customer, company, currency,
                     "so_detail": so_detail
                 })
 
-        # Add chargeable services
+        # Chargeable services
         for row in lease.chargeable_services:
             so_detail = frappe.db.get_value(
                 "Sales Order Item",
@@ -117,8 +154,6 @@ def handle_sales_order_invoices(lease, sales_order, customer, company, currency,
                     "sales_order": so_doc.name,
                     "so_detail": so_detail
                 })
-
-        created = []
 
         if deposit_items:
             created.append(create_sales_invoice(
@@ -138,13 +173,10 @@ def handle_sales_order_invoices(lease, sales_order, customer, company, currency,
 
     except Exception:
         frappe.log_error(frappe.get_traceback(), "Sales Order Invoice Creation Error")
-        frappe.msgprint("Error creating sales order invoices.")
         return []
 
 def handle_full_agency_invoices(lease, currency):
-    """
-    Creates sales and purchase invoices for rent item if agency type is 'Full Agency'.
-    """
+    """Create sales & purchase invoices for 'Full Agency' leases."""
     try:
         landlord_company = frappe.db.get_value("Landlord", lease.landlord, "company")
         agent_company = frappe.db.get_value("Agent", lease.agent, "company")
@@ -153,11 +185,9 @@ def handle_full_agency_invoices(lease, currency):
         agent_price_list = frappe.db.get_value("Customer", agent_customer, "default_price_list")
 
         if not all([landlord_company, agent_company, agent_customer, landlord_supplier, agent_price_list]):
-            frappe.msgprint("Missing linked company, customer, supplier or price list.")
             return []
 
         if not lease.rent_item or not lease.base_rental_amount:
-            frappe.msgprint("Missing rent item or base rental amount.")
             return []
 
         rent_item = [{
@@ -167,37 +197,23 @@ def handle_full_agency_invoices(lease, currency):
             "description": "Rent"
         }]
 
-        created = []
-        created.append(create_sales_invoice(
-            agent_customer,
-            landlord_company,
-            lease,
-            rent_item,
-            currency,
-            agent_price_list,
-            "Rent invoice to Agent"
-        ))
-        created.append(create_purchase_invoice(
-            landlord_supplier,
-            agent_company,
-            lease,
-            rent_item,
-            currency,
-            agent_price_list,
-            "Rent invoice from Landlord"
-        ))
+        return [
+            create_sales_invoice(
+                agent_customer, landlord_company, lease, rent_item,
+                currency, agent_price_list, "Rent invoice to Agent"
+            ),
+            create_purchase_invoice(
+                landlord_supplier, agent_company, lease, rent_item,
+                currency, agent_price_list, "Rent invoice from Landlord"
+            )
+        ]
 
-        return created
-
-    except Exception as e:
+    except Exception:
         frappe.log_error(frappe.get_traceback(), "Full Agency Invoice Error")
-        frappe.msgprint("Failed to create full agency invoices.")
         return []
 
 def create_sales_invoice(customer, company, lease, items, currency, price_list, remarks):
-    """
-    Creates and submits a sales invoice.
-    """
+    """Create and submit a Sales Invoice."""
     invoice = frappe.get_doc({
         "doctype": "Sales Invoice",
         "customer": customer,
@@ -217,9 +233,7 @@ def create_sales_invoice(customer, company, lease, items, currency, price_list, 
     return invoice.name
 
 def create_purchase_invoice(supplier, company, lease, items, currency, price_list, remarks):
-    """
-    Creates and submits a purchase invoice.
-    """
+    """Create and submit a Purchase Invoice."""
     invoice = frappe.get_doc({
         "doctype": "Purchase Invoice",
         "supplier": supplier,
@@ -239,10 +253,7 @@ def create_purchase_invoice(supplier, company, lease, items, currency, price_lis
     return invoice.name
 
 def allocate_payment_to_invoices(lease, customer, amount):
-    """
-    Allocates the given amount to outstanding sales invoices related to the lease.
-    Returns list of payment references and unallocated amount.
-    """
+    """Allocate received payment to outstanding invoices."""
     invoices = frappe.get_all(
         "Sales Invoice",
         filters={
@@ -255,13 +266,10 @@ def allocate_payment_to_invoices(lease, customer, amount):
         order_by="posting_date asc"
     )
 
-    remaining = amount
-    references = []
-
+    remaining, references = amount, []
     for inv in invoices:
         if remaining <= 0:
             break
-
         to_allocate = min(inv.outstanding_amount, remaining)
         references.append({
             "reference_doctype": "Sales Invoice",
@@ -275,9 +283,7 @@ def allocate_payment_to_invoices(lease, customer, amount):
     return references, remaining
 
 def create_payment_entry(lease, customer, company, amount, unallocated, references, posting_date):
-    """
-    Creates and submits a Payment Entry to reflect the received amount.
-    """
+    """Create and submit a Payment Entry for received M-Pesa payment."""
     payment_entry = frappe.new_doc("Payment Entry")
     payment_entry.update({
         "payment_type": "Receive",
