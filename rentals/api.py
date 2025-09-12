@@ -301,6 +301,7 @@ def create_payment_entry(lease, customer, company, amount, unallocated, referenc
         "reference_date": posting_date,
         "references": references
     })
-    payment_entry.insert(ignore_permissions=True)
+    payment_entry.flags.ignore_permissions = True
+    payment_entry.insert()
     payment_entry.submit()
     return payment_entry
