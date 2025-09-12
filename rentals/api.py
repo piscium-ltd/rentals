@@ -294,6 +294,22 @@ def create_payment_entry(lease, customer, company, amount, unallocated, referenc
         "posting_date": posting_date,
         "paid_from": frappe.get_value("Company", company, "default_receivable_account"),
         "paid_to": frappe.get_value("Company", company, "default_bank_account"),
+        "cost_center": frappe.get_value("Company", company, "cost_center"),
+        "paid_from_account_currency": frappe.get_value(
+            "Account",
+            frappe.get_value("Company", company, "default_receivable_account"),
+            "account_currency"
+        ),
+        "paid_to_account_currency": frappe.get_value(
+            "Account",
+            frappe.get_value("Company", company, "default_bank_account"),
+            "account_currency"
+        ),
+        "party_account_currency": frappe.get_value(
+            "Account",
+            frappe.get_value("Company", company, "default_receivable_account"),
+            "account_currency"
+        ),
         "received_amount": amount,
         "paid_amount": amount,
         "unallocated_amount": unallocated,
@@ -301,7 +317,9 @@ def create_payment_entry(lease, customer, company, amount, unallocated, referenc
         "custom_lease_agreement": lease.name,
         "reference_no": lease.name,
         "reference_date": posting_date,
-        "references": references
+        "references": references,
+        "target_exchange_rate": 1,
+        "source_exchange_rate": 1,
     })
     payment_entry.flags.ignore_permissions = True
     payment_entry.flags.ignore_links = True
