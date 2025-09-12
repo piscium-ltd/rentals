@@ -92,7 +92,7 @@ def payment_webhook(account_number, amount):
         }
 
     except Exception as e:
-        frappe.log_error(frappe.get_traceback(), "Bank Payment Webhook Error")
+        frappe.log_error(frappe.get_traceback(), "Payment Webhook Error")
         frappe.throw(f"Error while processing payment: {str(e)}")
 
 def handle_sales_order_invoices(lease, sales_order, customer, company, currency, price_list):
@@ -172,7 +172,7 @@ def handle_sales_order_invoices(lease, sales_order, customer, company, currency,
         return created
 
     except Exception:
-        frappe.log_error(frappe.get_traceback(), "Sales Order Invoice Creation Error")
+        frappe.log_error(frappe.get_traceback(), "Sales Invoice Creation Error")
         return []
 
 def handle_full_agency_invoices(lease, currency):
@@ -228,8 +228,8 @@ def create_sales_invoice(customer, company, lease, items, currency, price_list, 
         "items": items,
         "remarks": remarks
     })
-    invoice.insert()
-    invoice.submit()
+    invoice.insert(ignore_permissions=True)
+    invoice.submit(ignore_permissions=True)
     return invoice.name
 
 def create_purchase_invoice(supplier, company, lease, items, currency, price_list, remarks):
@@ -248,8 +248,8 @@ def create_purchase_invoice(supplier, company, lease, items, currency, price_lis
         "items": items,
         "remarks": remarks
     })
-    invoice.insert()
-    invoice.submit()
+    invoice.insert(ignore_permissions=True)
+    invoice.submit(ignore_permissions=True)
     return invoice.name
 
 def allocate_payment_to_invoices(lease, customer, amount):
@@ -301,6 +301,6 @@ def create_payment_entry(lease, customer, company, amount, unallocated, referenc
         "reference_date": posting_date,
         "references": references
     })
-    payment_entry.insert()
-    payment_entry.submit()
+    payment_entry.insert(ignore_permissions=True)
+    payment_entry.submit(ignore_permissions=True)
     return payment_entry
