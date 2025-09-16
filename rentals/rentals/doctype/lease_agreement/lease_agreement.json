@@ -551,7 +551,7 @@
    "link_fieldname": "lease_agreement"
   }
  ],
- "modified": "2025-07-31 01:12:41.584280",
+ "modified": "2025-09-16 23:02:13.456264",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Lease Agreement",
@@ -567,6 +567,32 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Landlord",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agent",
    "share": 1,
    "submit": 1,
    "write": 1

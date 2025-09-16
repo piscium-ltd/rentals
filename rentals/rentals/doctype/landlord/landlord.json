@@ -224,7 +224,7 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2025-07-30 01:06:05.624579",
+ "modified": "2025-09-16 23:21:42.396722",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Landlord",
@@ -242,6 +242,15 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agent",
+   "share": 1
   }
  ],
  "row_format": "Dynamic",

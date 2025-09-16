@@ -12,6 +12,7 @@
   "column_break_widu",
   "landlord",
   "landlord_name",
+  "created_by_agent",
   "ifrs_accounting_model_section",
   "accounting_model",
   "last_valuation_date",
@@ -158,6 +159,12 @@
    "fieldname": "fair_value_decline_threshold",
    "fieldtype": "Float",
    "label": "Fair Value Decline Threshold (%)"
+  },
+  {
+   "fieldname": "created_by_agent",
+   "fieldtype": "Link",
+   "label": "Created By Agent",
+   "options": "Agent"
   }
  ],
  "grid_page_length": 50,
@@ -168,7 +175,7 @@
    "link_fieldname": "property"
   }
  ],
- "modified": "2025-07-20 00:43:19.015450",
+ "modified": "2025-09-16 23:17:49.277027",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Property",
@@ -184,6 +191,30 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Landlord",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agent",
    "share": 1,
    "write": 1
   }
