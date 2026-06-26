@@ -6,16 +6,31 @@ import random
 import re
 from frappe import _
 from frappe.model.document import Document
+from frappe.utils import cint, now_datetime
 
 class Landlord(Document):
     def validate(self):
-        """Validate KRA PIN format."""
+        """Validate KRA PIN format and SMS preferences."""
+        self._sync_sms_opt_out_timestamp()
         if self.kra_pin:
             self.kra_pin = self.kra_pin.strip().upper()
             if not re.fullmatch(r"[AP]\d{9}[A-Z]", self.kra_pin):
                 frappe.throw(
                     _("❌ Invalid KRA PIN format. Use format like <b>A123456789B</b> or <b>P051234567K</b>.")
                 )
+
+
+    def _sync_sms_opt_out_timestamp(self):
+        """Track when a landlord opts out of SMS."""
+        if not hasattr(self, "allow_sms"):
+            return
+
+        if not cint(self.allow_sms):
+            if not self.sms_opt_out_on:
+                self.sms_opt_out_on = now_datetime()
+        else:
+            self.sms_opt_out_on = None
+            self.sms_opt_out_reason = None
 
     def after_insert(self):
         """Handle post-insert tasks: abbreviation, company, user, customer, and supplier creation."""

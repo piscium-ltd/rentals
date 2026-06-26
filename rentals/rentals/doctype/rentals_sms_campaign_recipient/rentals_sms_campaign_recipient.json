@@ -1,0 +1,98 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-06-26 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tenant",
+  "tenant_name",
+  "lease_agreement",
+  "property",
+  "phone_number",
+  "normalized_phone",
+  "status",
+  "sms_log",
+  "error"
+ ],
+ "fields": [
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tenant",
+   "options": "Tenant"
+  },
+  {
+   "fieldname": "tenant_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Tenant Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "lease_agreement",
+   "fieldtype": "Link",
+   "label": "Lease Agreement",
+   "options": "Lease Agreement"
+  },
+  {
+   "fieldname": "property",
+   "fieldtype": "Link",
+   "label": "Property",
+   "options": "Property"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Phone",
+   "in_list_view": 1,
+   "label": "Phone Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "normalized_phone",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Normalized Phone",
+   "read_only": 1
+  },
+  {
+   "default": "Queued",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Queued\nSending\nSubmitted\nSuccess\nSent\nBuffered\nDelivered\nFailed\nRejected\nInvalidPhoneNumber\nInsufficientBalance\nUserInBlacklist\nNotSent\nExpired\nUnknown\nOptedOut",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sms_log",
+   "fieldtype": "Link",
+   "label": "SMS Log",
+   "options": "Rentals SMS Log",
+   "read_only": 1
+  },
+  {
+   "fieldname": "error",
+   "fieldtype": "Small Text",
+   "label": "Error",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Rentals SMS Campaign Recipient",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 0,
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

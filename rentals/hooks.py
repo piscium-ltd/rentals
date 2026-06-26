@@ -148,7 +148,9 @@ scheduler_events = {
 # 	],
 	"daily": [
 		"rentals.tasks.daily.check_expired_leases",
-		"rentals.tasks.daily.generate_sales_invoices"
+		"rentals.tasks.daily.generate_sales_invoices",
+		"rentals.sms.reminders.run_daily_sms_reminders",
+		"rentals.sms.cleanup.run_scheduled_sms_cleanup"
 	],
 # 	"hourly": [
 # 		"rentals.tasks.hourly"

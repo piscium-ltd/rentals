@@ -4,9 +4,25 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from frappe.utils import cint, now_datetime
 
 
 class Tenant(Document):
+    def validate(self):
+        self._sync_sms_opt_out_timestamp()
+
+    def _sync_sms_opt_out_timestamp(self):
+        """Track when a tenant opts out of SMS."""
+        if not hasattr(self, "allow_sms"):
+            return
+
+        if not cint(self.allow_sms):
+            if not self.sms_opt_out_on:
+                self.sms_opt_out_on = now_datetime()
+        else:
+            self.sms_opt_out_on = None
+            self.sms_opt_out_reason = None
+
     def after_insert(self):
         """Create a Customer record for this Tenant and link it."""
         try:

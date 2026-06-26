@@ -1,0 +1,258 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:SMS-IN-{YYYY}-{#####}",
+ "creation": "2026-06-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "message_section",
+  "from_phone",
+  "normalized_phone",
+  "to_phone",
+  "message",
+  "keyword",
+  "column_break_message",
+  "action",
+  "status",
+  "received_on",
+  "recipient_section",
+  "recipient_doctype",
+  "recipient_name",
+  "matched_recipient_count",
+  "matched_recipients",
+  "provider_section",
+  "provider_message_id",
+  "link_id",
+  "network_code",
+  "raw_payload",
+  "error",
+  "cleanup_section",
+  "archived",
+  "archived_on",
+  "cleanup_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "message_section",
+   "fieldtype": "Section Break",
+   "label": "Inbound Message"
+  },
+  {
+   "fieldname": "from_phone",
+   "fieldtype": "Phone",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "From Phone",
+   "reqd": 1
+  },
+  {
+   "fieldname": "normalized_phone",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Normalized Phone",
+   "read_only": 1
+  },
+  {
+   "fieldname": "to_phone",
+   "fieldtype": "Data",
+   "label": "To / Short Code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Message",
+   "read_only": 1
+  },
+  {
+   "fieldname": "keyword",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Keyword",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_message",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Unknown",
+   "fieldname": "action",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Action",
+   "options": "OptOut\nOptIn\nHelp\nUnknown\nIgnored\nFailed",
+   "read_only": 1
+  },
+  {
+   "default": "Received",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Received\nProcessed\nIgnored\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "received_on",
+   "fieldtype": "Datetime",
+   "in_standard_filter": 1,
+   "label": "Received On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "recipient_section",
+   "fieldtype": "Section Break",
+   "label": "Matched Recipient"
+  },
+  {
+   "fieldname": "recipient_doctype",
+   "fieldtype": "Link",
+   "label": "First Matched Recipient DocType",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "recipient_name",
+   "fieldtype": "Dynamic Link",
+   "label": "First Matched Recipient",
+   "options": "recipient_doctype",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "matched_recipient_count",
+   "fieldtype": "Int",
+   "label": "Matched Recipient Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "matched_recipients",
+   "fieldtype": "Long Text",
+   "label": "Matched Recipients",
+   "read_only": 1
+  },
+  {
+   "fieldname": "provider_section",
+   "fieldtype": "Section Break",
+   "label": "Provider"
+  },
+  {
+   "fieldname": "provider_message_id",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Provider Message ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "link_id",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Link ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "network_code",
+   "fieldtype": "Data",
+   "label": "Network Code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "raw_payload",
+   "fieldtype": "Long Text",
+   "label": "Raw Payload",
+   "read_only": 1
+  },
+  {
+   "fieldname": "error",
+   "fieldtype": "Small Text",
+   "label": "Error",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cleanup_section",
+   "fieldtype": "Section Break",
+   "label": "Cleanup / Retention"
+  },
+  {
+   "default": "0",
+   "fieldname": "archived",
+   "fieldtype": "Check",
+   "label": "Archived"
+  },
+  {
+   "fieldname": "archived_on",
+   "fieldtype": "Datetime",
+   "label": "Archived On"
+  },
+  {
+   "fieldname": "cleanup_reason",
+   "fieldtype": "Small Text",
+   "label": "Cleanup Reason"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Rentals SMS Inbound Log",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agent",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Blue",
+   "title": "Received"
+  },
+  {
+   "color": "Green",
+   "title": "Processed"
+  },
+  {
+   "color": "Gray",
+   "title": "Ignored"
+  },
+  {
+   "color": "Red",
+   "title": "Failed"
+  }
+ ],
+ "title_field": "from_phone",
+ "track_changes": 1
+}

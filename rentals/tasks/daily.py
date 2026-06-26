@@ -35,6 +35,8 @@ def generate_sales_invoices(lease_name=None, override_billing_date=False):
         invoice = create_sales_invoice(lease_doc, invoice_items, today, override_billing_date)
         created_invoices.append(invoice.name)
 
+        send_invoice_created_sms(lease_doc, invoice)
+
         attempt_reconciliation(lease_doc.customer, lease_doc.company)
 
         update_billing_dates(lease_doc, updated_services, today, override_billing_date)
@@ -154,6 +156,15 @@ def create_sales_invoice(lease_doc, invoice_items, today, override):
     invoice.insert()
     invoice.submit()
     return invoice
+
+def send_invoice_created_sms(lease_doc, invoice):
+    """Queue tenant SMS after invoice generation when enabled in Rentals SMS Settings."""
+    try:
+        from rentals.sms.transactional import send_invoice_created_sms as queue_invoice_sms
+
+        queue_invoice_sms(lease_doc, invoice)
+    except Exception:
+        frappe.log_error(frappe.get_traceback(), "Invoice Created SMS Error")
 
 def attempt_reconciliation(customer, company):
     """Auto-reconcile customer payments."""

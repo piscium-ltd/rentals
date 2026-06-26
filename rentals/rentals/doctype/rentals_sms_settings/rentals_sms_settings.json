@@ -1,0 +1,490 @@
+{
+ "actions": [],
+ "creation": "2026-06-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "environment",
+  "column_break_credentials",
+  "username",
+  "api_key",
+  "section_break_sending",
+  "sender_id",
+  "enqueue",
+  "column_break_defaults",
+  "default_country_code",
+  "section_break_automation",
+  "auto_send_lease_sms",
+  "auto_send_invoice_sms",
+  "auto_send_payment_sms",
+  "section_break_templates",
+  "lease_sms_template",
+  "invoice_sms_template",
+  "payment_sms_template",
+  "column_break_sms_templates",
+  "rent_due_reminder_sms_template",
+  "overdue_invoice_reminder_sms_template",
+  "lease_expiry_reminder_sms_template",
+  "section_break_reminders",
+  "auto_send_rent_due_reminder_sms",
+  "rent_due_reminder_days_before",
+  "auto_send_overdue_invoice_reminder_sms",
+  "overdue_invoice_reminder_days_after",
+  "column_break_reminders",
+  "auto_send_lease_expiry_reminder_sms",
+  "lease_expiry_reminder_days_before",
+  "reminder_sms_limit_per_run",
+  "section_break_delivery_reports",
+  "delivery_callback_secret",
+  "section_break_inbound_sms",
+  "enable_inbound_keyword_processing",
+  "inbound_callback_secret",
+  "column_break_inbound_sms",
+  "stop_keywords",
+  "start_keywords",
+  "help_keywords",
+  "auto_reply_to_inbound_keywords",
+  "section_break_inbound_replies",
+  "opt_out_auto_reply",
+  "opt_in_auto_reply",
+  "help_auto_reply",
+  "section_break_sms_preferences",
+  "respect_recipient_sms_opt_out",
+  "send_transactional_sms_to_opted_out_recipients",
+  "send_campaign_sms_to_opted_out_recipients",
+  "sms_template_help",
+  "section_break_cleanup",
+  "enable_sms_cleanup",
+  "sms_log_retention_days",
+  "inbound_log_retention_days",
+  "column_break_cleanup",
+  "archive_instead_of_delete",
+  "delete_archived_logs_after_days",
+  "cleanup_batch_size",
+  "section_break_cleanup_safety",
+  "keep_failed_sms_logs",
+  "keep_campaign_sms_logs",
+  "delete_unarchived_sms_logs",
+  "cleanup_help"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "default": "Sandbox",
+   "fieldname": "environment",
+   "fieldtype": "Select",
+   "label": "Environment",
+   "options": "Sandbox\nProduction",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_credentials",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Use sandbox for Africa's Talking sandbox, or your production username when live.",
+   "fieldname": "username",
+   "fieldtype": "Data",
+   "label": "Username"
+  },
+  {
+   "fieldname": "api_key",
+   "fieldtype": "Password",
+   "label": "API Key"
+  },
+  {
+   "fieldname": "section_break_sending",
+   "fieldtype": "Section Break",
+   "label": "Sending Defaults"
+  },
+  {
+   "description": "Optional registered Africa's Talking Sender ID. Leave blank to use the default short code/sender configured on the account.",
+   "fieldname": "sender_id",
+   "fieldtype": "Data",
+   "label": "Sender ID"
+  },
+  {
+   "default": "1",
+   "description": "Recommended for bulk sends so messages are queued by Africa's Talking.",
+   "fieldname": "enqueue",
+   "fieldtype": "Check",
+   "label": "Use Provider Queue"
+  },
+  {
+   "fieldname": "column_break_defaults",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "254",
+   "description": "Used when users enter local numbers like 0712345678.",
+   "fieldname": "default_country_code",
+   "fieldtype": "Data",
+   "label": "Default Country Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_automation",
+   "fieldtype": "Section Break",
+   "label": "Automation Toggles"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_send_lease_sms",
+   "fieldtype": "Check",
+   "label": "Auto-send Lease SMS"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_send_invoice_sms",
+   "fieldtype": "Check",
+   "label": "Auto-send Invoice SMS"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_send_payment_sms",
+   "fieldtype": "Check",
+   "label": "Auto-send Payment SMS"
+  },
+  {
+   "fieldname": "section_break_templates",
+   "fieldtype": "Section Break",
+   "label": "SMS Templates"
+  },
+  {
+   "description": "Optional template used when a lease is submitted. Leave blank to use the built-in message.",
+   "fieldname": "lease_sms_template",
+   "fieldtype": "Link",
+   "label": "Lease SMS Template",
+   "options": "Rentals SMS Template"
+  },
+  {
+   "description": "Optional template used when rent/invoice SMS is generated. Leave blank to use the built-in message.",
+   "fieldname": "invoice_sms_template",
+   "fieldtype": "Link",
+   "label": "Invoice SMS Template",
+   "options": "Rentals SMS Template"
+  },
+  {
+   "description": "Optional template used when M-Pesa payment confirmation SMS is sent. Leave blank to use the built-in message.",
+   "fieldname": "payment_sms_template",
+   "fieldtype": "Link",
+   "label": "Payment SMS Template",
+   "options": "Rentals SMS Template"
+  },
+  {
+   "fieldname": "column_break_sms_templates",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Optional template used for rent due reminders.",
+   "fieldname": "rent_due_reminder_sms_template",
+   "fieldtype": "Link",
+   "label": "Rent Due Reminder SMS Template",
+   "options": "Rentals SMS Template"
+  },
+  {
+   "description": "Optional template used for overdue invoice reminders.",
+   "fieldname": "overdue_invoice_reminder_sms_template",
+   "fieldtype": "Link",
+   "label": "Overdue Invoice Reminder SMS Template",
+   "options": "Rentals SMS Template"
+  },
+  {
+   "description": "Optional template used for lease expiry reminders.",
+   "fieldname": "lease_expiry_reminder_sms_template",
+   "fieldtype": "Link",
+   "label": "Lease Expiry Reminder SMS Template",
+   "options": "Rentals SMS Template"
+  },
+  {
+   "fieldname": "section_break_reminders",
+   "fieldtype": "Section Break",
+   "label": "Automated Reminders"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_send_rent_due_reminder_sms",
+   "fieldtype": "Check",
+   "label": "Auto-send Rent Due Reminder SMS"
+  },
+  {
+   "default": "3,1",
+   "description": "Comma-separated days before lease billing date. Example: 7,3,1. Use 0 only if you want same-day rent due reminders.",
+   "fieldname": "rent_due_reminder_days_before",
+   "fieldtype": "Data",
+   "label": "Rent Due Reminder Days Before"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_send_overdue_invoice_reminder_sms",
+   "fieldtype": "Check",
+   "label": "Auto-send Overdue Invoice Reminder SMS"
+  },
+  {
+   "default": "1,3,7,14,30",
+   "description": "Comma-separated days after invoice due date. Example: 1,3,7,14,30.",
+   "fieldname": "overdue_invoice_reminder_days_after",
+   "fieldtype": "Data",
+   "label": "Overdue Invoice Reminder Days After"
+  },
+  {
+   "fieldname": "column_break_reminders",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_send_lease_expiry_reminder_sms",
+   "fieldtype": "Check",
+   "label": "Auto-send Lease Expiry Reminder SMS"
+  },
+  {
+   "default": "30,7,1",
+   "description": "Comma-separated days before lease end date. Example: 30,14,7,1. Use 0 only if you want expiry-day reminders.",
+   "fieldname": "lease_expiry_reminder_days_before",
+   "fieldtype": "Data",
+   "label": "Lease Expiry Reminder Days Before"
+  },
+  {
+   "default": "500",
+   "description": "Safety limit for total automated reminder SMS attempts per scheduler run.",
+   "fieldname": "reminder_sms_limit_per_run",
+   "fieldtype": "Int",
+   "label": "Reminder SMS Limit Per Run"
+  },
+  {
+   "fieldname": "section_break_delivery_reports",
+   "fieldtype": "Section Break",
+   "label": "Delivery Reports"
+  },
+  {
+   "description": "Optional secret for the Africa's Talking delivery-report callback. Add it to the callback URL as ?secret=YOUR_SECRET.",
+   "fieldname": "delivery_callback_secret",
+   "fieldtype": "Password",
+   "label": "Delivery Callback Secret"
+  },
+  {
+   "fieldname": "section_break_inbound_sms",
+   "fieldtype": "Section Break",
+   "label": "Inbound SMS / STOP Handling"
+  },
+  {
+   "default": "1",
+   "description": "When enabled, incoming SMS keywords like STOP and START update Tenant/Landlord Allow SMS preferences.",
+   "fieldname": "enable_inbound_keyword_processing",
+   "fieldtype": "Check",
+   "label": "Enable Inbound Keyword Processing"
+  },
+  {
+   "description": "Optional secret for the Africa's Talking inbound SMS callback. Add it to the callback URL as ?secret=YOUR_SECRET.",
+   "fieldname": "inbound_callback_secret",
+   "fieldtype": "Password",
+   "label": "Inbound Callback Secret"
+  },
+  {
+   "fieldname": "column_break_inbound_sms",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "STOP,STOPALL,UNSUBSCRIBE,CANCEL,END,QUIT",
+   "description": "Comma-separated keywords that opt a recipient out of campaign SMS.",
+   "fieldname": "stop_keywords",
+   "fieldtype": "Data",
+   "label": "STOP / Opt-out Keywords"
+  },
+  {
+   "default": "START,YES,RESUME,SUBSCRIBE,UNSTOP",
+   "description": "Comma-separated keywords that opt a recipient back in.",
+   "fieldname": "start_keywords",
+   "fieldtype": "Data",
+   "label": "START / Opt-in Keywords"
+  },
+  {
+   "default": "HELP,INFO",
+   "description": "Comma-separated informational keywords. These are logged but do not change Allow SMS.",
+   "fieldname": "help_keywords",
+   "fieldtype": "Data",
+   "label": "Help Keywords"
+  },
+  {
+   "default": "0",
+   "description": "When enabled, the system sends a confirmation SMS after STOP, START, or HELP keywords.",
+   "fieldname": "auto_reply_to_inbound_keywords",
+   "fieldtype": "Check",
+   "label": "Auto-reply to Inbound Keywords"
+  },
+  {
+   "depends_on": "eval:doc.auto_reply_to_inbound_keywords",
+   "fieldname": "section_break_inbound_replies",
+   "fieldtype": "Section Break",
+   "label": "Inbound Auto-replies"
+  },
+  {
+   "default": "You have been opted out of campaign SMS. Reply START to opt back in.",
+   "depends_on": "eval:doc.auto_reply_to_inbound_keywords",
+   "fieldname": "opt_out_auto_reply",
+   "fieldtype": "Small Text",
+   "label": "Opt-out Auto-reply"
+  },
+  {
+   "default": "You have been opted back in to SMS updates. Reply STOP to opt out of campaign SMS.",
+   "depends_on": "eval:doc.auto_reply_to_inbound_keywords",
+   "fieldname": "opt_in_auto_reply",
+   "fieldtype": "Small Text",
+   "label": "Opt-in Auto-reply"
+  },
+  {
+   "default": "Reply STOP to opt out of campaign SMS or START to opt back in.",
+   "depends_on": "eval:doc.auto_reply_to_inbound_keywords",
+   "fieldname": "help_auto_reply",
+   "fieldtype": "Small Text",
+   "label": "Help Auto-reply"
+  },
+  {
+   "fieldname": "section_break_sms_preferences",
+   "fieldtype": "Section Break",
+   "label": "Recipient SMS Preferences"
+  },
+  {
+   "default": "1",
+   "description": "When enabled, Tenant and Landlord records with Allow SMS unchecked are skipped unless the relevant override below is enabled.",
+   "fieldname": "respect_recipient_sms_opt_out",
+   "fieldtype": "Check",
+   "label": "Respect Recipient SMS Opt-out"
+  },
+  {
+   "default": "1",
+   "description": "If enabled, lease, invoice, payment, and reminder SMS may still be sent to opted-out recipients because they are operational messages.",
+   "fieldname": "send_transactional_sms_to_opted_out_recipients",
+   "fieldtype": "Check",
+   "label": "Send Transactional SMS to Opted-out Recipients"
+  },
+  {
+   "default": "0",
+   "description": "If disabled, bulk campaign recipients who opted out are marked OptedOut and skipped.",
+   "fieldname": "send_campaign_sms_to_opted_out_recipients",
+   "fieldtype": "Check",
+   "label": "Send Campaign SMS to Opted-out Recipients"
+  },
+  {
+   "fieldname": "sms_template_help",
+   "fieldtype": "HTML",
+   "label": "SMS Template Help",
+   "options": "<div class='text-muted'>Templates support Jinja-style placeholders, for example <code>{{ tenant_name }}</code>, <code>{{ lease_name }}</code>, <code>{{ amount }}</code>, <code>{{ due_date }}</code>, <code>{{ property_label }}</code>, <code>{{ mpesa_receipt }}</code>.</div>"
+  },
+  {
+   "fieldname": "section_break_cleanup",
+   "fieldtype": "Section Break",
+   "label": "SMS Cleanup / Retention"
+  },
+  {
+   "default": "0",
+   "description": "When enabled, the daily scheduler archives or deletes old SMS logs using the retention settings below.",
+   "fieldname": "enable_sms_cleanup",
+   "fieldtype": "Check",
+   "label": "Enable SMS Cleanup"
+  },
+  {
+   "default": "365",
+   "description": "SMS Logs older than this many days are eligible for cleanup. Minimum is 30 days.",
+   "fieldname": "sms_log_retention_days",
+   "fieldtype": "Int",
+   "label": "SMS Log Retention Days"
+  },
+  {
+   "default": "365",
+   "description": "Inbound SMS Logs older than this many days are eligible for cleanup. Minimum is 30 days.",
+   "fieldname": "inbound_log_retention_days",
+   "fieldtype": "Int",
+   "label": "Inbound Log Retention Days"
+  },
+  {
+   "fieldname": "column_break_cleanup",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Recommended. Marks old logs as archived instead of deleting them, preserving audit history.",
+   "fieldname": "archive_instead_of_delete",
+   "fieldtype": "Check",
+   "label": "Archive Instead of Delete"
+  },
+  {
+   "default": "730",
+   "description": "When deletion is used after archiving, archived records older than this many days are eligible for deletion.",
+   "fieldname": "delete_archived_logs_after_days",
+   "fieldtype": "Int",
+   "label": "Delete Archived Logs After Days"
+  },
+  {
+   "default": "1000",
+   "description": "Maximum records processed per cleanup run. Hard-capped at 5000.",
+   "fieldname": "cleanup_batch_size",
+   "fieldtype": "Int",
+   "label": "Cleanup Batch Size"
+  },
+  {
+   "fieldname": "section_break_cleanup_safety",
+   "fieldtype": "Section Break",
+   "label": "Cleanup Safety Rules"
+  },
+  {
+   "default": "1",
+   "description": "Recommended. Failed/rejected SMS logs remain available for debugging and compliance.",
+   "fieldname": "keep_failed_sms_logs",
+   "fieldtype": "Check",
+   "label": "Keep Failed SMS Logs"
+  },
+  {
+   "default": "1",
+   "description": "Recommended. Campaign logs are retained because campaign recipient rows link to them.",
+   "fieldname": "keep_campaign_sms_logs",
+   "fieldtype": "Check",
+   "label": "Keep Campaign SMS Logs"
+  },
+  {
+   "default": "0",
+   "description": "Advanced. Allows delete mode to delete records that were never archived first. Keep disabled unless you are sure.",
+   "fieldname": "delete_unarchived_sms_logs",
+   "fieldtype": "Check",
+   "label": "Allow Deleting Unarchived Logs"
+  },
+  {
+   "fieldname": "cleanup_help",
+   "fieldtype": "HTML",
+   "options": "<div class='text-muted'>Recommended production setup: enable cleanup, keep <b>Archive Instead of Delete</b> enabled, keep failed/campaign logs, then use the manual preview endpoint before changing delete settings.</div>",
+   "label": "Cleanup Help"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "modified": "2026-06-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Rentals SMS Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 0,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

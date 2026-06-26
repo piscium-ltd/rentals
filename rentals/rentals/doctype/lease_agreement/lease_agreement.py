@@ -147,11 +147,12 @@ class LeaseAgreement(Document):
         ])
 
     def on_submit(self):
-        """Handle unit occupation, customer setup, and create sales and payment documents."""
+        """Handle unit occupation, customer setup, sales/payment documents, and SMS notification."""
         self._mark_unit_as_occupied()
         self._create_price_list_and_update_customer()
         sales_order = self._create_sales_order()
         self._create_payment_request(sales_order)
+        self._send_lease_created_sms()
         self._create_duplicate_if_full_agency()
 
     def _mark_unit_as_occupied(self):
@@ -346,6 +347,18 @@ class LeaseAgreement(Document):
             alert=True,
             indicator="green"
         )
+
+    def _send_lease_created_sms(self):
+        """Queue tenant SMS after lease submission when enabled in Rentals SMS Settings."""
+        if self.get("__is_duplicate"):
+            return
+
+        try:
+            from rentals.sms.transactional import send_lease_created_sms
+
+            send_lease_created_sms(self)
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "Lease Created SMS Error")
 
     def _create_duplicate_if_full_agency(self):
         """Duplicate the Lease Agreement for the landlord if this is a full agency case."""

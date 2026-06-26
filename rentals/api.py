@@ -42,11 +42,34 @@ def payment_confirmation():
                 "remarks": f"M-Pesa payment from {phone_number}"
             })
 
+        send_payment_received_sms(
+            account_number=account_number,
+            amount=amount,
+            mpesa_receipt=mpesa_receipt,
+            payer_phone=phone_number,
+            payment_entry=result.get("payment_entry"),
+        )
+
         return {"ResultCode": 0, "ResultDesc": "Confirmation received successfully"}
 
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "M-Pesa C2B Confirmation Error")
         return {"ResultCode": "C2B00016", "ResultDesc": f"Processing error: {str(e)}"}
+
+def send_payment_received_sms(account_number, amount, mpesa_receipt=None, payer_phone=None, payment_entry=None):
+    """Queue tenant payment SMS without blocking the M-Pesa confirmation callback."""
+    try:
+        from rentals.sms.transactional import send_payment_received_sms as queue_payment_sms
+
+        queue_payment_sms(
+            lease_name=account_number,
+            amount=amount,
+            mpesa_receipt=mpesa_receipt,
+            payer_phone=payer_phone,
+            payment_entry=payment_entry,
+        )
+    except Exception:
+        frappe.log_error(frappe.get_traceback(), "Payment Received SMS Error")
 
 def payment_webhook(account_number, amount):
     """Core webhook that processes payments for a Lease Agreement."""
@@ -326,3 +349,122 @@ def create_payment_entry(lease, customer, company, amount, unallocated, referenc
     payment_entry.submit()
     frappe.set_user("Guest")
     return payment_entry
+
+@frappe.whitelist()
+def test_send_sms(phone_number=None, message=None):
+    """
+    Send a single test SMS through Africa's Talking.
+
+    Request body example:
+    {
+        "phone_number": "0712345678",
+        "message": "Rentals SMS test"
+    }
+    """
+    frappe.only_for("System Manager")
+
+    data = frappe.local.form_dict or {}
+    phone_number = phone_number or data.get("phone_number") or data.get("to") or data.get("recipient")
+    message = message or data.get("message") or "Rentals SMS test message."
+
+    from rentals.sms.africas_talking import send_sms
+
+    return send_sms(
+        recipients=phone_number,
+        message=message,
+        reference_doctype="Rentals SMS Settings",
+        reference_name="Rentals SMS Settings",
+        sms_category="Test",
+    )
+
+@frappe.whitelist()
+def build_sms_campaign_recipients(campaign_name=None):
+    """Build recipients for a Rentals SMS Campaign."""
+    data = frappe.local.form_dict or {}
+    campaign_name = campaign_name or data.get("campaign_name")
+
+    if not campaign_name:
+        frappe.throw("Campaign name is required.")
+
+    from rentals.sms.campaign import build_campaign_recipients
+
+    return build_campaign_recipients(campaign_name)
+
+
+@frappe.whitelist()
+def send_sms_campaign(campaign_name=None):
+    """Queue a Rentals SMS Campaign for sending."""
+    data = frappe.local.form_dict or {}
+    campaign_name = campaign_name or data.get("campaign_name")
+
+    if not campaign_name:
+        frappe.throw("Campaign name is required.")
+
+    from rentals.sms.campaign import enqueue_campaign_send
+
+    return enqueue_campaign_send(campaign_name)
+
+@frappe.whitelist(allow_guest=True)
+def africas_talking_delivery_report(**kwargs):
+    """Africa's Talking delivery-report callback wrapper."""
+    from rentals.sms.callbacks import africas_talking_delivery_report as process_delivery_report
+
+    return process_delivery_report(**kwargs)
+
+@frappe.whitelist()
+def run_sms_reminders(reminder_type=None):
+    """
+    Manually run automated SMS reminders.
+
+    reminder_type options:
+    - All
+    - Rent Due
+    - Overdue Invoice
+    - Lease Expiry
+    """
+    from rentals.sms.reminders import run_sms_reminders as run_reminders
+
+    data = frappe.local.form_dict or {}
+    reminder_type = reminder_type or data.get("reminder_type") or "All"
+
+    return run_reminders(reminder_type=reminder_type)
+
+
+@frappe.whitelist()
+def preview_sms_template(template_name=None, context=None):
+    """Preview a Rentals SMS Template with its sample context or supplied JSON context."""
+    data = frappe.local.form_dict or {}
+    template_name = template_name or data.get("template_name")
+    context = context or data.get("context")
+
+    from rentals.sms.templates import preview_sms_template as preview_template
+
+    return preview_template(template_name=template_name, context=context)
+
+
+@frappe.whitelist(allow_guest=True)
+def africas_talking_inbound_sms(**kwargs):
+    """Africa's Talking inbound SMS callback wrapper for STOP/START keywords."""
+    from rentals.sms.inbound import africas_talking_inbound_sms as process_inbound_sms
+
+    return process_inbound_sms(**kwargs)
+
+
+@frappe.whitelist()
+def preview_sms_cleanup():
+    """Preview SMS cleanup impact without changing records."""
+    from rentals.sms.cleanup import preview_sms_cleanup as preview_cleanup
+
+    return preview_cleanup()
+
+
+@frappe.whitelist()
+def run_sms_cleanup(dry_run=1, force_delete=0):
+    """Run SMS cleanup manually. Defaults to dry-run for safety."""
+    data = frappe.local.form_dict or {}
+    dry_run = data.get("dry_run", dry_run)
+    force_delete = data.get("force_delete", force_delete)
+
+    from rentals.sms.cleanup import run_sms_cleanup as cleanup_logs
+
+    return cleanup_logs(dry_run=dry_run, force_delete=force_delete)

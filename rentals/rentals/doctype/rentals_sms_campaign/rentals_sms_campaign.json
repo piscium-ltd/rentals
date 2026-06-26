@@ -1,0 +1,259 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:SMS-CAMP-{YYYY}-{#####}",
+ "creation": "2026-06-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "campaign_title",
+  "status",
+  "target_section",
+  "target_type",
+  "property",
+  "landlord",
+  "lease_status",
+  "column_break_target",
+  "manual_numbers",
+  "message_section",
+  "sms_template",
+  "exclude_opted_out_recipients",
+  "message",
+  "recipients_section",
+  "recipients",
+  "totals_section",
+  "total_recipients",
+  "total_sent",
+  "total_failed",
+  "total_skipped",
+  "column_break_totals",
+  "sent_on",
+  "last_error"
+ ],
+ "fields": [
+  {
+   "fieldname": "campaign_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Campaign Title",
+   "reqd": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nQueued\nSending\nCompleted\nFailed\nCancelled",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_section",
+   "fieldtype": "Section Break",
+   "label": "Target"
+  },
+  {
+   "default": "All Active Tenants",
+   "fieldname": "target_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Target Type",
+   "options": "All Active Tenants\nTenants by Property\nTenants by Landlord\nTenants with Active Leases\nTenants with Outstanding Invoices\nManual Numbers",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.target_type == 'Tenants by Property'",
+   "fieldname": "property",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Property",
+   "options": "Property"
+  },
+  {
+   "depends_on": "eval:doc.target_type == 'Tenants by Landlord'",
+   "fieldname": "landlord",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Landlord",
+   "options": "Landlord"
+  },
+  {
+   "default": "Active",
+   "depends_on": "eval:['Tenants by Property', 'Tenants by Landlord', 'Tenants with Active Leases'].includes(doc.target_type)",
+   "fieldname": "lease_status",
+   "fieldtype": "Select",
+   "label": "Lease Status",
+   "options": "\nActive\nExpired\nTerminated"
+  },
+  {
+   "fieldname": "column_break_target",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.target_type == 'Manual Numbers'",
+   "description": "Enter one phone number per line, or separate numbers with commas/semicolons.",
+   "fieldname": "manual_numbers",
+   "fieldtype": "Long Text",
+   "label": "Manual Numbers"
+  },
+  {
+   "fieldname": "message_section",
+   "fieldtype": "Section Break",
+   "label": "Message"
+  },
+  {
+   "description": "Optional reusable template. Use Load Template Message to copy it into Message before sending.",
+   "fieldname": "sms_template",
+   "fieldtype": "Link",
+   "label": "SMS Template",
+   "options": "Rentals SMS Template"
+  },
+  {
+   "default": "1",
+   "description": "When enabled, tenants who have Allow SMS unchecked are marked OptedOut when recipients are built.",
+   "fieldname": "exclude_opted_out_recipients",
+   "fieldtype": "Check",
+   "label": "Exclude Opted-out Recipients"
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Small Text",
+   "label": "Message",
+   "reqd": 1
+  },
+  {
+   "fieldname": "recipients_section",
+   "fieldtype": "Section Break",
+   "label": "Recipients"
+  },
+  {
+   "fieldname": "recipients",
+   "fieldtype": "Table",
+   "label": "Recipients",
+   "options": "Rentals SMS Campaign Recipient"
+  },
+  {
+   "fieldname": "totals_section",
+   "fieldtype": "Section Break",
+   "label": "Totals"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_recipients",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Recipients",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_sent",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Sent",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_failed",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Failed",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_skipped",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Skipped",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sent_on",
+   "fieldtype": "Datetime",
+   "in_standard_filter": 1,
+   "label": "Sent On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_error",
+   "fieldtype": "Small Text",
+   "label": "Last Error",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Rentals SMS Campaign",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agent",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Gray",
+   "title": "Draft"
+  },
+  {
+   "color": "Orange",
+   "title": "Queued"
+  },
+  {
+   "color": "Blue",
+   "title": "Sending"
+  },
+  {
+   "color": "Green",
+   "title": "Completed"
+  },
+  {
+   "color": "Red",
+   "title": "Failed"
+  },
+  {
+   "color": "Gray",
+   "title": "Cancelled"
+  }
+ ],
+ "title_field": "campaign_title",
+ "track_changes": 1
+}

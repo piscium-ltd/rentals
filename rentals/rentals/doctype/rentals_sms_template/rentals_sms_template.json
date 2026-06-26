@@ -1,0 +1,143 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:template_name",
+ "creation": "2026-06-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "template_name",
+  "template_type",
+  "status",
+  "is_default",
+  "message_section",
+  "message",
+  "sample_context",
+  "preview_section",
+  "preview_message",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Template Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "Generic",
+   "fieldname": "template_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Template Type",
+   "options": "Generic\nLease Created\nInvoice Created\nPayment Received\nRent Due Reminder\nOverdue Invoice Reminder\nLease Expiry Reminder\nCampaign",
+   "reqd": 1
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Active\nInactive",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "description": "Only one active default template is allowed per template type.",
+   "fieldname": "is_default",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Default"
+  },
+  {
+   "fieldname": "message_section",
+   "fieldtype": "Section Break",
+   "label": "Message"
+  },
+  {
+   "description": "Use Jinja-style placeholders like {{ tenant_name }}, {{ lease_name }}, {{ amount }}, {{ due_date }}, {{ property_label }}, {{ mpesa_receipt }}.",
+   "fieldname": "message",
+   "fieldtype": "Small Text",
+   "label": "Message",
+   "reqd": 1
+  },
+  {
+   "description": "Optional JSON used by the Preview button. Example: {\"tenant_name\": \"John\", \"amount\": \"KES 25000\"}",
+   "fieldname": "sample_context",
+   "fieldtype": "Code",
+   "label": "Sample Context",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "preview_section",
+   "fieldtype": "Section Break",
+   "label": "Preview"
+  },
+  {
+   "fieldname": "preview_message",
+   "fieldtype": "Small Text",
+   "label": "Preview Message",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Rentals SMS Template",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agent",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Green",
+   "title": "Active"
+  },
+  {
+   "color": "Gray",
+   "title": "Inactive"
+  }
+ ],
+ "title_field": "template_name",
+ "track_changes": 1
+}
