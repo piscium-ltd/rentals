@@ -21,7 +21,14 @@
   "kra_pin",
   "is_related_party",
   "company",
-  "supplier"
+  "supplier",
+  "section_break_frma",
+  "county",
+  "constituency",
+  "ward",
+  "column_break_trsj",
+  "location",
+  "sub_location"
  ],
  "fields": [
   {
@@ -138,12 +145,51 @@
    "fieldname": "is_related_party",
    "fieldtype": "Check",
    "label": "Is Related Party"
+  },
+  {
+   "fieldname": "section_break_frma",
+   "fieldtype": "Section Break",
+   "label": "Location Details"
+  },
+  {
+   "fieldname": "county",
+   "fieldtype": "Link",
+   "label": "County",
+   "options": "County"
+  },
+  {
+   "fieldname": "constituency",
+   "fieldtype": "Link",
+   "label": "Constituency",
+   "options": "Constituency"
+  },
+  {
+   "fieldname": "ward",
+   "fieldtype": "Link",
+   "label": "Ward",
+   "options": "Ward"
+  },
+  {
+   "fieldname": "column_break_trsj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location Name"
+  },
+  {
+   "fieldname": "sub_location",
+   "fieldtype": "Link",
+   "label": "Sub Location",
+   "options": "Sub Location"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-17 11:54:18.991865",
+ "modified": "2026-06-28 21:51:09.563402",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Agent",

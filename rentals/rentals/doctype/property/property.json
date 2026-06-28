@@ -7,12 +7,18 @@
  "engine": "InnoDB",
  "field_order": [
   "property_name",
-  "location",
   "asset",
   "column_break_widu",
   "landlord",
   "landlord_name",
   "created_by_agent",
+  "location_details_section",
+  "county",
+  "constituency",
+  "ward",
+  "column_break_tqfg",
+  "location",
+  "sub_location",
   "ifrs_accounting_model_section",
   "accounting_model",
   "last_valuation_date",
@@ -165,6 +171,39 @@
    "fieldtype": "Link",
    "label": "Created By Agent",
    "options": "Agent"
+  },
+  {
+   "fieldname": "county",
+   "fieldtype": "Link",
+   "label": "County",
+   "options": "County"
+  },
+  {
+   "fieldname": "constituency",
+   "fieldtype": "Link",
+   "label": "Constituency",
+   "options": "Constituency"
+  },
+  {
+   "fieldname": "ward",
+   "fieldtype": "Link",
+   "label": "Ward",
+   "options": "Ward"
+  },
+  {
+   "fieldname": "location_details_section",
+   "fieldtype": "Section Break",
+   "label": "Location Details"
+  },
+  {
+   "fieldname": "sub_location",
+   "fieldtype": "Link",
+   "label": "Sub Location",
+   "options": "Sub Location"
+  },
+  {
+   "fieldname": "column_break_tqfg",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
@@ -175,11 +214,11 @@
    "link_fieldname": "property"
   }
  ],
- "modified": "2025-09-16 23:17:49.277027",
+ "modified": "2026-06-28 21:56:19.801331",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Property",
- "naming_rule": "Expression",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

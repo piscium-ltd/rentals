@@ -21,6 +21,13 @@
   "is_related_party",
   "section_break_myis",
   "kyc_documents",
+  "location_details_tab",
+  "county",
+  "constituency",
+  "ward",
+  "column_break_ewfy",
+  "location",
+  "sub_location",
   "address_and_contact_tab",
   "tenant_primary_address",
   "primary_address",
@@ -183,12 +190,51 @@
    "fieldtype": "Datetime",
    "label": "SMS Opt-out On",
    "read_only": 1
+  },
+  {
+   "fieldname": "location_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Location Details"
+  },
+  {
+   "fieldname": "county",
+   "fieldtype": "Link",
+   "label": "County",
+   "options": "County"
+  },
+  {
+   "fieldname": "constituency",
+   "fieldtype": "Link",
+   "label": "Constituency",
+   "options": "Constituency"
+  },
+  {
+   "fieldname": "ward",
+   "fieldtype": "Link",
+   "label": "Ward",
+   "options": "Ward"
+  },
+  {
+   "fieldname": "column_break_ewfy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location Name"
+  },
+  {
+   "fieldname": "sub_location",
+   "fieldtype": "Link",
+   "label": "Sub Location",
+   "options": "Sub Location"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-26 00:00:00.000000",
+ "modified": "2026-06-28 21:53:11.941669",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Tenant",

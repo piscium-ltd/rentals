@@ -9,6 +9,7 @@
   "landlord_type",
   "full_name",
   "email",
+  "column_break_upyz",
   "landlord_group",
   "abbr",
   "status",
@@ -27,6 +28,13 @@
   "is_related_party",
   "company",
   "supplier",
+  "location_details_tab",
+  "county",
+  "constituency",
+  "ward",
+  "column_break_dsft",
+  "location",
+  "sub_location",
   "address_and_contact_tab",
   "landlord_primary_address",
   "primary_address",
@@ -243,6 +251,49 @@
    "hidden": 1,
    "label": "Supplier",
    "options": "Supplier"
+  },
+  {
+   "fieldname": "location_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Location Details"
+  },
+  {
+   "fieldname": "county",
+   "fieldtype": "Link",
+   "label": "County",
+   "options": "County"
+  },
+  {
+   "fieldname": "constituency",
+   "fieldtype": "Link",
+   "label": "Constituency",
+   "options": "Constituency"
+  },
+  {
+   "fieldname": "ward",
+   "fieldtype": "Link",
+   "label": "Ward",
+   "options": "Ward"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location Name"
+  },
+  {
+   "fieldname": "sub_location",
+   "fieldtype": "Link",
+   "label": "Sub Location",
+   "options": "Sub Location"
+  },
+  {
+   "fieldname": "column_break_dsft",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_upyz",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
@@ -253,7 +304,7 @@
    "link_fieldname": "landlord"
   }
  ],
- "modified": "2026-06-26 00:00:00.000000",
+ "modified": "2026-06-28 21:41:50.147329",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Landlord",
