@@ -150,8 +150,9 @@ scheduler_events = {
 # 		"rentals.tasks.all"
 # 	],
 	"daily": [
-		"rentals.tasks.daily.check_expired_leases",
+		# Bill all due periods (clamped to lease end date) before expiring leases.
 		"rentals.tasks.daily.generate_sales_invoices",
+		"rentals.tasks.daily.check_expired_leases",
 		"rentals.sms.reminders.run_daily_sms_reminders",
 		"rentals.sms.cleanup.run_scheduled_sms_cleanup"
 	],

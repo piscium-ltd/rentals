@@ -58,39 +58,10 @@ frappe.ui.form.on("Lease Agreement", {
 			};
 		};
 
-		// Generate invoice button for submitted documents
-		if (frm.doc.docstatus === 1) {
-			frm.add_custom_button(__("Generate Invoice"), function () {
-				frappe.call({
-					method: "rentals.tasks.daily.generate_sales_invoices",
-					args: {
-						lease_name: frm.doc.name,
-						override_billing_date: true,
-					},
-					callback: function (r) {
-						if (r.message?.invoices?.length > 0) {
-							const links = r.message.invoices
-								.map((inv) => {
-									const url = `/app/sales-invoice/${inv}`;
-									return `<a href="${url}" target="_blank">${inv}</a>`;
-								})
-								.join("<br>");
-
-							frappe.msgprint({
-								title: __(r.message.message),
-								indicator: "green",
-								message: __("<b>" + links + "<b>"),
-							});
-
-							frm.reload_doc();
-						} else {
-							frappe.msgprint(r.message.message || __("No invoices created."));
-						}
-					},
-					error: () => {
-						frappe.msgprint(__("Error generating sales invoice."));
-					},
-				});
+		// Period-aware invoice generation for submitted, active leases.
+		if (frm.doc.docstatus === 1 && frm.doc.status === "Active") {
+			frm.add_custom_button(__("Generate Invoices"), function () {
+				open_invoice_generation_dialog(frm);
 			});
 		}
 
@@ -219,4 +190,168 @@ function handle_chargeable_services_change(frm) {
 function handle_security_deposits_change(frm) {
 	calculate_security_deposits_subtotal(frm);
 	calculate_grand_total(frm);
+}
+
+
+function open_invoice_generation_dialog(frm) {
+	const today = frappe.datetime.get_today();
+	const default_through = frm.doc.billing_date || today;
+	const dialog = new frappe.ui.Dialog({
+		title: __("Generate Lease Invoices"),
+		fields: [
+			{
+				fieldname: "generate_through",
+				fieldtype: "Date",
+				label: __("Generate Through"),
+				reqd: 1,
+				default: default_through,
+				description: __(
+					"Generation starts from the next ungenerated billing occurrence. Future dates are allowed."
+				),
+				onchange: () => update_invoice_generation_preview(frm, dialog),
+			},
+			{
+				fieldname: "send_notifications",
+				fieldtype: "Check",
+				label: __("Send Tenant Invoice Notifications"),
+				default: 0,
+				description: __("Leave disabled for demos or bulk future-period generation."),
+			},
+			{
+				fieldname: "preview_html",
+				fieldtype: "HTML",
+			},
+		],
+		primary_action_label: __("Generate Invoices"),
+		primary_action(values) {
+			const generate = () => generate_invoices_through(frm, dialog, values);
+			if (values.generate_through > today) {
+				frappe.confirm(
+					__(
+						"You are generating future-dated submitted Sales Invoices. These are real accounting documents. Continue?"
+					),
+					generate
+				);
+				return;
+			}
+			generate();
+		},
+	});
+
+	dialog.show();
+	update_invoice_generation_preview(frm, dialog);
+}
+
+function update_invoice_generation_preview(frm, dialog) {
+	const through = dialog.get_value("generate_through");
+	if (!through) return;
+
+	const wrapper = dialog.fields_dict.preview_html.$wrapper;
+	wrapper.html(`<div class="text-muted">${__("Loading invoice preview...")}</div>`);
+
+	frappe.call({
+		method: "rentals.tasks.daily.preview_invoice_generation",
+		args: {
+			lease_name: frm.doc.name,
+			through_date: through,
+		},
+		callback(r) {
+			const result = r.message || {};
+			const periods = result.periods || [];
+			if (!periods.length) {
+				wrapper.html(
+					`<div class="alert alert-info mt-3">${__(
+						"No ungenerated billing periods are due through the selected date."
+					)}</div>`
+				);
+				return;
+			}
+
+			const rows = periods
+				.map((row) => {
+					const status = row.existing_invoice
+						? `<span class="text-muted">${__("Already generated")}</span>`
+						: `<span class="text-success">${__("Will generate")}</span>`;
+					return `
+						<tr>
+							<td>${frappe.datetime.str_to_user(row.billing_date)}</td>
+							<td class="text-right">${format_currency(row.previous_balance, frm.doc.billing_currency)}</td>
+							<td class="text-right">${format_currency(row.current_charges, frm.doc.billing_currency)}</td>
+							<td class="text-right"><strong>${format_currency(
+								row.projected_account_due,
+								frm.doc.billing_currency
+							)}</strong></td>
+							<td>${status}</td>
+						</tr>`;
+				})
+				.join("");
+
+			const future_warning = result.has_future_periods
+				? `<div class="alert alert-warning mb-3">${__(
+						"This preview contains future billing periods. Generated invoices will use those future dates as their posting and due dates."
+				  )}</div>`
+				: "";
+
+			wrapper.html(`
+				<div class="mt-3">
+					${future_warning}
+					<p><strong>${__("Periods")}: ${result.period_count}</strong></p>
+					<div class="table-responsive">
+						<table class="table table-bordered table-sm">
+							<thead>
+								<tr>
+									<th>${__("Billing Period")}</th>
+									<th class="text-right">${__("Previous Balance")}</th>
+									<th class="text-right">${__("Current Charges")}</th>
+									<th class="text-right">${__("Projected Account Due")}</th>
+									<th>${__("Status")}</th>
+								</tr>
+							</thead>
+							<tbody>${rows}</tbody>
+						</table>
+					</div>
+					<p class="text-muted small">${__(
+						"Previous Balance is informational and is not added as another invoice item, so outstanding debt is not double-counted."
+					)}</p>
+				</div>`);
+		},
+		error() {
+			wrapper.html(`<div class="alert alert-danger mt-3">${__("Unable to load invoice preview.")}</div>`);
+		},
+	});
+}
+
+function generate_invoices_through(frm, dialog, values) {
+	dialog.disable_primary_action();
+	frappe.call({
+		method: "rentals.tasks.daily.generate_sales_invoices",
+		args: {
+			lease_name: frm.doc.name,
+			through_date: values.generate_through,
+			send_notifications: values.send_notifications ? 1 : 0,
+			generation_source: "Manual",
+		},
+		callback(r) {
+			const result = r.message || {};
+			const invoices = result.invoices || [];
+			dialog.hide();
+
+			if (invoices.length) {
+				const links = invoices
+					.map((invoice) => `<a href="/app/sales-invoice/${encodeURIComponent(invoice)}" target="_blank">${invoice}</a>`)
+					.join("<br>");
+				frappe.msgprint({
+					title: __("Invoices Generated"),
+					indicator: "green",
+					message: `${__(result.message || "Sales Invoice(s) generated successfully.")}<br><br>${links}`,
+				});
+			} else {
+				frappe.msgprint(result.message || __("No invoices were created."));
+			}
+			frm.reload_doc();
+		},
+		error() {
+			dialog.enable_primary_action();
+		},
+	});
 }
