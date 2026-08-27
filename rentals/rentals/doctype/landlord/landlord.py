@@ -1,12 +1,18 @@
 # Copyright (c) 2025, Piscium Solutions LTD and contributors
 # For license information, please see license.txt
 
-import frappe
 import random
 import re
+
+import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import cint, now_datetime
+from frappe.utils import cint, now_datetime, now
+
+
+PROVISIONING_QUEUE = "long"
+PROVISIONING_METHOD = "rentals.rentals.doctype.landlord.landlord.provision_landlord"
+
 
 class Landlord(Document):
     def validate(self):
@@ -18,7 +24,6 @@ class Landlord(Document):
                 frappe.throw(
                     _("❌ Invalid KRA PIN format. Use format like <b>A123456789B</b> or <b>P051234567K</b>.")
                 )
-
 
     def _sync_sms_opt_out_timestamp(self):
         """Track when a landlord opts out of SMS."""
@@ -33,130 +38,135 @@ class Landlord(Document):
             self.sms_opt_out_reason = None
 
     def after_insert(self):
-        """Handle post-insert tasks: abbreviation, company, user, customer, and supplier creation."""
-        try:
-            abbr = self._get_abbreviation()
-            self.db_set("abbr", abbr)
+        """Save quickly, then provision expensive linked records in a worker."""
+        abbr = self._get_abbreviation()
+        self.db_set("abbr", abbr, update_modified=False)
+        self.db_set("setup_status", "Pending", update_modified=False)
+        self.db_set("setup_error", None, update_modified=False)
+        self.db_set("setup_completed_on", None, update_modified=False)
+        self._enqueue_provisioning()
 
-            company_name = self.company_name if self.landlord_type == "Company" else abbr
+    def _enqueue_provisioning(self):
+        """Queue provisioning only after the landlord transaction commits."""
+        frappe.enqueue(
+            PROVISIONING_METHOD,
+            queue=PROVISIONING_QUEUE,
+            enqueue_after_commit=True,
+            job_id=f"landlord-provision-{self.name}",
+            deduplicate=True,
+            landlord_name=self.name,
+        )
 
-            # Create company if it doesn't exist
-            if not frappe.db.exists("Company", {"company_name": company_name}):
-                self._create_company(company_name, abbr)
+    def _provision_related_records(self):
+        """Idempotently create and link Company, User, Customer and Supplier."""
+        self.db_set("setup_status", "In Progress", update_modified=False)
+        self.db_set("setup_error", None, update_modified=False)
 
-            self.db_set("company", company_name)
-            # Create user if email is provided and user doesn't exist
-            if self.email and not frappe.db.exists("User", self.email):
-                display_name = company_name if self.landlord_type == "Company" else self.full_name
-                self._create_user(display_name)
+        company_name = self.company_name if self.landlord_type == "Company" else self.abbr
+        company = self._ensure_company(company_name, self.abbr)
+        self.db_set("company", company, update_modified=False)
+        self.company = company
 
-            # Create Customer and Supplier
-            self._create_customer(company_name)
-            self._create_supplier(company_name)
+        if self.email:
+            display_name = company_name if self.landlord_type == "Company" else self.full_name
+            user = self._ensure_user(display_name)
+            self.db_set("user", user, update_modified=False)
+            self.user = user
+            self._ensure_user_permission(user, "Landlord", self.name)
+            self._ensure_user_permission(user, "Company", company)
 
-        except Exception as e:
-            frappe.log_error(message=frappe.get_traceback(), title="Landlord after_insert Error")
-            frappe.throw(_("❌ An error occurred while setting up landlord details. Please check logs."))
+        customer = self._ensure_customer(company_name)
+        self.db_set("customer", customer, update_modified=False)
+        self.customer = customer
+
+        supplier = self._ensure_supplier(company_name)
+        self.db_set("supplier", supplier, update_modified=False)
+        self.supplier = supplier
+
+        self.db_set("setup_completed_on", now(), update_modified=False)
+        self.db_set("setup_status", "Completed", update_modified=False)
+        self.db_set("setup_error", None, update_modified=False)
 
     # -------------------------------
     # Private Helper Methods
     # -------------------------------
 
-    def _create_company(self, company_name, abbr):
-        """Create a new Company and link it to the landlord."""
-        try:
-            defaults = self._get_global_defaults()
+    def _ensure_company(self, company_name, abbr):
+        """Return an existing Company or create it."""
+        existing = frappe.db.exists("Company", {"company_name": company_name})
+        if existing:
+            return existing
 
-            company = frappe.get_doc({
-                "doctype": "Company",
-                "company_name": company_name,
-                "abbr": abbr,
-                "default_currency": defaults.get("default_currency", "KES"),
-                "country": defaults.get("country", "Kenya"),
-                "tax_id": self.kra_pin,
-                "create_chart_of_accounts_based_on": "Existing Company",
-                "existing_company": defaults.get("default_company")
-            })
-            company.insert(ignore_permissions=True)
+        defaults = self._get_global_defaults()
+        company = frappe.get_doc({
+            "doctype": "Company",
+            "company_name": company_name,
+            "abbr": abbr,
+            "default_currency": defaults.get("default_currency") or "KES",
+            "country": defaults.get("country") or "Kenya",
+            "tax_id": self.kra_pin,
+            "create_chart_of_accounts_based_on": "Existing Company",
+            "existing_company": defaults.get("default_company"),
+        })
+        company.insert(ignore_permissions=True)
+        return company.name
 
-            frappe.msgprint(
-                _("✅ Landlord created successfully and linked to Company <b>{0}</b>.").format(company_name),
-                indicator="green", alert=True
-            )
-        except Exception:
-            frappe.log_error(frappe.get_traceback(), "Company Creation Failed")
-            frappe.throw(_("❌ Failed to create associated Company for this Landlord. Check error logs."))
+    def _ensure_user(self, name):
+        """Return an existing user or create one with the Rentals role profile."""
+        if frappe.db.exists("User", self.email):
+            return self.email
 
-    def _create_user(self, name):
-        """Create a user for the landlord and assign permissions."""
-        try:
-            user = frappe.get_doc({
-                "doctype": "User",
-                "email": self.email,
-                "first_name": name,
-                "send_welcome_email": 0,
-                "role_profile_name": [{"role_profile": "Rentals"}]
-            })
-            user.insert(ignore_permissions=True)
-            self.db_set("user", user.name)
+        user = frappe.get_doc({
+            "doctype": "User",
+            "email": self.email,
+            "first_name": name,
+            "send_welcome_email": 0,
+            "role_profiles": [{"role_profile": "Rentals"}],
+        })
+        user.insert(ignore_permissions=True)
+        return user.name
 
-            # Assign permissions
-            self._assign_user_permission(user.name, "Landlord", self.name)
-            self._assign_user_permission(user.name, "Company", self.company)
+    def _ensure_user_permission(self, user, doctype, value):
+        """Create a User Permission once; retries must not create duplicates."""
+        if not user or not value:
+            return
 
-            frappe.msgprint(_("✅ User <b>{0}</b> created successfully.").format(user.name),indicator="green", alert=True)
+        filters = {"user": user, "allow": doctype, "for_value": value}
+        if frappe.db.exists("User Permission", filters):
+            return
 
-        except Exception:
-            frappe.log_error(frappe.get_traceback(), "User Creation Failed")
-            frappe.throw(_("❌ Failed to create user for this Landlord. Check error logs."))
+        frappe.get_doc({
+            "doctype": "User Permission",
+            **filters,
+        }).insert(ignore_permissions=True)
 
-    def _assign_user_permission(self, user, doctype, value):
-        """Assign user permission for a specific doctype and value."""
-        try:
-            frappe.get_doc({
-                "doctype": "User Permission",
-                "user": user,
-                "allow": doctype,
-                "for_value": value,
-            }).insert(ignore_permissions=True)
-        except Exception:
-            frappe.log_error(frappe.get_traceback(), f"Failed to assign permission for {doctype}")
+    def _ensure_customer(self, customer_name):
+        """Return an existing Customer or create it."""
+        existing = frappe.db.exists("Customer", {"customer_name": customer_name})
+        if existing:
+            return existing
 
-    def _create_customer(self, customer_name):
-        """Create a Customer for the Landlord."""
-        try:
-            if not frappe.db.exists("Customer", {"customer_name": customer_name}):
-                customer = frappe.get_doc({
-                    "doctype": "Customer",
-                    "customer_name": customer_name,
-                    "customer_type": "Company" if self.landlord_type == "Company" else "Individual"
-                })
-                customer.insert(ignore_permissions=True)
-                frappe.msgprint(
-                _("✅ Customer created successfully <b>{0}</b>.").format(customer_name),indicator="green", alert=True
-            )
-                self.db_set("customer", customer.name)
-        except Exception:
-            frappe.log_error(frappe.get_traceback(), "Customer Creation Failed")
-            frappe.throw(_("❌ Failed to create Customer for this Landlord. Check logs."))
+        customer = frappe.get_doc({
+            "doctype": "Customer",
+            "customer_name": customer_name,
+            "customer_type": "Company" if self.landlord_type == "Company" else "Individual",
+        })
+        customer.insert(ignore_permissions=True)
+        return customer.name
 
-    def _create_supplier(self, supplier_name):
-        """Create a Supplier for the Landlord."""
-        try:
-            if not frappe.db.exists("Supplier", {"supplier_name": supplier_name}):
-                supplier = frappe.get_doc({
-                    "doctype": "Supplier",
-                    "supplier_name": supplier_name,
-                    "supplier_type": "Company" if self.landlord_type == "Company" else "Individual"
-                })
-                supplier.insert(ignore_permissions=True)
-                frappe.msgprint(
-                _("✅ Supplier created successfully <b>{0}</b>.").format(supplier_name),indicator="green", alert=True
-            )
-                self.db_set("supplier", supplier.name)
-        except Exception:
-            frappe.log_error(frappe.get_traceback(), "Supplier Creation Failed")
-            frappe.throw(_("❌ Failed to create Supplier for this Landlord. Check logs."))
+    def _ensure_supplier(self, supplier_name):
+        """Return an existing Supplier or create it."""
+        existing = frappe.db.exists("Supplier", {"supplier_name": supplier_name})
+        if existing:
+            return existing
+
+        supplier = frappe.get_doc({
+            "doctype": "Supplier",
+            "supplier_name": supplier_name,
+            "supplier_type": "Company" if self.landlord_type == "Company" else "Individual",
+        })
+        supplier.insert(ignore_permissions=True)
+        return supplier.name
 
     def _get_abbreviation(self):
         """Generate a unique 3-letter abbreviation."""
@@ -166,8 +176,12 @@ class Landlord(Document):
 
         try:
             for _ in range(max_attempts):
-                abbr = ''.join(random.choices(safe_charset, k=3))
-                if abbr not in blacklist and not frappe.db.exists("Company", {"abbr": abbr}):
+                abbr = "".join(random.choices(safe_charset, k=3))
+                if (
+                    abbr not in blacklist
+                    and not frappe.db.exists("Company", {"abbr": abbr})
+                    and not frappe.db.exists("Landlord", {"abbr": abbr})
+                ):
                     return abbr
         except Exception:
             frappe.log_error(frappe.get_traceback(), "Abbreviation Generation Failed")
@@ -176,12 +190,48 @@ class Landlord(Document):
 
     def _get_global_defaults(self):
         """Fetch global defaults once to reduce DB calls."""
-        try:
-            return {
-                "default_company": frappe.db.get_single_value("Global Defaults", "default_company"),
-                "default_currency": frappe.db.get_single_value("Global Defaults", "default_currency"),
-                "country": frappe.db.get_single_value("Global Defaults", "country"),
-            }
-        except Exception:
-            frappe.log_error(frappe.get_traceback(), "Global Defaults Fetch Failed")
-            return {}
+        return {
+            "default_company": frappe.db.get_single_value("Global Defaults", "default_company"),
+            "default_currency": frappe.db.get_single_value("Global Defaults", "default_currency"),
+            "country": frappe.db.get_single_value("Global Defaults", "country"),
+        }
+
+
+@frappe.whitelist()
+def retry_landlord_setup(landlord_name):
+    """Retry failed/pending provisioning without blocking the Desk request."""
+    landlord = frappe.get_doc("Landlord", landlord_name)
+    landlord.check_permission("write")
+
+    if landlord.setup_status == "Completed":
+        return {"status": "Completed"}
+
+    landlord.db_set("setup_status", "Pending", update_modified=False)
+    landlord.db_set("setup_error", None, update_modified=False)
+    landlord.db_set("setup_completed_on", None, update_modified=False)
+    landlord._enqueue_provisioning()
+    return {"status": "Pending"}
+
+
+def provision_landlord(landlord_name):
+    """Background entry point for expensive landlord provisioning."""
+    try:
+        landlord = frappe.get_doc("Landlord", landlord_name)
+        if landlord.setup_status == "Completed":
+            return
+        landlord._provision_related_records()
+    except Exception as exc:
+        # Preserve any successfully-created linked records; the workflow is
+        # idempotent, so an administrator can safely retry from the form.
+        error_text = str(exc) or exc.__class__.__name__
+        frappe.db.set_value(
+            "Landlord",
+            landlord_name,
+            {
+                "setup_status": "Failed",
+                "setup_error": error_text[:500],
+                "setup_completed_on": None,
+            },
+            update_modified=False,
+        )
+        frappe.log_error(frappe.get_traceback(), "Landlord Provisioning Failed")

@@ -13,6 +13,9 @@
   "landlord_group",
   "abbr",
   "status",
+  "setup_status",
+  "setup_error",
+  "setup_completed_on",
   "sms_preferences_section",
   "allow_sms",
   "sms_opt_out_reason",
@@ -294,6 +297,27 @@
   {
    "fieldname": "column_break_upyz",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "setup_status",
+   "fieldtype": "Select",
+   "label": "Setup Status",
+   "options": "Pending\nIn Progress\nCompleted\nFailed",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.setup_status==\"Failed\"",
+   "fieldname": "setup_error",
+   "fieldtype": "Small Text",
+   "label": "Setup Error",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.setup_status==\"Completed\"",
+   "fieldname": "setup_completed_on",
+   "fieldtype": "Datetime",
+   "label": "Setup Completed On",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
