@@ -12,7 +12,13 @@ from datetime import date
 
 import frappe
 from frappe import _
-from frappe.utils import add_days, add_months, cint, flt, getdate, nowdate
+from frappe.utils import cint, flt, getdate, nowdate
+
+from rentals.billing.periods import (
+    get_final_proration_factor,
+    get_next_billing_date as _get_next_billing_date,
+    get_recurring_charge_amount,
+)
 
 MAX_PERIODS_PER_RUN = 366
 
@@ -113,6 +119,10 @@ def preview_invoice_generation(lease_name, through_date):
         items.extend(utility_items)
         consumed_utility_logs.update(log.name for log in utility_logs)
 
+        if not items and _is_zero_day_final_period(lease_doc, period):
+            _advance_state(state, period)
+            continue
+
         current_charges = _item_total(items)
         existing_invoice = _find_existing_period_invoice(lease_doc.name, period.billing_date)
         existing_outstanding = 0
@@ -178,8 +188,18 @@ def generate_lease_invoices_through(lease_doc, through_date, generation_source, 
         utility_items, utility_logs = _get_utility_items(lease_doc, period.billing_date)
         invoice_items.extend(utility_items)
 
-        # There should normally be a rent/service item because the period comes
-        # from the lease schedule.  Do not advance a broken schedule silently.
+        # A final occurrence exactly on end_date has zero billable days under
+        # the agreed boundary-day convention. Advance it without creating a
+        # zero-value invoice. Other empty periods still indicate bad data.
+        if not invoice_items and _is_zero_day_final_period(lease_doc, period):
+            skipped.append({
+                "billing_date": str(period.billing_date),
+                "reason": _("No billable recurring days remain before lease end."),
+            })
+            _advance_lease_schedule(lease_doc, period)
+            _save_schedule(lease_doc)
+            continue
+
         if not invoice_items:
             frappe.throw(
                 _("Billing period {0} for Lease Agreement {1} has no invoiceable items.").format(
@@ -226,16 +246,10 @@ def get_target_leases(lease_name=None):
 
 def get_next_billing_date(current_date, cycle):
     """Return the next occurrence for a billing cycle."""
-    current_date = getdate(current_date)
-    next_date = {
-        "Daily": add_days(current_date, 1),
-        "Monthly": add_months(current_date, 1),
-        "Quarterly": add_months(current_date, 3),
-        "Annually": add_months(current_date, 12),
-    }.get(cycle)
-    if not next_date:
+    try:
+        return _get_next_billing_date(current_date, cycle)
+    except ValueError:
         frappe.throw(_("Unsupported billing cycle: {0}").format(cycle or _("Not set")))
-    return getdate(next_date)
 
 
 def create_sales_invoice(lease_doc, invoice_items, billing_date, generation_source):
@@ -313,26 +327,61 @@ def _get_next_due_period(lease_doc, through_date):
 def _build_recurring_items(lease_doc, period):
     items = []
     if period.rent_due:
-        items.append(
-            {
-                "item_code": lease_doc.rent_item,
-                "qty": 1,
-                "rate": lease_doc.base_rental_amount,
-                "description": _("Base Rent - billing period {0}").format(period.billing_date),
-            }
+        amount, factor = _recurring_amount_and_factor(
+            lease_doc,
+            lease_doc.base_rental_amount,
+            lease_doc.billing_cycle,
+            period.billing_date,
         )
+        if amount > 0:
+            description = _("Base Rent - billing period {0}").format(period.billing_date)
+            if factor < 1:
+                description = _("{0} (prorated through {1})").format(description, lease_doc.end_date)
+            items.append(
+                {
+                    "item_code": lease_doc.rent_item,
+                    "qty": 1,
+                    "rate": amount,
+                    "description": description,
+                }
+            )
 
     for service in lease_doc.chargeable_services:
         if service.name in period.service_names:
+            amount, factor = _recurring_amount_and_factor(
+                lease_doc, service.rate, service.billing_cycle, period.billing_date
+            )
+            if amount <= 0:
+                continue
+            description = _("{0} - billing period {1}").format(service.billing_cycle, period.billing_date)
+            if factor < 1:
+                description = _("{0} (prorated through {1})").format(description, lease_doc.end_date)
             items.append(
                 {
                     "item_code": service.service,
                     "qty": 1,
-                    "rate": service.rate,
-                    "description": _("{0} - billing period {1}").format(service.billing_cycle, period.billing_date),
+                    "rate": amount,
+                    "description": description,
                 }
             )
     return items
+
+
+def _recurring_amount_and_factor(lease_doc, full_amount, cycle, period_start):
+    factor = get_final_proration_factor(
+        period_start=period_start,
+        cycle=cycle,
+        end_date=lease_doc.end_date,
+        prorate_last_invoice=lease_doc.prorate_last_invoice,
+    )
+    amount = get_recurring_charge_amount(
+        full_amount,
+        period_start=period_start,
+        cycle=cycle,
+        end_date=lease_doc.end_date,
+        prorate_last_invoice=lease_doc.prorate_last_invoice,
+    )
+    return amount, factor
 
 
 def _get_utility_items(lease_doc, billing_date, exclude_logs=None):
@@ -532,6 +581,14 @@ def _validate_lease_for_generation(lease_doc):
         frappe.throw(_("Lease Agreement {0} requires both Customer and Company.").format(lease_doc.name))
 
 
+def _is_zero_day_final_period(lease_doc, period):
+    return bool(
+        lease_doc.end_date
+        and cint(lease_doc.prorate_last_invoice)
+        and getdate(period.billing_date) >= getdate(lease_doc.end_date)
+    )
+
+
 def _effective_through_date(lease_doc, target_date):
     target_date = getdate(target_date)
     if lease_doc.end_date:
@@ -600,10 +657,26 @@ def _peek_due_period(state, through_date):
 def _build_recurring_items_from_state(lease_doc, state, period):
     items = []
     if period.rent_due:
-        items.append({"item_code": state["rent"]["item"], "qty": 1, "rate": state["rent"]["rate"]})
+        amount = get_recurring_charge_amount(
+            state["rent"]["rate"],
+            period_start=period.billing_date,
+            cycle=state["rent"]["cycle"],
+            end_date=lease_doc.end_date,
+            prorate_last_invoice=lease_doc.prorate_last_invoice,
+        )
+        if amount > 0:
+            items.append({"item_code": state["rent"]["item"], "qty": 1, "rate": amount})
     for name in period.service_names:
         row = state["services"][name]
-        items.append({"item_code": row["item"], "qty": 1, "rate": row["rate"]})
+        amount = get_recurring_charge_amount(
+            row["rate"],
+            period_start=period.billing_date,
+            cycle=row["cycle"],
+            end_date=lease_doc.end_date,
+            prorate_last_invoice=lease_doc.prorate_last_invoice,
+        )
+        if amount > 0:
+            items.append({"item_code": row["item"], "qty": 1, "rate": amount})
     return items
 
 

@@ -320,10 +320,11 @@
    "allow_on_submit": 1,
    "fieldname": "grand_total",
    "fieldtype": "Currency",
-   "label": "Grand Total",
+   "label": "Initial Amount Due",
    "non_negative": 1,
    "options": "currency",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Onboarding amount due: applicable first/last-prorated recurring charges plus security deposits. The submitted Sales Order is the accounting source of truth."
   },
   {
    "fieldname": "section_break_guxm",
@@ -369,19 +370,25 @@
    "default": "0",
    "fieldname": "prorate_first_invoice",
    "fieldtype": "Check",
-   "label": "Prorate First Invoice"
+   "label": "Prorate First Invoice",
+   "depends_on": "eval:doc.billing_cycle==\"Monthly\"",
+   "description": "Prorate the onboarding rent and fixed monthly services from the lease Start Date to month end. The next recurring invoice is then due on the 1st of the following month."
   },
   {
    "fieldname": "next_invoice_date",
    "fieldtype": "Date",
    "label": "Next Invoice Date",
-   "read_only": 1
+   "read_only": 1,
+   "hidden": 1,
+   "description": "Legacy field. Recurring billing uses Next Billing Date (billing_date) as its source of truth."
   },
   {
    "default": "0",
    "fieldname": "prorate_last_invoice",
    "fieldtype": "Check",
-   "label": "Prorate Last Invoice"
+   "label": "Prorate Last Invoice",
+   "depends_on": "eval:doc.billing_cycle==\"Monthly\"",
+   "description": "Prorate the final monthly rent and fixed monthly services through the lease End Date. Security deposits and usage-based utilities are not prorated."
   },
   {
    "fieldname": "recurring_charges_section",
@@ -504,7 +511,8 @@
    "fieldname": "billing_date",
    "fieldtype": "Date",
    "label": "Next Billing Date",
-   "reqd": 1
+   "reqd": 1,
+   "description": "System-managed date for the next recurring billing occurrence. Monthly leases with first-invoice proration recur on the 1st of the month."
   },
   {
    "allow_on_submit": 1,

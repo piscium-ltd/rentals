@@ -217,13 +217,20 @@ def send_lease_created_sms(lease_doc) -> dict[str, Any] | None:
 
 	tenant_phone = _get_tenant_phone(lease_doc)
 	currency = getattr(lease_doc, "billing_currency", None) or "KES"
-	amount = _format_money(currency, getattr(lease_doc, "grand_total", None))
+	onboarding_total = frappe.db.get_value(
+		"Sales Order",
+		{"custom_lease_agreement": lease_doc.name, "docstatus": ["!=", 2]},
+		"grand_total",
+	)
+	if onboarding_total is None:
+		onboarding_total = getattr(lease_doc, "grand_total", None)
+	amount = _format_money(currency, onboarding_total)
 	property_label = _get_property_label(lease_doc)
 
 	context = _lease_context(
 		lease_doc,
 		amount=amount,
-		grand_total=getattr(lease_doc, "grand_total", None),
+		grand_total=onboarding_total,
 	)
 
 	message_parts = [

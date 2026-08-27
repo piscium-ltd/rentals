@@ -7,9 +7,11 @@ import random
 from frappe.model.document import Document
 from frappe import _
 from frappe.utils import (
-    today, add_days, add_months, getdate, nowdate, get_url, flt
+    today, getdate, nowdate, get_url, flt
 )
 from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
+
+from rentals.billing.periods import get_initial_billing_date, get_initial_charge_amount
 
 class LeaseAgreement(Document):
     def autoname(self):
@@ -104,31 +106,33 @@ class LeaseAgreement(Document):
                 self.property_assignment = assignment[0].name
 
     def _compute_billing_dates(self):
-        """Set billing_date for self and all chargeable services without a billing_date."""
-        today_date = getdate(today())
+        """Set the first recurring dates from the lease start date.
 
-        if self.billing_cycle and not self.billing_date:
-            self.billing_date = self._get_billing_date(self.billing_cycle, today_date)
+        Monthly leases with first-invoice proration use the onboarding Sales
+        Order for the partial start month, then recur on the first day of the
+        following month. Other schedules retain anniversary billing.
+        """
+        if not self.start_date:
+            return
+
+        if self.billing_cycle and (self.docstatus == 0 or not self.billing_date):
+            self.billing_date = self._get_billing_date(self.billing_cycle, self.start_date)
 
         for row in self.chargeable_services:
-            if row.billing_cycle and not row.billing_date:
-                row.billing_date = self._get_billing_date(row.billing_cycle, today_date)
+            if row.billing_cycle and (self.docstatus == 0 or not row.billing_date):
+                row.billing_date = self._get_billing_date(row.billing_cycle, self.start_date)
 
     def _get_billing_date(self, cycle, base_date=None):
-        """Return next billing date based on the billing cycle."""
-        base_date = base_date or getdate(today())
-
-        match cycle:
-            case "Daily":
-                return add_days(base_date, 1)
-            case "Monthly":
-                return add_months(base_date, 1)
-            case "Quarterly":
-                return add_months(base_date, 3)
-            case "Annually":
-                return add_months(base_date, 12)
-            case _:
-                return None
+        """Return the first recurring date for a charge schedule."""
+        base_date = base_date or self.start_date or getdate(today())
+        try:
+            return get_initial_billing_date(
+                base_date,
+                cycle,
+                prorate_first_invoice=self.prorate_first_invoice,
+            )
+        except ValueError:
+            return None
 
     def _calculate_chargeable_services_subtotal(self):
         """Compute total for chargeable services and update subtotal field."""
@@ -139,12 +143,20 @@ class LeaseAgreement(Document):
         self.security_deposits_subtotal = sum(flt(row.rate) for row in self.security_deposits)
 
     def _calculate_grand_total(self):
-        """Compute grand total from base rent, chargeable services, and security deposits."""
-        self.grand_total = sum([
-            flt(self.base_rental_amount),
-            flt(self.chargeable_services_subtotal),
-            flt(self.security_deposits_subtotal),
-        ])
+        """Compute the actual onboarding amount due.
+
+        This mirrors the Sales Order: prorated monthly rent/fixed services where
+        applicable, plus security deposits at their full configured amounts.
+        """
+        recurring_total = self._initial_recurring_amount(
+            self.base_rental_amount, self.billing_cycle
+        ) if self.base_rental_amount and self.billing_cycle else 0
+        recurring_total += sum(
+            self._initial_recurring_amount(row.rate, row.billing_cycle)
+            for row in self.chargeable_services
+            if row.rate and row.billing_cycle
+        )
+        self.grand_total = flt(recurring_total) + flt(self.security_deposits_subtotal)
 
     def on_submit(self):
         """Handle unit occupation, customer setup, sales/payment documents, and SMS notification."""
@@ -262,22 +274,30 @@ class LeaseAgreement(Document):
 
         items = []
 
-        # Add rent item
+        # Add rent item. The Sales Order is the monetary SSOT for onboarding,
+        # so any first/last proration is applied before the Payment Request and
+        # before api.py later splits the order into accounting invoices.
         if self.rent_item and self.base_rental_amount:
-            items.append({
-                "item_code": self.rent_item,
-                "qty": 1,
-                "rate": self.base_rental_amount,
-                "delivery_date": nowdate()
-            })
+            rent_rate = self._initial_recurring_amount(self.base_rental_amount, self.billing_cycle)
+            if rent_rate > 0:
+                items.append({
+                    "item_code": self.rent_item,
+                    "qty": 1,
+                    "rate": rent_rate,
+                    "delivery_date": nowdate()
+                })
 
-        # Add chargeable services
+        # Fixed monthly chargeable services follow the same onboarding period
+        # as rent. Non-monthly services retain their configured full rate.
         for row in self.chargeable_services:
             if row.service and row.rate:
+                service_rate = self._initial_recurring_amount(row.rate, row.billing_cycle)
+                if service_rate <= 0:
+                    continue
                 items.append({
                     "item_code": row.service,
                     "qty": 1,
-                    "rate": row.rate,
+                    "rate": service_rate,
                     "delivery_date": nowdate()
                 })
 
@@ -316,9 +336,23 @@ class LeaseAgreement(Document):
         )
         return sales_order
 
+
+    def _initial_recurring_amount(self, amount, cycle):
+        """Return the onboarding fixed-charge amount for one recurring line."""
+        if not self.start_date:
+            return flt(amount)
+        return get_initial_charge_amount(
+            amount,
+            start_date=self.start_date,
+            cycle=cycle,
+            prorate_first_invoice=self.prorate_first_invoice,
+            end_date=self.end_date,
+            prorate_last_invoice=self.prorate_last_invoice,
+        )
+
     def _create_payment_request(self, sales_order):
         """Create a Payment Request and email it to the customer."""
-        if self.get("__is_duplicate"):
+        if self.get("__is_duplicate") or not sales_order:
             return
 
         email = frappe.db.get_value("Customer", self.customer, "email_id")
@@ -337,7 +371,7 @@ class LeaseAgreement(Document):
         payment_request.message = (
             f"<p>Dear {self.customer},</p>"
             f"<p>Please make payment for Account Number <b>{self.name}</b> totaling "
-            f"<b>Sh. {self.grand_total:,.0f}</b>.</p><p>Thank you.</p>"
+            f"<b>Sh. {sales_order.grand_total:,.0f}</b>.</p><p>Thank you.</p>"
         )
         payment_request.save()
         payment_request.submit()

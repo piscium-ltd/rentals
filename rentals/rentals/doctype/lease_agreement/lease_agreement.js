@@ -98,14 +98,35 @@ frappe.ui.form.on("Lease Agreement", {
 		});
 	},
 
-	start_date: validate_dates,
-	end_date: validate_dates,
+	start_date(frm) {
+		validate_dates(frm);
+		refresh_initial_billing_dates(frm);
+		calculate_grand_total(frm);
+	},
+	end_date(frm) {
+		validate_dates(frm);
+		calculate_grand_total(frm);
+	},
+
+	prorate_first_invoice(frm) {
+		refresh_initial_billing_dates(frm);
+		calculate_grand_total(frm);
+	},
+
+	prorate_last_invoice(frm) {
+		calculate_grand_total(frm);
+	},
 
 	billing_cycle(frm) {
-		const next_date = get_billing_date(frm.doc.billing_cycle);
+		const next_date = get_billing_date(
+			frm.doc.billing_cycle,
+			frm.doc.start_date,
+			frm.doc.prorate_first_invoice
+		);
 		if (next_date) {
 			frm.set_value("billing_date", next_date);
 		}
+		calculate_grand_total(frm);
 	},
 
 	base_rental_amount: calculate_grand_total,
@@ -120,10 +141,15 @@ frappe.ui.form.on("Chargeable Services", {
 
 	billing_cycle(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
-		const next_date = get_billing_date(row.billing_cycle);
+		const next_date = get_billing_date(
+			row.billing_cycle,
+			frm.doc.start_date,
+			frm.doc.prorate_first_invoice
+		);
 		if (next_date) {
 			frappe.model.set_value(cdt, cdn, "billing_date", next_date);
 		}
+		calculate_grand_total(frm);
 	},
 });
 
@@ -135,21 +161,52 @@ frappe.ui.form.on("Security Deposit", {
 
 // ---------- Helper Functions ---------- //
 
-function get_billing_date(cycle) {
-	const today_date = frappe.datetime.get_today();
+function get_billing_date(cycle, start_date, prorate_first_invoice) {
+	const base_date = start_date || frappe.datetime.get_today();
+
+	if (cycle === "Monthly" && cint(prorate_first_invoice)) {
+		const next_month = frappe.datetime.add_months(base_date, 1);
+		return `${next_month.slice(0, 7)}-01`;
+	}
 
 	switch (cycle) {
 		case "Daily":
-			return frappe.datetime.add_days(today_date, 1);
+			return frappe.datetime.add_days(base_date, 1);
 		case "Monthly":
-			return frappe.datetime.add_months(today_date, 1);
+			return frappe.datetime.add_months(base_date, 1);
 		case "Quarterly":
-			return frappe.datetime.add_months(today_date, 3);
+			return frappe.datetime.add_months(base_date, 3);
 		case "Annually":
-			return frappe.datetime.add_months(today_date, 12);
+			return frappe.datetime.add_months(base_date, 12);
 		default:
 			return null;
 	}
+}
+
+function refresh_initial_billing_dates(frm) {
+	if (frm.doc.docstatus !== 0 || !frm.doc.start_date) {
+		return;
+	}
+
+	const rent_date = get_billing_date(
+		frm.doc.billing_cycle,
+		frm.doc.start_date,
+		frm.doc.prorate_first_invoice
+	);
+	if (rent_date) {
+		frm.set_value("billing_date", rent_date);
+	}
+
+	(frm.doc.chargeable_services || []).forEach((row) => {
+		const service_date = get_billing_date(
+			row.billing_cycle,
+			frm.doc.start_date,
+			frm.doc.prorate_first_invoice
+		);
+		if (service_date) {
+			frappe.model.set_value(row.doctype, row.name, "billing_date", service_date);
+		}
+	});
 }
 
 function calculate_chargeable_services_subtotal(frm) {
@@ -163,12 +220,90 @@ function calculate_security_deposits_subtotal(frm) {
 }
 
 function calculate_grand_total(frm) {
-	const total =
-		flt(frm.doc.base_rental_amount) +
-		flt(frm.doc.chargeable_services_subtotal) +
-		flt(frm.doc.security_deposits_subtotal);
+	const rent = calculate_initial_recurring_amount(
+		frm.doc.base_rental_amount,
+		frm.doc.billing_cycle,
+		frm.doc
+	);
+	const services = (frm.doc.chargeable_services || []).reduce(
+		(sum, row) => sum + calculate_initial_recurring_amount(row.rate, row.billing_cycle, frm.doc),
+		0
+	);
+	const total = rent + services + flt(frm.doc.security_deposits_subtotal);
 
 	frm.set_value("grand_total", total);
+}
+
+function calculate_initial_recurring_amount(full_amount, cycle, doc) {
+	const amount = flt(full_amount);
+	if (!amount || cycle !== "Monthly" || !doc.start_date) {
+		return amount;
+	}
+
+	const start = doc.start_date;
+	const end = doc.end_date || null;
+	const prorate_first = Boolean(cint(doc.prorate_first_invoice));
+	const prorate_last = Boolean(cint(doc.prorate_last_invoice));
+	let factor = 1;
+
+	if (prorate_first) {
+		const month_end = get_month_end_date(start);
+		const next_recurring = get_billing_date("Monthly", start, true);
+		let effective_end = month_end;
+
+		if (prorate_last && end && end < next_recurring) {
+			effective_end = end < month_end ? end : month_end;
+		}
+
+		if (effective_end <= start) {
+			factor = 0;
+		} else if (Number(start.slice(8, 10)) === 1 && effective_end === month_end) {
+			factor = 1;
+		} else {
+			factor = clamp_factor(days_between(start, effective_end) / days_in_month(start));
+		}
+	} else if (prorate_last && end) {
+		const period_end = get_billing_date("Monthly", start, false);
+		if (end < period_end) {
+			factor = partial_period_factor(start, period_end, end);
+		}
+	}
+
+	return amount * factor;
+}
+
+function partial_period_factor(period_start, period_end, effective_end) {
+	if (effective_end <= period_start) {
+		return 0;
+	}
+	if (effective_end >= frappe.datetime.add_days(period_end, -1)) {
+		return 1;
+	}
+	const denominator = days_between(period_start, period_end);
+	return denominator > 0 ? clamp_factor(days_between(period_start, effective_end) / denominator) : 0;
+}
+
+function get_month_end_date(value) {
+	const year = Number(value.slice(0, 4));
+	const month = Number(value.slice(5, 7));
+	const day = new Date(Date.UTC(year, month, 0)).getUTCDate();
+	return `${value.slice(0, 7)}-${String(day).padStart(2, "0")}`;
+}
+
+function days_in_month(value) {
+	const year = Number(value.slice(0, 4));
+	const month = Number(value.slice(5, 7));
+	return new Date(Date.UTC(year, month, 0)).getUTCDate();
+}
+
+function days_between(start, end) {
+	const to_utc = (value) =>
+		Date.UTC(Number(value.slice(0, 4)), Number(value.slice(5, 7)) - 1, Number(value.slice(8, 10)));
+	return Math.round((to_utc(end) - to_utc(start)) / 86400000);
+}
+
+function clamp_factor(value) {
+	return Math.max(0, Math.min(Number(value), 1));
 }
 
 function validate_dates(frm) {

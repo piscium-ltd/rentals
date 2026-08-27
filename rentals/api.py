@@ -1,6 +1,8 @@
 import frappe
 from frappe.utils import getdate, nowdate
 
+from rentals.billing.periods import get_initial_charge_amount
+
 @frappe.whitelist(allow_guest=True)
 def payment_validation():
     """M-Pesa C2B Validation URL handler."""
@@ -90,12 +92,15 @@ def payment_webhook(account_number, amount):
         # Handle Sales Order invoices
         sales_order = frappe.db.get_value("Sales Order", {"custom_lease_agreement": lease.name}, "name")
         if sales_order:
-            created_invoices += handle_sales_order_invoices(
+            onboarding_invoices = handle_sales_order_invoices(
                 lease, sales_order, customer, company, currency, price_list
             )
+            created_invoices += onboarding_invoices
 
-            # Handle Full Agency invoices
-            if lease.agency_type == "Full Agency":
+            # Full Agency mirror documents belong to the same onboarding event.
+            # Only create them when this payment actually converted the Sales
+            # Order, preventing duplicate mirror invoices on later payments.
+            if onboarding_invoices and lease.agency_type == "Full Agency":
                 created_invoices += handle_full_agency_invoices(lease, currency)
 
         # Allocate payment to invoices
@@ -119,7 +124,12 @@ def payment_webhook(account_number, amount):
         frappe.throw(f"Error while processing payment: {str(e)}")
 
 def handle_sales_order_invoices(lease, sales_order, customer, company, currency, price_list):
-    """Generate invoices (deposit + recurring) from Sales Order linked to Lease."""
+    """Split the onboarding Sales Order into deposit and recurring invoices.
+
+    The Sales Order is the monetary source of truth. Its rent/monthly-service
+    rows may already be prorated, so invoice conversion must copy SO quantities
+    and rates instead of rebuilding full rates from the Lease Agreement.
+    """
     try:
         so_doc = frappe.get_doc("Sales Order", sales_order)
         if so_doc.per_billed >= 100:
@@ -127,56 +137,26 @@ def handle_sales_order_invoices(lease, sales_order, customer, company, currency,
 
         deposit_items, recurring_items, created = [], [], []
 
-        # Security deposits
         for row in lease.security_deposits:
-            so_detail = frappe.db.get_value(
-                "Sales Order Item",
-                {"parent": so_doc.name, "item_code": row.security_type},
-                "name"
-            )
-            if so_detail:
-                deposit_items.append({
-                    "item_code": row.security_type,
-                    "qty": 1,
-                    "rate": row.rate,
-                    "description": "Security Deposit",
-                    "sales_order": so_doc.name,
-                    "so_detail": so_detail
-                })
+            so_row = _find_sales_order_item(so_doc, row.security_type)
+            if so_row:
+                deposit_items.append(_invoice_item_from_sales_order(
+                    so_doc, so_row, description="Security Deposit"
+                ))
 
-        # Rent
         if lease.rent_item and lease.base_rental_amount:
-            so_detail = frappe.db.get_value(
-                "Sales Order Item",
-                {"parent": so_doc.name, "item_code": lease.rent_item},
-                "name"
-            )
-            if so_detail:
-                recurring_items.append({
-                    "item_code": lease.rent_item,
-                    "qty": 1,
-                    "rate": lease.base_rental_amount,
-                    "description": "Base Rent",
-                    "sales_order": so_doc.name,
-                    "so_detail": so_detail
-                })
+            so_row = _find_sales_order_item(so_doc, lease.rent_item)
+            if so_row:
+                recurring_items.append(_invoice_item_from_sales_order(
+                    so_doc, so_row, description="Base Rent"
+                ))
 
-        # Chargeable services
         for row in lease.chargeable_services:
-            so_detail = frappe.db.get_value(
-                "Sales Order Item",
-                {"parent": so_doc.name, "item_code": row.service},
-                "name"
-            )
-            if so_detail:
-                recurring_items.append({
-                    "item_code": row.service,
-                    "qty": 1,
-                    "rate": row.rate,
-                    "description": row.billing_cycle,
-                    "sales_order": so_doc.name,
-                    "so_detail": so_detail
-                })
+            so_row = _find_sales_order_item(so_doc, row.service)
+            if so_row:
+                recurring_items.append(_invoice_item_from_sales_order(
+                    so_doc, so_row, description=row.billing_cycle
+                ))
 
         if deposit_items:
             created.append(create_sales_invoice(
@@ -198,6 +178,24 @@ def handle_sales_order_invoices(lease, sales_order, customer, company, currency,
         frappe.log_error(frappe.get_traceback(), "Sales Invoice Creation Error")
         return []
 
+
+def _find_sales_order_item(so_doc, item_code):
+    if not item_code:
+        return None
+    return next((row for row in so_doc.items if row.item_code == item_code), None)
+
+
+def _invoice_item_from_sales_order(so_doc, so_row, *, description):
+    """Copy the commercial amount exactly from its Sales Order row."""
+    return {
+        "item_code": so_row.item_code,
+        "qty": so_row.qty,
+        "rate": so_row.rate,
+        "description": description,
+        "sales_order": so_doc.name,
+        "so_detail": so_row.name,
+    }
+
 def handle_full_agency_invoices(lease, currency):
     """Create sales & purchase invoices for 'Full Agency' leases."""
     try:
@@ -213,10 +211,21 @@ def handle_full_agency_invoices(lease, currency):
         if not lease.rent_item or not lease.base_rental_amount:
             return []
 
+        onboarding_rent = get_initial_charge_amount(
+            lease.base_rental_amount,
+            start_date=lease.start_date,
+            cycle=lease.billing_cycle,
+            prorate_first_invoice=lease.prorate_first_invoice,
+            end_date=lease.end_date,
+            prorate_last_invoice=lease.prorate_last_invoice,
+        )
+        if onboarding_rent <= 0:
+            return []
+
         rent_item = [{
             "item_code": lease.rent_item,
             "qty": 1,
-            "rate": lease.base_rental_amount,
+            "rate": onboarding_rent,
             "description": "Rent"
         }]
 
