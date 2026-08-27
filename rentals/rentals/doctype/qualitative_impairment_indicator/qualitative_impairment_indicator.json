@@ -23,8 +23,9 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Indicator Type",
-   "options": "To be added",
-   "reqd": 1
+   "options": "Physical Damage or Deterioration\nAdverse Market or Economic Change\nAdverse Legal or Regulatory Change\nObsolescence\nOperational Underperformance\nOccupancy or Vacancy Deterioration\nCash Flow Deterioration\nOther",
+   "reqd": 1,
+   "description": "Choose the event that may indicate the property requires an impairment review."
   },
   {
    "fieldname": "description",
@@ -38,7 +39,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-16 23:32:39.150473",
+ "modified": "2026-08-27 15:59:00.000000",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Qualitative Impairment Indicator",

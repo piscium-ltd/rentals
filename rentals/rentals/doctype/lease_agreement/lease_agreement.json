@@ -418,7 +418,7 @@
    "options": "Contingent Rent Term"
   },
   {
-   "fetch_from": "property.location",
+   "fetch_from": "property.rental_location",
    "fieldname": "location",
    "fieldtype": "Read Only",
    "label": "Location"

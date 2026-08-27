@@ -1,45 +1,94 @@
 (() => {
-	const doctypes = ["Landlord", "Tenant", "Property", "Agent"];
+	const locationFieldByDoctype = {
+		Landlord: "location",
+		Tenant: "location",
+		Property: "rental_location",
+		Agent: "location",
+	};
 
-	doctypes.forEach((doctype) => {
+	Object.entries(locationFieldByDoctype).forEach(([doctype, locationField]) => {
+		const enforceHierarchy = doctype === "Property";
+
 		frappe.ui.form.on(doctype, {
 			setup(frm) {
-				// Constituency depends on County
-				frm.set_query("constituency", () => ({
-					filters: {
-						county: frm.doc.county,
-					},
-				}));
+				configure_location_queries(frm, locationField);
+				update_location_field_states(frm, locationField, enforceHierarchy);
+			},
 
-				// Ward depends on Constituency
-				frm.set_query("ward", () => ({
-					filters: {
-						constituency: frm.doc.constituency,
-					},
-				}));
-
-				// Location depends on Ward
-				frm.set_query("location", () => ({
-					filters: {
-						ward: frm.doc.ward,
-					},
-				}));
+			refresh(frm) {
+				update_location_field_states(frm, locationField, enforceHierarchy);
 			},
 
 			county(frm) {
-				frm.set_value("constituency", null);
-				frm.set_value("ward", null);
-				frm.set_value("location", null);
+				clear_fields(frm, ["constituency", "ward", locationField, "sub_location"]);
+				update_location_field_states(frm, locationField, enforceHierarchy);
 			},
 
 			constituency(frm) {
-				frm.set_value("ward", null);
-				frm.set_value("location", null);
+				clear_fields(frm, ["ward", locationField, "sub_location"]);
+				update_location_field_states(frm, locationField, enforceHierarchy);
 			},
 
 			ward(frm) {
-				frm.set_value("location", null);
+				clear_fields(frm, [locationField, "sub_location"]);
+				update_location_field_states(frm, locationField, enforceHierarchy);
+			},
+
+			[locationField](frm) {
+				clear_fields(frm, ["sub_location"]);
+				update_location_field_states(frm, locationField, enforceHierarchy);
 			},
 		});
 	});
+
+	function configure_location_queries(frm, locationField) {
+		frm.set_query("constituency", () => ({
+			filters: {
+				county: frm.doc.county,
+			},
+		}));
+
+		frm.set_query("ward", () => ({
+			filters: {
+				constituency: frm.doc.constituency,
+			},
+		}));
+
+		frm.set_query(locationField, () => ({
+			filters: {
+				ward: frm.doc.ward,
+			},
+		}));
+
+		frm.set_query("sub_location", () => ({
+			filters: {
+				location: frm.doc[locationField],
+			},
+		}));
+	}
+
+	function clear_fields(frm, fields) {
+		fields.forEach((fieldname) => {
+			if (frm.fields_dict[fieldname] && frm.doc[fieldname]) {
+				frm.set_value(fieldname, null);
+			}
+		});
+	}
+
+	function update_location_field_states(frm, locationField, enforceHierarchy) {
+		if (!enforceHierarchy) return;
+
+		if (frm.fields_dict.constituency) {
+			frm.toggle_enable("constituency", Boolean(frm.doc.county));
+		}
+		if (frm.fields_dict.ward) {
+			frm.toggle_enable("ward", Boolean(frm.doc.constituency));
+		}
+		if (frm.fields_dict[locationField]) {
+			frm.toggle_enable(locationField, Boolean(frm.doc.ward));
+		}
+		if (frm.fields_dict.sub_location) {
+			frm.toggle_enable("sub_location", Boolean(frm.doc[locationField]));
+		}
+	}
 })();

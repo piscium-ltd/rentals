@@ -1,49 +1,68 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{property_name}-{location}",
+ "autoname": "{property_name}-{rental_location}",
  "creation": "2025-04-14 22:30:25.789111",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "property_details_tab",
+  "property_details_section",
   "property_name",
-  "asset",
-  "column_break_widu",
+  "created_by_agent",
+  "column_break_csqc",
   "landlord",
   "landlord_name",
-  "created_by_agent",
-  "location_details_section",
+  "location_details_tab",
   "county",
   "constituency",
   "ward",
   "column_break_tqfg",
-  "location",
+  "rental_location",
   "sub_location",
-  "ifrs_accounting_model_section",
+  "accounting_tab",
   "accounting_model",
-  "last_valuation_date",
-  "column_break_ypgw",
+  "acquisition_date",
   "current_fair_value",
-  "section_break_dekj",
+  "column_break_ypgw",
+  "acquisition_cost",
+  "available_for_use_date",
+  "last_valuation_date",
+  "cost_model_depreciation_section",
+  "calculate_depreciation",
+  "useful_life_years",
+  "column_break_depreciation",
+  "depreciation_frequency",
+  "residual_value",
+  "valuation_section",
   "valuation_history",
+  "impairment_tab",
+  "asset_setup_section",
+  "asset",
+  "setup_status",
+  "setup_error",
+  "column_break_jfpp",
+  "location",
+  "setup_completed_on",
   "impairment_assessment_parameters_section",
-  "occupancy_rate_threshold",
-  "fair_value_decline_threshold",
-  "column_break_qrqf",
   "enable_automated_impairment_check",
+  "occupancy_rate_threshold",
+  "column_break_qrqf",
+  "fair_value_decline_threshold",
   "trigger_impairment_review",
-  "section_break_qxfn",
+  "qualitative_indicators_section",
   "qualitative_impairment_indicator"
  ],
  "fields": [
   {
-   "fieldname": "landlord",
-   "fieldtype": "Link",
-   "in_standard_filter": 1,
-   "label": "Landlord",
-   "options": "Landlord",
-   "reqd": 1,
-   "search_index": 1
+   "fieldname": "property_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Property"
+  },
+  {
+   "fieldname": "property_details_section",
+   "fieldtype": "Section Break",
+   "label": "Property Details"
   },
   {
    "fieldname": "property_name",
@@ -54,123 +73,31 @@
    "reqd": 1
   },
   {
+   "fieldname": "landlord",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Landlord",
+   "options": "Landlord",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
    "fetch_from": "landlord.abbr",
    "fieldname": "landlord_name",
    "fieldtype": "Read Only",
    "in_list_view": 1,
-   "label": "Landlord Name"
-  },
-  {
-   "fieldname": "location",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Location",
-   "options": "Location",
-   "reqd": 1
-  },
-  {
-   "fieldname": "asset",
-   "fieldtype": "Link",
-   "label": "Asset",
-   "no_copy": 1,
-   "options": "Asset",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_widu",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "ifrs_accounting_model_section",
-   "fieldtype": "Section Break",
-   "label": "IFRS Accounting Model"
-  },
-  {
-   "default": "Cost Model",
-   "fieldname": "accounting_model",
-   "fieldtype": "Select",
-   "label": "Accounting Model",
-   "options": "Cost Model\nFair Value Model",
-   "reqd": 1,
-   "set_only_once": 1
-  },
-  {
-   "fieldname": "current_fair_value",
-   "fieldtype": "Currency",
-   "label": "Current Fair Value",
-   "read_only": 1
-  },
-  {
-   "fieldname": "last_valuation_date",
-   "fieldtype": "Date",
-   "label": "Last Valuation Date",
-   "read_only": 1
-  },
-  {
-   "depends_on": "eval:doc.accounting_model=='Fair Value Model'",
-   "fieldname": "valuation_history",
-   "fieldtype": "Table",
-   "label": "Valuation History",
-   "mandatory_depends_on": "eval:doc.accounting_model=='Fair Value Model'",
-   "options": "Valuation History"
-  },
-  {
-   "fieldname": "column_break_ypgw",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_dekj",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "impairment_assessment_parameters_section",
-   "fieldtype": "Section Break",
-   "label": "Impairment Assessment Parameters"
-  },
-  {
-   "default": "1",
-   "fieldname": "enable_automated_impairment_check",
-   "fieldtype": "Check",
-   "label": "Enable Automated Impairment Check"
-  },
-  {
-   "default": "0",
-   "fieldname": "trigger_impairment_review",
-   "fieldtype": "Check",
-   "label": "Trigger Impairment Review",
-   "read_only": 1
-  },
-  {
-   "fieldname": "section_break_qxfn",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "qualitative_impairment_indicator",
-   "fieldtype": "Table",
-   "label": "Qualitative Impairment Indicator",
-   "options": "Qualitative Impairment Indicator"
-  },
-  {
-   "fieldname": "column_break_qrqf",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "occupancy_rate_threshold",
-   "fieldtype": "Float",
-   "label": "Occupancy Rate Threshold (%)"
-  },
-  {
-   "depends_on": "eval:doc.accounting_model=='Fair Value Model'",
-   "fieldname": "fair_value_decline_threshold",
-   "fieldtype": "Float",
-   "label": "Fair Value Decline Threshold (%)"
+   "label": "Landlord Abbr"
   },
   {
    "fieldname": "created_by_agent",
    "fieldtype": "Link",
    "label": "Created By Agent",
    "options": "Agent"
+  },
+  {
+   "fieldname": "location_details_tab",
+   "fieldtype": "Section Break",
+   "label": "Location Details"
   },
   {
    "fieldname": "county",
@@ -191,9 +118,17 @@
    "options": "Ward"
   },
   {
-   "fieldname": "location_details_section",
-   "fieldtype": "Section Break",
-   "label": "Location Details"
+   "fieldname": "column_break_tqfg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rental_location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Location",
+   "options": "Location Name",
+   "reqd": 1
   },
   {
    "fieldname": "sub_location",
@@ -202,7 +137,222 @@
    "options": "Sub Location"
   },
   {
-   "fieldname": "column_break_tqfg",
+   "fieldname": "accounting_tab",
+   "fieldtype": "Section Break",
+   "label": "Accounting & Valuation"
+  },
+  {
+   "default": "Cost Model",
+   "fieldname": "accounting_model",
+   "fieldtype": "Select",
+   "label": "Accounting Model",
+   "options": "Cost Model\nFair Value Model",
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "acquisition_cost",
+   "fieldtype": "Currency",
+   "label": "Acquisition Cost",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "acquisition_date",
+   "fieldtype": "Date",
+   "label": "Acquisition Date",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "available_for_use_date",
+   "fieldtype": "Date",
+   "label": "Available for Use Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_ypgw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.accounting_model==\"Fair Value Model\"",
+   "fieldname": "current_fair_value",
+   "fieldtype": "Currency",
+   "label": "Current Fair Value",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.accounting_model==\"Fair Value Model\"",
+   "fieldname": "last_valuation_date",
+   "fieldtype": "Date",
+   "label": "Last Valuation Date",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.accounting_model==\"Cost Model\"",
+   "fieldname": "cost_model_depreciation_section",
+   "fieldtype": "Section Break",
+   "label": "Cost Model Depreciation"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval:doc.accounting_model==\"Cost Model\"",
+   "fieldname": "calculate_depreciation",
+   "fieldtype": "Check",
+   "label": "Calculate Depreciation"
+  },
+  {
+   "default": "40",
+   "depends_on": "eval:doc.accounting_model==\"Cost Model\" && doc.calculate_depreciation",
+   "fieldname": "useful_life_years",
+   "fieldtype": "Float",
+   "label": "Useful Life (Years)",
+   "mandatory_depends_on": "eval:doc.accounting_model==\"Cost Model\" && doc.calculate_depreciation",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "column_break_depreciation",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Annual",
+   "depends_on": "eval:doc.accounting_model==\"Cost Model\" && doc.calculate_depreciation",
+   "fieldname": "depreciation_frequency",
+   "fieldtype": "Select",
+   "label": "Depreciation Frequency",
+   "mandatory_depends_on": "eval:doc.accounting_model==\"Cost Model\" && doc.calculate_depreciation",
+   "options": "Monthly\nQuarterly\nSemi-Annual\nAnnual"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.accounting_model==\"Cost Model\" && doc.calculate_depreciation",
+   "fieldname": "residual_value",
+   "fieldtype": "Currency",
+   "label": "Residual Value",
+   "non_negative": 1
+  },
+  {
+   "depends_on": "eval:doc.accounting_model==\"Fair Value Model\"",
+   "fieldname": "valuation_section",
+   "fieldtype": "Section Break",
+   "label": "Fair Value Measurements"
+  },
+  {
+   "depends_on": "eval:doc.accounting_model==\"Fair Value Model\"",
+   "fieldname": "valuation_history",
+   "fieldtype": "Table",
+   "label": "Valuation History",
+   "mandatory_depends_on": "eval:doc.accounting_model==\"Fair Value Model\"",
+   "options": "Valuation History"
+  },
+  {
+   "fieldname": "impairment_tab",
+   "fieldtype": "Tab Break",
+   "label": "Asset & Review"
+  },
+  {
+   "fieldname": "asset_setup_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "asset",
+   "fieldtype": "Link",
+   "label": "Asset",
+   "no_copy": 1,
+   "options": "Asset",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Asset Location",
+   "no_copy": 1,
+   "options": "Location",
+   "read_only": 1
+  },
+  {
+   "default": "Pending",
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "setup_status",
+   "fieldtype": "Select",
+   "label": "Asset Setup Status",
+   "no_copy": 1,
+   "options": "Pending\nIn Progress\nCompleted\nFailed",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.setup_status==\"Failed\"",
+   "fieldname": "setup_error",
+   "fieldtype": "Small Text",
+   "label": "Asset Setup Error",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.setup_status==\"Completed\"",
+   "fieldname": "setup_completed_on",
+   "fieldtype": "Datetime",
+   "label": "Asset Setup Completed On",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "impairment_assessment_parameters_section",
+   "fieldtype": "Section Break",
+   "label": "Automated Review Parameters"
+  },
+  {
+   "default": "0",
+   "description": "Turn this on only after setting the thresholds that reflect your accounting policy.",
+   "fieldname": "enable_automated_impairment_check",
+   "fieldtype": "Check",
+   "label": "Enable Automated Impairment Check"
+  },
+  {
+   "depends_on": "eval:doc.enable_automated_impairment_check",
+   "fieldname": "occupancy_rate_threshold",
+   "fieldtype": "Float",
+   "label": "Occupancy Rate Threshold (%)",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "column_break_qrqf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.enable_automated_impairment_check && doc.accounting_model==\"Fair Value Model\"",
+   "fieldname": "fair_value_decline_threshold",
+   "fieldtype": "Float",
+   "label": "Fair Value Decline Threshold (%)",
+   "non_negative": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "trigger_impairment_review",
+   "fieldtype": "Check",
+   "label": "Trigger Impairment Review",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qualitative_indicators_section",
+   "fieldtype": "Section Break",
+   "label": "Qualitative Indicators"
+  },
+  {
+   "fieldname": "qualitative_impairment_indicator",
+   "fieldtype": "Table",
+   "label": "Qualitative Impairment Indicators",
+   "options": "Qualitative Impairment Indicator"
+  },
+  {
+   "fieldname": "column_break_csqc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_jfpp",
    "fieldtype": "Column Break"
   }
  ],
@@ -214,11 +364,11 @@
    "link_fieldname": "property"
   }
  ],
- "modified": "2026-06-28 21:56:19.801331",
+ "modified": "2026-08-27 17:12:31.494981",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Property",
- "naming_rule": "Expression (old style)",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
