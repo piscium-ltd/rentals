@@ -8,6 +8,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import cint, flt, get_last_day, getdate, now, nowdate
 
+from rentals.rentals.asset_compat import acquisition_amount_field
+
 
 ASSET_SETUP_QUEUE = "long"
 ASSET_SETUP_METHOD = "rentals.rentals.doctype.property.property.provision_property_asset"
@@ -294,20 +296,24 @@ class Property(Document):
             "location": asset_location,
             "purchase_date": self.acquisition_date,
             "available_for_use_date": self.available_for_use_date,
-            "net_purchase_amount": amount,
             "asset_quantity": 1,
         }
+
+        amount_field = acquisition_amount_field(asset_meta)
+        if not amount_field:
+            frappe.throw(
+                _(
+                    "The installed ERPNext Asset schema has no supported acquisition amount field "
+                    "(net_purchase_amount, gross_purchase_amount, or purchase_amount)."
+                )
+            )
+        payload[amount_field] = amount
 
         # ERPNext v16+ uses asset_type; older supported benches used is_existing_asset.
         if asset_meta.has_field("asset_type"):
             payload["asset_type"] = "Existing Asset"
         elif asset_meta.has_field("is_existing_asset"):
             payload["is_existing_asset"] = 1
-
-        # Keep compatibility with older Asset schemas while always populating the
-        # modern mandatory Net Purchase Amount that caused the original failure.
-        if asset_meta.has_field("gross_purchase_amount"):
-            payload["gross_purchase_amount"] = amount
 
         if self.accounting_model == "Cost Model" and cint(self.calculate_depreciation):
             frequency = self._get_depreciation_frequency_months()

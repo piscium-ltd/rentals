@@ -1,6 +1,8 @@
 import frappe
 from frappe.utils import flt, getdate
 
+from rentals.rentals.asset_compat import ASSET_RECORDED_COST_FIELDS, supported_fields
+
 
 DEFAULT_USEFUL_LIFE_YEARS = 40
 
@@ -50,23 +52,25 @@ def _get_asset_values(asset_name):
     if not asset_name or not frappe.db.exists("Asset", asset_name):
         return None
 
-    fields = [
-        "name",
-        "docstatus",
-        "purchase_date",
-        "available_for_use_date",
-        "net_purchase_amount",
-        "calculate_depreciation",
-    ]
     asset_meta = frappe.get_meta("Asset")
-    if asset_meta.has_field("gross_purchase_amount"):
-        fields.append("gross_purchase_amount")
+    fields = ["name", "docstatus"]
+    fields.extend(
+        supported_fields(
+            asset_meta,
+            (
+                "purchase_date",
+                "available_for_use_date",
+                "calculate_depreciation",
+                *ASSET_RECORDED_COST_FIELDS,
+            ),
+        )
+    )
 
     asset = frappe.db.get_value("Asset", asset_name, fields, as_dict=True)
     if not asset:
         return None
 
-    if asset.calculate_depreciation:
+    if asset.get("calculate_depreciation"):
         finance_book = frappe.db.get_value(
             "Asset Finance Book",
             {"parent": asset_name, "parenttype": "Asset", "parentfield": "finance_books"},
@@ -110,12 +114,16 @@ def _backfill_geography(prop, values):
 def _backfill_dates(prop, asset, values):
     acquisition_date = prop.acquisition_date
     if not acquisition_date:
-        acquisition_date = asset.purchase_date if asset and asset.purchase_date else getdate(prop.creation)
+        acquisition_date = (
+            asset.get("purchase_date") if asset and asset.get("purchase_date") else getdate(prop.creation)
+        )
         values["acquisition_date"] = acquisition_date
 
     if not prop.available_for_use_date:
         available_date = (
-            asset.available_for_use_date if asset and asset.available_for_use_date else acquisition_date
+            asset.get("available_for_use_date")
+            if asset and asset.get("available_for_use_date")
+            else acquisition_date
         )
         values["available_for_use_date"] = available_date
 
@@ -127,12 +135,11 @@ def _backfill_acquisition_cost(prop, asset, values):
     if not asset:
         return
 
-    amount = flt(asset.net_purchase_amount)
-    if amount <= 0 and asset.get("gross_purchase_amount") is not None:
-        amount = flt(asset.gross_purchase_amount)
-
-    if amount > 0:
-        values["acquisition_cost"] = amount
+    for fieldname in ASSET_RECORDED_COST_FIELDS:
+        amount = flt(asset.get(fieldname))
+        if amount > 0:
+            values["acquisition_cost"] = amount
+            return
 
 
 def _backfill_depreciation(prop, asset, values):
@@ -140,7 +147,11 @@ def _backfill_depreciation(prop, asset, values):
         values["calculate_depreciation"] = 0
         return
 
-    calculate_depreciation = int(asset.calculate_depreciation) if asset else int(prop.calculate_depreciation or 0)
+    calculate_depreciation = (
+        int(asset.get("calculate_depreciation") or 0)
+        if asset
+        else int(prop.calculate_depreciation or 0)
+    )
     values["calculate_depreciation"] = calculate_depreciation
 
     if not calculate_depreciation:

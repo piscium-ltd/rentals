@@ -40,7 +40,7 @@ class _PropertyForPayload:
 class UnitTestProperty(UnitTestCase):
     def test_cost_model_asset_payload_sets_net_purchase_amount(self):
         prop = _PropertyForPayload()
-        meta = _AssetMeta({"asset_type"})
+        meta = _AssetMeta({"asset_type", "net_purchase_amount"})
 
         with patch("rentals.rentals.doctype.property.property.frappe.get_meta", return_value=meta):
             payload = Property._build_asset_payload(
@@ -61,7 +61,7 @@ class UnitTestProperty(UnitTestCase):
         prop.accounting_model = "Fair Value Model"
         prop.calculate_depreciation = 0
         prop.current_fair_value = 20_000_000
-        meta = _AssetMeta({"asset_type", "gross_purchase_amount"})
+        meta = _AssetMeta({"asset_type", "net_purchase_amount"})
 
         with patch("rentals.rentals.doctype.property.property.frappe.get_meta", return_value=meta):
             payload = Property._build_asset_payload(
@@ -72,9 +72,25 @@ class UnitTestProperty(UnitTestCase):
             )
 
         self.assertEqual(payload["net_purchase_amount"], 12_500_000)
-        self.assertEqual(payload["gross_purchase_amount"], 12_500_000)
+        self.assertNotIn("gross_purchase_amount", payload)
         self.assertEqual(payload["calculate_depreciation"], 0)
         self.assertNotIn("finance_books", payload)
+
+    def test_legacy_asset_payload_uses_gross_purchase_amount(self):
+        prop = _PropertyForPayload()
+        meta = _AssetMeta({"is_existing_asset", "gross_purchase_amount"})
+
+        with patch("rentals.rentals.doctype.property.property.frappe.get_meta", return_value=meta):
+            payload = Property._build_asset_payload(
+                prop,
+                company="Test Company",
+                asset_category="Investment Property",
+                asset_location="Property Site",
+            )
+
+        self.assertEqual(payload["gross_purchase_amount"], 12_500_000)
+        self.assertNotIn("net_purchase_amount", payload)
+        self.assertEqual(payload["is_existing_asset"], 1)
 
     def test_monthly_depreciation_uses_full_useful_life(self):
         prop = _PropertyForPayload()
