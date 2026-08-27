@@ -28,7 +28,8 @@
    "fieldname": "flat_rate",
    "fieldtype": "Float",
    "label": "Flat Rate",
-   "mandatory_depends_on": "eval:doc.rate_type == \"Flat\""
+   "mandatory_depends_on": "eval:doc.rate_type == \"Flat\"",
+   "non_negative": 1
   },
   {
    "depends_on": "eval:doc.rate_type == \"Slab\"",
