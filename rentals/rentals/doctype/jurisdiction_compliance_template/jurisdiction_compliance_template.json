@@ -1,0 +1,213 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 17:38:04.729833",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_dz7s",
+  "amended_from",
+  "temolate_key",
+  "version",
+  "country",
+  "column_break_ydwy",
+  "jurisdiction_scope",
+  "party_kind",
+  "context_key",
+  "template_status",
+  "legal_and_system_effectivity_section",
+  "legal_effective_from",
+  "legal_effective_to",
+  "column_break_sctg",
+  "system_active_from",
+  "system_active_to",
+  "legal__authority_source_basis_section",
+  "source_bundle",
+  "interpretation_notes",
+  "compliance_requirements_tab",
+  "requirements",
+  "approval_and_integrity_section",
+  "approved_by",
+  "approved_on",
+  "content_hash",
+  "column_break_eveo",
+  "predecessor_template",
+  "successor_template"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_dz7s",
+   "fieldtype": "Section Break",
+   "label": "Template Identity and Applicability"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Jurisdiction Compliance Template",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "temolate_key",
+   "fieldtype": "Data",
+   "label": "Temolate Key"
+  },
+  {
+   "fieldname": "version",
+   "fieldtype": "Int",
+   "label": "Version"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "column_break_ydwy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "jurisdiction_scope",
+   "fieldtype": "Data",
+   "label": "Jurisdiction Scope"
+  },
+  {
+   "fieldname": "party_kind",
+   "fieldtype": "Select",
+   "label": "Party Kind"
+  },
+  {
+   "fieldname": "context_key",
+   "fieldtype": "Data",
+   "label": "Context Key"
+  },
+  {
+   "fieldname": "template_status",
+   "fieldtype": "Select",
+   "label": "Template Status"
+  },
+  {
+   "fieldname": "legal_and_system_effectivity_section",
+   "fieldtype": "Section Break",
+   "label": "Legal and System Effectivity"
+  },
+  {
+   "fieldname": "legal_effective_from",
+   "fieldtype": "Date",
+   "label": "Legal Effective From"
+  },
+  {
+   "fieldname": "legal_effective_to",
+   "fieldtype": "Date",
+   "label": "Legal Effective To"
+  },
+  {
+   "fieldname": "column_break_sctg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "system_active_from",
+   "fieldtype": "Datetime",
+   "label": "System Active From"
+  },
+  {
+   "fieldname": "system_active_to",
+   "fieldtype": "Datetime",
+   "label": "System Active To"
+  },
+  {
+   "fieldname": "legal__authority_source_basis_section",
+   "fieldtype": "Section Break",
+   "label": "Legal / Authority Source Basis"
+  },
+  {
+   "fieldname": "source_bundle",
+   "fieldtype": "Long Text",
+   "label": "Source Bundle"
+  },
+  {
+   "fieldname": "interpretation_notes",
+   "fieldtype": "Small Text",
+   "label": "Interpretation Notes"
+  },
+  {
+   "fieldname": "compliance_requirements_tab",
+   "fieldtype": "Tab Break",
+   "label": "Compliance Requirements"
+  },
+  {
+   "fieldname": "requirements",
+   "fieldtype": "Data",
+   "label": "Requirements"
+  },
+  {
+   "fieldname": "approval_and_integrity_section",
+   "fieldtype": "Section Break",
+   "label": "Approval and Integrity"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approved_on",
+   "fieldtype": "Datetime",
+   "label": "Approved On"
+  },
+  {
+   "fieldname": "content_hash",
+   "fieldtype": "Data",
+   "label": "Content Hash"
+  },
+  {
+   "fieldname": "column_break_eveo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "predecessor_template",
+   "fieldtype": "Data",
+   "label": "Predecessor Template"
+  },
+  {
+   "fieldname": "successor_template",
+   "fieldtype": "Data",
+   "label": "Successor Template"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-09-08 17:47:58.438420",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Jurisdiction Compliance Template",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

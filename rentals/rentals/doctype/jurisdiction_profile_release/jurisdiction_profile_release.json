@@ -1,0 +1,364 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 17:16:19.135435",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_pyaw",
+  "amended_from",
+  "profile",
+  "jurisdiction_slot_key",
+  "release_number",
+  "column_break_jjgl",
+  "country",
+  "jurisdiction_scope",
+  "relationship_basis",
+  "template",
+  "template_content_hash",
+  "legal_identity_and_capacity_for_this_period_section",
+  "legal_name",
+  "trading_name",
+  "legal_form",
+  "column_break_xbut",
+  "formation_jurisdiction",
+  "registration_status",
+  "legal_capacity_status",
+  "tax_and_compliance_classification_summary_section",
+  "taxpayer_category",
+  "tax_residence_status",
+  "column_break_mvpz",
+  "tax_residence_basis",
+  "tax_status_summary",
+  "normalised_legal_statutory_and_tax_facts_tab",
+  "identifier_facts",
+  "statutory_registration_facts",
+  "tax_obligation_facts",
+  "compliance_entitlement_facts",
+  "effective_dating_tab",
+  "valid_from",
+  "valid_to",
+  "recorded_at",
+  "column_break_zzdk",
+  "approved_at",
+  "superseded_at",
+  "preparation_review_and_approval_section",
+  "prepared_by",
+  "prepared_on",
+  "reviewed_by",
+  "reviewed_on",
+  "column_break_zuqo",
+  "approved_by",
+  "approval_rationale",
+  "integrity_state_and_lineage_section",
+  "content_hash",
+  "evidence_bundle_hash",
+  "workflow_state",
+  "effectivity_state",
+  "column_break_kjhg",
+  "predecessor_release",
+  "successor_release"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_pyaw",
+   "fieldtype": "Section Break",
+   "label": "Release Identity and Jurisdiction"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Jurisdiction Profile Release",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "profile",
+   "fieldtype": "Link",
+   "label": "Profile",
+   "options": "Party Legal and Compliance Identity"
+  },
+  {
+   "fieldname": "jurisdiction_slot_key",
+   "fieldtype": "Data",
+   "label": "Jurisdiction Slot Key"
+  },
+  {
+   "fieldname": "release_number",
+   "fieldtype": "Int",
+   "label": "Release Number"
+  },
+  {
+   "fieldname": "column_break_jjgl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "jurisdiction_scope",
+   "fieldtype": "Data",
+   "label": "Jurisdiction Scope"
+  },
+  {
+   "fieldname": "relationship_basis",
+   "fieldtype": "Select",
+   "label": "Relationship Basis"
+  },
+  {
+   "fieldname": "template_content_hash",
+   "fieldtype": "Data",
+   "label": "Template Content Hash"
+  },
+  {
+   "fieldname": "template",
+   "fieldtype": "Data",
+   "label": "Template"
+  },
+  {
+   "fieldname": "legal_identity_and_capacity_for_this_period_section",
+   "fieldtype": "Section Break",
+   "label": "Legal Identity and Capacity for This Period"
+  },
+  {
+   "fieldname": "legal_name",
+   "fieldtype": "Data",
+   "label": "Legal Name"
+  },
+  {
+   "fieldname": "trading_name",
+   "fieldtype": "Data",
+   "label": "Trading Name"
+  },
+  {
+   "fieldname": "legal_form",
+   "fieldtype": "Data",
+   "label": "Legal Form"
+  },
+  {
+   "fieldname": "column_break_xbut",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "formation_jurisdiction",
+   "fieldtype": "Link",
+   "label": "Formation Jurisdiction",
+   "options": "Country"
+  },
+  {
+   "fieldname": "registration_status",
+   "fieldtype": "Select",
+   "label": "Registration Status"
+  },
+  {
+   "fieldname": "legal_capacity_status",
+   "fieldtype": "Select",
+   "label": "Legal Capacity Status"
+  },
+  {
+   "fieldname": "tax_and_compliance_classification_summary_section",
+   "fieldtype": "Section Break",
+   "label": "Tax and Compliance Classification Summary"
+  },
+  {
+   "fieldname": "taxpayer_category",
+   "fieldtype": "Data",
+   "label": "Taxpayer Category"
+  },
+  {
+   "fieldname": "tax_residence_status",
+   "fieldtype": "Select",
+   "label": "Tax Residence Status"
+  },
+  {
+   "fieldname": "column_break_mvpz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tax_residence_basis",
+   "fieldtype": "Small Text",
+   "label": "Tax Residence Basis"
+  },
+  {
+   "fieldname": "tax_status_summary",
+   "fieldtype": "Small Text",
+   "label": "Tax Status Summary"
+  },
+  {
+   "fieldname": "normalised_legal_statutory_and_tax_facts_tab",
+   "fieldtype": "Tab Break",
+   "label": "Normalised Legal, Statutory and Tax Facts"
+  },
+  {
+   "fieldname": "identifier_facts",
+   "fieldtype": "Data",
+   "label": "Identifier Facts"
+  },
+  {
+   "fieldname": "statutory_registration_facts",
+   "fieldtype": "Data",
+   "label": "Statutory Registration Facts"
+  },
+  {
+   "fieldname": "tax_obligation_facts",
+   "fieldtype": "Data",
+   "label": "Tax Obligation Facts"
+  },
+  {
+   "fieldname": "compliance_entitlement_facts",
+   "fieldtype": "Data",
+   "label": "Compliance Entitlement Facts"
+  },
+  {
+   "fieldname": "effective_dating_tab",
+   "fieldtype": "Tab Break",
+   "label": "Effective Dating"
+  },
+  {
+   "fieldname": "valid_from",
+   "fieldtype": "Date",
+   "label": "Valid From"
+  },
+  {
+   "fieldname": "valid_to",
+   "fieldtype": "Date",
+   "label": "Valid To"
+  },
+  {
+   "fieldname": "recorded_at",
+   "fieldtype": "Datetime",
+   "label": "Recorded At"
+  },
+  {
+   "fieldname": "approved_at",
+   "fieldtype": "Datetime",
+   "label": "Approved At"
+  },
+  {
+   "fieldname": "superseded_at",
+   "fieldtype": "Datetime",
+   "label": "Superseded At"
+  },
+  {
+   "fieldname": "column_break_zzdk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "preparation_review_and_approval_section",
+   "fieldtype": "Section Break",
+   "label": "Preparation, Review and Approval"
+  },
+  {
+   "fieldname": "prepared_by",
+   "fieldtype": "Link",
+   "label": "Prepared By",
+   "options": "User"
+  },
+  {
+   "fieldname": "prepared_on",
+   "fieldtype": "Datetime",
+   "label": "Prepared On"
+  },
+  {
+   "fieldname": "reviewed_by",
+   "fieldtype": "Link",
+   "label": "Reviewed By",
+   "options": "User"
+  },
+  {
+   "fieldname": "reviewed_on",
+   "fieldtype": "Datetime",
+   "label": "Reviewed On"
+  },
+  {
+   "fieldname": "column_break_zuqo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approval_rationale",
+   "fieldtype": "Small Text",
+   "label": "Approval Rationale"
+  },
+  {
+   "fieldname": "integrity_state_and_lineage_section",
+   "fieldtype": "Section Break",
+   "label": "Integrity, State and Lineage"
+  },
+  {
+   "fieldname": "content_hash",
+   "fieldtype": "Data",
+   "label": "Content Hash"
+  },
+  {
+   "fieldname": "evidence_bundle_hash",
+   "fieldtype": "Data",
+   "label": "Evidence Bundle Hash"
+  },
+  {
+   "fieldname": "workflow_state",
+   "fieldtype": "Select",
+   "label": "Workflow State"
+  },
+  {
+   "fieldname": "effectivity_state",
+   "fieldtype": "Select",
+   "label": "Effectivity State"
+  },
+  {
+   "fieldname": "column_break_kjhg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "predecessor_release",
+   "fieldtype": "Data",
+   "label": "Predecessor Release"
+  },
+  {
+   "fieldname": "successor_release",
+   "fieldtype": "Data",
+   "label": "Successor Release"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-09-08 17:35:50.655230",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Jurisdiction Profile Release",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

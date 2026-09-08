@@ -1,0 +1,95 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 17:04:14.409135",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "party",
+  "party_kind",
+  "lifecycle_status",
+  "current_display_name",
+  "primary_jurisdiction_slot_key",
+  "column_break_done",
+  "jurisdiction_slots",
+  "row_version",
+  "last_governed_change_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "party",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Party",
+   "options": "Party",
+   "reqd": 1
+  },
+  {
+   "fieldname": "party_kind",
+   "fieldtype": "Select",
+   "label": "Party Kind"
+  },
+  {
+   "fieldname": "lifecycle_status",
+   "fieldtype": "Select",
+   "label": "Lifecycle Status"
+  },
+  {
+   "fieldname": "current_display_name",
+   "fieldtype": "Data",
+   "label": "Current Display Name"
+  },
+  {
+   "fieldname": "primary_jurisdiction_slot_key",
+   "fieldtype": "Data",
+   "label": "Primary Jurisdiction Slot Key"
+  },
+  {
+   "fieldname": "column_break_done",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "jurisdiction_slots",
+   "fieldtype": "Select",
+   "label": "Jurisdiction Slots"
+  },
+  {
+   "fieldname": "row_version",
+   "fieldtype": "Int",
+   "label": "Row Version"
+  },
+  {
+   "fieldname": "last_governed_change_on",
+   "fieldtype": "Datetime",
+   "label": "Last Governed Change On"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-08 17:08:51.308609",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Party Legal and Compliance Identity",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

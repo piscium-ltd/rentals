@@ -1,0 +1,314 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 17:48:53.208694",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_cptg",
+  "amended_from",
+  "evidence_type",
+  "subject_party",
+  "profile",
+  "column_break_wotf",
+  "country",
+  "issuer_source",
+  "source_class",
+  "official_reference",
+  "controlled_artifact_section",
+  "evidence_file",
+  "mime_type",
+  "file_size_bytes",
+  "column_break_hswd",
+  "malware_scan_status",
+  "checksum_sha256",
+  "evidence_time_section",
+  "issued_on",
+  "received_on",
+  "expires_on",
+  "column_break_yjtq",
+  "observed_on",
+  "verified_on",
+  "authority_and_verification_tab",
+  "authority_level",
+  "source_competence_summary",
+  "column_break_wjmw",
+  "verification_method",
+  "verification_outcome",
+  "reviewer",
+  "scope_and_limitations_section",
+  "supported_fact_keys",
+  "supported_period_from",
+  "supported_period_to",
+  "column_break_fxpy",
+  "conditions",
+  "limitations",
+  "version_integrity_and_lifecycle_section",
+  "evidence_version",
+  "content_hash",
+  "predecessor_evidence",
+  "column_break_yqwk",
+  "successor_evidence",
+  "lifecycle_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_cptg",
+   "fieldtype": "Section Break",
+   "label": "Evidence Identity and Subject"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Evidence Record",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "evidence_type",
+   "fieldtype": "Data",
+   "label": "Evidence Type"
+  },
+  {
+   "fieldname": "subject_party",
+   "fieldtype": "Link",
+   "label": "Subject Party",
+   "options": "Party"
+  },
+  {
+   "fieldname": "profile",
+   "fieldtype": "Link",
+   "label": "Profile",
+   "options": "Party Legal and Compliance Identity"
+  },
+  {
+   "fieldname": "column_break_wotf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "issuer_source",
+   "fieldtype": "Data",
+   "label": "Issuer Source"
+  },
+  {
+   "fieldname": "source_class",
+   "fieldtype": "Select",
+   "label": "Source Class"
+  },
+  {
+   "fieldname": "official_reference",
+   "fieldtype": "Data",
+   "label": "Official Reference"
+  },
+  {
+   "fieldname": "controlled_artifact_section",
+   "fieldtype": "Section Break",
+   "label": "Controlled Artifact"
+  },
+  {
+   "fieldname": "evidence_file",
+   "fieldtype": "Attach",
+   "label": "Evidence File"
+  },
+  {
+   "fieldname": "mime_type",
+   "fieldtype": "Data",
+   "label": "Mime Type"
+  },
+  {
+   "fieldname": "file_size_bytes",
+   "fieldtype": "Int",
+   "label": "File Size Bytes"
+  },
+  {
+   "fieldname": "column_break_hswd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "malware_scan_status",
+   "fieldtype": "Select",
+   "label": "Malware Scan Status"
+  },
+  {
+   "fieldname": "checksum_sha256",
+   "fieldtype": "Data",
+   "label": "Checksum Sha256"
+  },
+  {
+   "fieldname": "evidence_time_section",
+   "fieldtype": "Section Break",
+   "label": "Evidence Time"
+  },
+  {
+   "fieldname": "issued_on",
+   "fieldtype": "Date",
+   "label": "Issued On"
+  },
+  {
+   "fieldname": "received_on",
+   "fieldtype": "Datetime",
+   "label": "Received On"
+  },
+  {
+   "fieldname": "observed_on",
+   "fieldtype": "Datetime",
+   "label": "Observed On"
+  },
+  {
+   "fieldname": "verified_on",
+   "fieldtype": "Datetime",
+   "label": "Verified On"
+  },
+  {
+   "fieldname": "expires_on",
+   "fieldtype": "Datetime",
+   "label": "Expires On"
+  },
+  {
+   "fieldname": "column_break_yjtq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "authority_and_verification_tab",
+   "fieldtype": "Tab Break",
+   "label": "Authority and Verification"
+  },
+  {
+   "fieldname": "authority_level",
+   "fieldtype": "Select",
+   "label": "Authority Level"
+  },
+  {
+   "fieldname": "source_competence_summary",
+   "fieldtype": "Small Text",
+   "label": "Source Competence Summary"
+  },
+  {
+   "fieldname": "column_break_wjmw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "verification_method",
+   "fieldtype": "Select",
+   "label": "Verification Method"
+  },
+  {
+   "fieldname": "verification_outcome",
+   "fieldtype": "Select",
+   "label": "Verification Outcome"
+  },
+  {
+   "fieldname": "reviewer",
+   "fieldtype": "Link",
+   "label": "Reviewer",
+   "options": "User"
+  },
+  {
+   "fieldname": "scope_and_limitations_section",
+   "fieldtype": "Section Break",
+   "label": "Scope and Limitations"
+  },
+  {
+   "fieldname": "supported_fact_keys",
+   "fieldtype": "Small Text",
+   "label": "Supported Fact Keys"
+  },
+  {
+   "fieldname": "supported_period_from",
+   "fieldtype": "Date",
+   "label": "Supported Period From"
+  },
+  {
+   "fieldname": "supported_period_to",
+   "fieldtype": "Date",
+   "label": "Supported Period To"
+  },
+  {
+   "fieldname": "column_break_fxpy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "conditions",
+   "fieldtype": "Small Text",
+   "label": "Conditions"
+  },
+  {
+   "fieldname": "limitations",
+   "fieldtype": "Small Text",
+   "label": "Limitations"
+  },
+  {
+   "fieldname": "version_integrity_and_lifecycle_section",
+   "fieldtype": "Section Break",
+   "label": "Version, Integrity and Lifecycle"
+  },
+  {
+   "fieldname": "evidence_version",
+   "fieldtype": "Int",
+   "label": "Evidence Version"
+  },
+  {
+   "fieldname": "content_hash",
+   "fieldtype": "Data",
+   "label": "Content Hash"
+  },
+  {
+   "fieldname": "predecessor_evidence",
+   "fieldtype": "Data",
+   "label": "Predecessor Evidence"
+  },
+  {
+   "fieldname": "column_break_yqwk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "successor_evidence",
+   "fieldtype": "Data",
+   "label": "Successor Evidence"
+  },
+  {
+   "fieldname": "lifecycle_status",
+   "fieldtype": "Select",
+   "label": "Lifecycle Status"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-09-08 18:14:55.780425",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Evidence Record",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
