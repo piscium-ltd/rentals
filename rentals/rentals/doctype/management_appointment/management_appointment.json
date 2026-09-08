@@ -1,0 +1,360 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-09-08 15:37:51.646679",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_rt4h",
+  "amended_from",
+  "naming_series",
+  "appointment_uid",
+  "record_version_uid",
+  "version_no",
+  "column_break_iaxa",
+  "manager_party",
+  "appointing_party",
+  "management_mode",
+  "responsibility_slot",
+  "authority_profile",
+  "instrument_version",
+  "b_principal_and_represented_interest_section",
+  "principal",
+  "c_management_scope_and_coverage_section",
+  "scope_basis",
+  "property",
+  "portfolio",
+  "scope_manifest_hash",
+  "scope_items",
+  "reserved_capabilities",
+  "e_governance_approval_and_acknowledgement_tab",
+  "custodian_workspace",
+  "owning_domain",
+  "initiating_event_id",
+  "actor_binding",
+  "represented_party",
+  "column_break_oxqs",
+  "source_hash",
+  "authority_decision_receipt",
+  "governance_decision",
+  "recorded_at",
+  "record_version_hash",
+  "column_break_tzyf",
+  "incoming_acknowledgement_status",
+  "incoming_acknowledged_by",
+  "approval_status",
+  "f_separate_current_state_projections_section",
+  "effectivity_status",
+  "operational_readiness",
+  "access_readiness",
+  "column_break_jcpl",
+  "transition_completion_status",
+  "dispute_status",
+  "coverage_status",
+  "g_appointment_lineage_and_transition_section",
+  "originating_transition",
+  "predecessor_appointment",
+  "column_break_sfto",
+  "successor_appointment",
+  "supersession_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_rt4h",
+   "fieldtype": "Section Break",
+   "label": "A. Appointment Identity and Parties"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Management Appointment",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series"
+  },
+  {
+   "fieldname": "appointment_uid",
+   "fieldtype": "Data",
+   "label": "Appointment Uid"
+  },
+  {
+   "fieldname": "record_version_uid",
+   "fieldtype": "Data",
+   "label": "Record Version Uid"
+  },
+  {
+   "fieldname": "version_no",
+   "fieldtype": "Int",
+   "label": "Version No"
+  },
+  {
+   "fieldname": "manager_party",
+   "fieldtype": "Data",
+   "label": "Manager Party"
+  },
+  {
+   "fieldname": "appointing_party",
+   "fieldtype": "Data",
+   "label": "Appointing Party"
+  },
+  {
+   "fieldname": "column_break_iaxa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "management_mode",
+   "fieldtype": "Select",
+   "label": "Management Mode"
+  },
+  {
+   "fieldname": "responsibility_slot",
+   "fieldtype": "Select",
+   "label": "Responsibility Slot"
+  },
+  {
+   "fieldname": "authority_profile",
+   "fieldtype": "Data",
+   "label": "Authority Profile"
+  },
+  {
+   "fieldname": "instrument_version",
+   "fieldtype": "Data",
+   "label": "Instrument Version"
+  },
+  {
+   "fieldname": "b_principal_and_represented_interest_section",
+   "fieldtype": "Section Break",
+   "label": "B. Principal and Represented Interest"
+  },
+  {
+   "fieldname": "principal",
+   "fieldtype": "Table",
+   "label": "Principal",
+   "options": "Appointment Principal"
+  },
+  {
+   "fieldname": "c_management_scope_and_coverage_section",
+   "fieldtype": "Section Break",
+   "label": "C. Management Scope and Coverage"
+  },
+  {
+   "fieldname": "scope_basis",
+   "fieldtype": "Select",
+   "label": "Scope Basis"
+  },
+  {
+   "fieldname": "property",
+   "fieldtype": "Link",
+   "label": "Property",
+   "options": "Property"
+  },
+  {
+   "fieldname": "portfolio",
+   "fieldtype": "Data",
+   "label": "Portfolio"
+  },
+  {
+   "fieldname": "scope_manifest_hash",
+   "fieldtype": "Data",
+   "label": "Scope Manifest Hash"
+  },
+  {
+   "fieldname": "scope_items",
+   "fieldtype": "Table",
+   "label": "Scope Items",
+   "options": "Appointment Scope Item"
+  },
+  {
+   "fieldname": "reserved_capabilities",
+   "fieldtype": "Table",
+   "label": "Reserved Capabilities",
+   "options": "Reserved Capability"
+  },
+  {
+   "fieldname": "e_governance_approval_and_acknowledgement_tab",
+   "fieldtype": "Tab Break",
+   "label": "E. Governance, Approval and Acknowledgement"
+  },
+  {
+   "fieldname": "custodian_workspace",
+   "fieldtype": "Data",
+   "label": "Custodian Workspace"
+  },
+  {
+   "fieldname": "owning_domain",
+   "fieldtype": "Data",
+   "label": "Owning Domain"
+  },
+  {
+   "fieldname": "initiating_event_id",
+   "fieldtype": "Data",
+   "label": "Initiating Event Id"
+  },
+  {
+   "fieldname": "actor_binding",
+   "fieldtype": "Data",
+   "label": "Actor Binding"
+  },
+  {
+   "fieldname": "represented_party",
+   "fieldtype": "Data",
+   "label": "Represented Party"
+  },
+  {
+   "fieldname": "column_break_oxqs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source_hash",
+   "fieldtype": "Data",
+   "label": "Source Hash"
+  },
+  {
+   "fieldname": "authority_decision_receipt",
+   "fieldtype": "Data",
+   "label": "Authority Decision Receipt"
+  },
+  {
+   "fieldname": "governance_decision",
+   "fieldtype": "Data",
+   "label": "Governance Decision"
+  },
+  {
+   "fieldname": "recorded_at",
+   "fieldtype": "Datetime",
+   "label": "Recorded At"
+  },
+  {
+   "fieldname": "record_version_hash",
+   "fieldtype": "Data",
+   "label": "Record Version Hash"
+  },
+  {
+   "fieldname": "column_break_tzyf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "incoming_acknowledgement_status",
+   "fieldtype": "Select",
+   "label": "Incoming Acknowledgement Status"
+  },
+  {
+   "fieldname": "incoming_acknowledged_by",
+   "fieldtype": "Link",
+   "label": "Incoming Acknowledged By",
+   "options": "User"
+  },
+  {
+   "fieldname": "approval_status",
+   "fieldtype": "Select",
+   "label": "Approval Status"
+  },
+  {
+   "fieldname": "f_separate_current_state_projections_section",
+   "fieldtype": "Section Break",
+   "label": "F. Separate Current State Projections"
+  },
+  {
+   "fieldname": "effectivity_status",
+   "fieldtype": "Select",
+   "label": "Effectivity Status"
+  },
+  {
+   "fieldname": "operational_readiness",
+   "fieldtype": "Select",
+   "label": "Operational Readiness"
+  },
+  {
+   "fieldname": "access_readiness",
+   "fieldtype": "Select",
+   "label": "Access Readiness"
+  },
+  {
+   "fieldname": "column_break_jcpl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "transition_completion_status",
+   "fieldtype": "Select",
+   "label": "Transition Completion Status"
+  },
+  {
+   "fieldname": "dispute_status",
+   "fieldtype": "Select",
+   "label": "Dispute Status"
+  },
+  {
+   "fieldname": "coverage_status",
+   "fieldtype": "Select",
+   "label": "Coverage Status"
+  },
+  {
+   "fieldname": "g_appointment_lineage_and_transition_section",
+   "fieldtype": "Section Break",
+   "label": "G. Appointment Lineage and Transition"
+  },
+  {
+   "fieldname": "originating_transition",
+   "fieldtype": "Data",
+   "label": "Originating Transition"
+  },
+  {
+   "fieldname": "predecessor_appointment",
+   "fieldtype": "Data",
+   "label": "Predecessor Appointment"
+  },
+  {
+   "fieldname": "column_break_sfto",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "successor_appointment",
+   "fieldtype": "Data",
+   "label": "Successor Appointment"
+  },
+  {
+   "fieldname": "supersession_reason",
+   "fieldtype": "Small Text",
+   "label": "Supersession Reason"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-09-08 15:57:50.340943",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Management Appointment",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,425 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-09-08 16:29:22.492324",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_igtw",
+  "amended_from",
+  "naming_series",
+  "transition_uid",
+  "record_version_uid",
+  "version_no",
+  "principal_party",
+  "column_break_mlwj",
+  "principal_scope_kind",
+  "property",
+  "portfolio",
+  "scope_manifest_hash",
+  "scope_manifest_evidence",
+  "transition_basis_and_appointment_changes_section",
+  "transition_type",
+  "reason",
+  "appointment_changes",
+  "cutover_and_temporal_control_section",
+  "cutover_at",
+  "legal_time_zone",
+  "cutover_boundary_basis",
+  "column_break_vggd",
+  "source_population_hash",
+  "source_population_evidence",
+  "governance_and_approval_tab",
+  "custodian_workspace",
+  "owning_domain",
+  "initiating_event_id",
+  "actor_binding",
+  "represented_party",
+  "column_break_gyke",
+  "source_hash",
+  "authority_decision_receipt",
+  "governance_decision",
+  "recorded_at",
+  "record_version_hash",
+  "column_break_didh",
+  "governance_approval_status",
+  "finance_route_status",
+  "tax_route_status",
+  "reconciliation_certificate",
+  "control_case",
+  "readiness_communication_and_acceptance_section",
+  "checklist_items",
+  "acceptance_certifications",
+  "residual_authorities",
+  "independent_transition_state_dimensions_tab",
+  "transition_stage",
+  "readiness_status",
+  "legal_effective_status",
+  "handover_status",
+  "reconciliation_status",
+  "responsibility_transfer_count",
+  "column_break_wzgq",
+  "access_revocation_status",
+  "coverage_gap_reason",
+  "coverage_gap_status",
+  "audit_closure_and_successor_lineage_section",
+  "closed_at",
+  "predecessor_transition",
+  "successor_transition",
+  "column_break_fjkb",
+  "closure_summary"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_igtw",
+   "fieldtype": "Section Break",
+   "label": "Transition Identity and Principal Scope"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Management Transition",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series"
+  },
+  {
+   "fieldname": "transition_uid",
+   "fieldtype": "Data",
+   "label": "Transition Uid"
+  },
+  {
+   "fieldname": "record_version_uid",
+   "fieldtype": "Data",
+   "label": "Record Version Uid"
+  },
+  {
+   "fieldname": "version_no",
+   "fieldtype": "Int",
+   "label": "Version No"
+  },
+  {
+   "fieldname": "column_break_mlwj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "principal_party",
+   "fieldtype": "Data",
+   "label": "Principal Party"
+  },
+  {
+   "fieldname": "principal_scope_kind",
+   "fieldtype": "Select",
+   "label": "Principal Scope Kind"
+  },
+  {
+   "fieldname": "property",
+   "fieldtype": "Link",
+   "label": "Property",
+   "options": "Property"
+  },
+  {
+   "fieldname": "portfolio",
+   "fieldtype": "Data",
+   "label": "Portfolio"
+  },
+  {
+   "fieldname": "scope_manifest_hash",
+   "fieldtype": "Data",
+   "label": "Scope Manifest Hash"
+  },
+  {
+   "fieldname": "scope_manifest_evidence",
+   "fieldtype": "Data",
+   "label": "Scope Manifest Evidence"
+  },
+  {
+   "fieldname": "transition_basis_and_appointment_changes_section",
+   "fieldtype": "Section Break",
+   "label": "Transition Basis and Appointment Changes"
+  },
+  {
+   "fieldname": "transition_type",
+   "fieldtype": "Select",
+   "label": "Transition Type"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Small Text",
+   "label": "Reason"
+  },
+  {
+   "fieldname": "appointment_changes",
+   "fieldtype": "Table",
+   "label": "Appointment Changes",
+   "options": "Appointment Change Item"
+  },
+  {
+   "fieldname": "cutover_and_temporal_control_section",
+   "fieldtype": "Section Break",
+   "label": "Cutover and Temporal Control"
+  },
+  {
+   "fieldname": "cutover_at",
+   "fieldtype": "Datetime",
+   "label": "Cutover At"
+  },
+  {
+   "fieldname": "legal_time_zone",
+   "fieldtype": "Data",
+   "label": "Legal Time Zone"
+  },
+  {
+   "fieldname": "cutover_boundary_basis",
+   "fieldtype": "Small Text",
+   "label": "Cutover Boundary Basis"
+  },
+  {
+   "fieldname": "source_population_hash",
+   "fieldtype": "Data",
+   "label": "Source Population Hash"
+  },
+  {
+   "fieldname": "source_population_evidence",
+   "fieldtype": "Data",
+   "label": "Source Population Evidence"
+  },
+  {
+   "fieldname": "column_break_vggd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "governance_and_approval_tab",
+   "fieldtype": "Tab Break",
+   "label": "Governance and Approval"
+  },
+  {
+   "fieldname": "custodian_workspace",
+   "fieldtype": "Data",
+   "label": "Custodian Workspace"
+  },
+  {
+   "fieldname": "owning_domain",
+   "fieldtype": "Data",
+   "label": "Owning Domain"
+  },
+  {
+   "fieldname": "initiating_event_id",
+   "fieldtype": "Data",
+   "label": "Initiating Event Id"
+  },
+  {
+   "fieldname": "actor_binding",
+   "fieldtype": "Data",
+   "label": "Actor Binding"
+  },
+  {
+   "fieldname": "represented_party",
+   "fieldtype": "Data",
+   "label": "Represented Party"
+  },
+  {
+   "fieldname": "column_break_gyke",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source_hash",
+   "fieldtype": "Data",
+   "label": "Source Hash"
+  },
+  {
+   "fieldname": "authority_decision_receipt",
+   "fieldtype": "Data",
+   "label": "Authority Decision Receipt"
+  },
+  {
+   "fieldname": "governance_decision",
+   "fieldtype": "Data",
+   "label": "Governance Decision"
+  },
+  {
+   "fieldname": "recorded_at",
+   "fieldtype": "Datetime",
+   "label": "Recorded At"
+  },
+  {
+   "fieldname": "record_version_hash",
+   "fieldtype": "Data",
+   "label": "Record Version Hash"
+  },
+  {
+   "fieldname": "column_break_didh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "governance_approval_status",
+   "fieldtype": "Select",
+   "label": "Governance Approval Status"
+  },
+  {
+   "fieldname": "finance_route_status",
+   "fieldtype": "Select",
+   "label": "Finance Route Status"
+  },
+  {
+   "fieldname": "tax_route_status",
+   "fieldtype": "Select",
+   "label": "Tax Route Status"
+  },
+  {
+   "fieldname": "reconciliation_certificate",
+   "fieldtype": "Data",
+   "label": "Reconciliation Certificate"
+  },
+  {
+   "fieldname": "control_case",
+   "fieldtype": "Data",
+   "label": "Control Case"
+  },
+  {
+   "fieldname": "readiness_communication_and_acceptance_section",
+   "fieldtype": "Section Break",
+   "label": "Readiness, Communication and Acceptance"
+  },
+  {
+   "fieldname": "checklist_items",
+   "fieldtype": "Table",
+   "label": "Checklist Items",
+   "options": "Transition Checklist Item"
+  },
+  {
+   "fieldname": "acceptance_certifications",
+   "fieldtype": "Table",
+   "label": "Acceptance Certifications",
+   "options": "Acceptance Certification"
+  },
+  {
+   "fieldname": "residual_authorities",
+   "fieldtype": "Table",
+   "label": "Residual Authorities",
+   "options": "Residual Authority Reference"
+  },
+  {
+   "fieldname": "independent_transition_state_dimensions_tab",
+   "fieldtype": "Tab Break",
+   "label": "Independent Transition State Dimensions"
+  },
+  {
+   "fieldname": "transition_stage",
+   "fieldtype": "Select",
+   "label": "Transition Stage"
+  },
+  {
+   "fieldname": "readiness_status",
+   "fieldtype": "Select",
+   "label": "Readiness Status"
+  },
+  {
+   "fieldname": "legal_effective_status",
+   "fieldtype": "Select",
+   "label": "Legal Effective Status"
+  },
+  {
+   "fieldname": "handover_status",
+   "fieldtype": "Select",
+   "label": "Handover Status"
+  },
+  {
+   "fieldname": "reconciliation_status",
+   "fieldtype": "Select",
+   "label": "Reconciliation Status"
+  },
+  {
+   "fieldname": "responsibility_transfer_count",
+   "fieldtype": "Int",
+   "label": "Responsibility Transfer Count"
+  },
+  {
+   "fieldname": "column_break_wzgq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "access_revocation_status",
+   "fieldtype": "Select",
+   "label": "Access Revocation Status"
+  },
+  {
+   "fieldname": "coverage_gap_reason",
+   "fieldtype": "Small Text",
+   "label": "Coverage Gap Reason"
+  },
+  {
+   "fieldname": "coverage_gap_status",
+   "fieldtype": "Select",
+   "label": "Coverage Gap Status"
+  },
+  {
+   "fieldname": "audit_closure_and_successor_lineage_section",
+   "fieldtype": "Section Break",
+   "label": "Audit, Closure and Successor Lineage"
+  },
+  {
+   "fieldname": "closed_at",
+   "fieldtype": "Datetime",
+   "label": "Closed At"
+  },
+  {
+   "fieldname": "predecessor_transition",
+   "fieldtype": "Data",
+   "label": "Predecessor Transition"
+  },
+  {
+   "fieldname": "successor_transition",
+   "fieldtype": "Data",
+   "label": "Successor Transition"
+  },
+  {
+   "fieldname": "column_break_fjkb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "closure_summary",
+   "fieldtype": "Small Text",
+   "label": "Closure Summary"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-09-08 17:00:15.158839",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Management Transition",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

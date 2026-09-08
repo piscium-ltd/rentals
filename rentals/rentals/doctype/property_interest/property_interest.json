@@ -1,0 +1,297 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-09-08 14:50:45.544916",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_uids",
+  "amended_from",
+  "naming_series",
+  "version_no",
+  "property",
+  "holder_party",
+  "verification_status",
+  "column_break_virl",
+  "right_type",
+  "legal_basis",
+  "section_break_vwcq",
+  "se",
+  "scope_items",
+  "restrictions",
+  "underlying_interests",
+  "tab_2_tab",
+  "valid_from",
+  "valid_to",
+  "column_break_pfir",
+  "legal_time_zone",
+  "effective_boundary_basis",
+  "section_break_cfpx",
+  "custodian_workspace",
+  "owning_domain",
+  "initiating_event_id",
+  "actor_binding",
+  "represented_party",
+  "source_hash",
+  "column_break_amfx",
+  "authority_decision_receipt",
+  "governance_decision",
+  "recorded_at",
+  "record_version_hash",
+  "appointing_power_status",
+  "approval_status",
+  "tab_3_tab",
+  "effectivity_status",
+  "dispute_status",
+  "predecessor_interest",
+  "supersession_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_uids",
+   "fieldtype": "Section Break",
+   "label": "A. Identity and Version"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Property Interest",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "PI-.YYYY.-.MM.-.###."
+  },
+  {
+   "fieldname": "version_no",
+   "fieldtype": "Int",
+   "label": "Version No"
+  },
+  {
+   "fieldname": "property",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Property",
+   "options": "Property",
+   "reqd": 1
+  },
+  {
+   "fieldname": "holder_party",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Holder Party",
+   "reqd": 1
+  },
+  {
+   "fieldname": "right_type",
+   "fieldtype": "Select",
+   "label": "Right Type",
+   "options": "Legal\nBeneficial\nEconomic"
+  },
+  {
+   "fieldname": "legal_basis",
+   "fieldtype": "Small Text",
+   "label": "Legal Basis"
+  },
+  {
+   "fieldname": "verification_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Verification Status",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_virl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_vwcq",
+   "fieldtype": "Section Break",
+   "label": "B. Interest Scope, Share and Rank"
+  },
+  {
+   "fieldname": "se",
+   "fieldtype": "Data",
+   "label": "Scope Manifest Hash"
+  },
+  {
+   "fieldname": "scope_items",
+   "fieldtype": "Table",
+   "label": "Scope Items",
+   "options": "Interest Scope Item"
+  },
+  {
+   "fieldname": "restrictions",
+   "fieldtype": "Table",
+   "label": "Restrictions",
+   "options": "Interest Restriction"
+  },
+  {
+   "fieldname": "underlying_interests",
+   "fieldtype": "Table",
+   "label": "Underlying Interests",
+   "options": "Underlying Interest Link"
+  },
+  {
+   "fieldname": "tab_2_tab",
+   "fieldtype": "Tab Break",
+   "label": "C. Effective Dating and Temporal Truth"
+  },
+  {
+   "fieldname": "valid_from",
+   "fieldtype": "Datetime",
+   "label": "Valid From"
+  },
+  {
+   "fieldname": "valid_to",
+   "fieldtype": "Datetime",
+   "label": "Valid To"
+  },
+  {
+   "fieldname": "column_break_pfir",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "legal_time_zone",
+   "fieldtype": "Data",
+   "label": "Legal Time zone"
+  },
+  {
+   "fieldname": "effective_boundary_basis",
+   "fieldtype": "Small Text",
+   "label": "Effective Boundary Basis"
+  },
+  {
+   "fieldname": "section_break_cfpx",
+   "fieldtype": "Section Break",
+   "label": "D. Governance, Approval and Authority"
+  },
+  {
+   "fieldname": "custodian_workspace",
+   "fieldtype": "Data",
+   "label": "Custodian Workspace"
+  },
+  {
+   "fieldname": "owning_domain",
+   "fieldtype": "Data",
+   "label": "Owning Domain"
+  },
+  {
+   "fieldname": "initiating_event_id",
+   "fieldtype": "Data",
+   "label": "Initiating Event Id"
+  },
+  {
+   "fieldname": "actor_binding",
+   "fieldtype": "Data",
+   "label": "Actor Binding"
+  },
+  {
+   "fieldname": "represented_party",
+   "fieldtype": "Data",
+   "label": "Represented Party"
+  },
+  {
+   "fieldname": "column_break_amfx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source_hash",
+   "fieldtype": "Data",
+   "label": "Source Hash"
+  },
+  {
+   "fieldname": "authority_decision_receipt",
+   "fieldtype": "Data",
+   "label": "Authority Decision Receipt"
+  },
+  {
+   "fieldname": "governance_decision",
+   "fieldtype": "Data",
+   "label": "Governance Decision"
+  },
+  {
+   "fieldname": "recorded_at",
+   "fieldtype": "Datetime",
+   "label": "Recorded At"
+  },
+  {
+   "fieldname": "record_version_hash",
+   "fieldtype": "Data",
+   "label": "Record Version Hash"
+  },
+  {
+   "fieldname": "appointing_power_status",
+   "fieldtype": "Select",
+   "label": "Appointing Power Status"
+  },
+  {
+   "fieldname": "approval_status",
+   "fieldtype": "Select",
+   "label": "Approval Status"
+  },
+  {
+   "fieldname": "tab_3_tab",
+   "fieldtype": "Tab Break",
+   "label": "E. Current Projections and Historical Lineage"
+  },
+  {
+   "fieldname": "effectivity_status",
+   "fieldtype": "Select",
+   "label": "Effectivity Status"
+  },
+  {
+   "fieldname": "dispute_status",
+   "fieldtype": "Select",
+   "label": "Dispute Status"
+  },
+  {
+   "fieldname": "predecessor_interest",
+   "fieldtype": "Data",
+   "label": "Predecessor Interest"
+  },
+  {
+   "fieldname": "supersession_reason",
+   "fieldtype": "Small Text",
+   "label": "Supersession Reason"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-09-08 15:21:13.077436",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Property Interest",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

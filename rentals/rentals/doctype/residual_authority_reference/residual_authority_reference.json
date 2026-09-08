@@ -1,0 +1,95 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 16:24:07.696732",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "authority_delegation",
+  "holder_party",
+  "legacy_action",
+  "scope_hash",
+  "evidence_record",
+  "column_break_vzfc",
+  "valid_from",
+  "valid_to",
+  "status_snapshot",
+  "reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "authority_delegation",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Authority Delegation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "holder_party",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Holder Party",
+   "reqd": 1
+  },
+  {
+   "fieldname": "legacy_action",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Legacy Action",
+   "reqd": 1
+  },
+  {
+   "fieldname": "scope_hash",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Scope Hash",
+   "reqd": 1
+  },
+  {
+   "fieldname": "evidence_record",
+   "fieldtype": "Data",
+   "label": "Evidence Record"
+  },
+  {
+   "fieldname": "column_break_vzfc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "valid_from",
+   "fieldtype": "Datetime",
+   "label": "Valid From"
+  },
+  {
+   "fieldname": "valid_to",
+   "fieldtype": "Datetime",
+   "label": "Valid To"
+  },
+  {
+   "fieldname": "status_snapshot",
+   "fieldtype": "Select",
+   "label": "Status Snapshot"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Small Text",
+   "label": "Reason"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 16:28:47.098726",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Residual Authority Reference",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

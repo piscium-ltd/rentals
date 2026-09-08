@@ -1,0 +1,96 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 16:08:53.005577",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "change_side",
+  "appointment",
+  "change_action",
+  "responsibility_slot",
+  "allocation_scope_hash",
+  "column_break_ctzw",
+  "source_version_hash",
+  "effective_boundary",
+  "allocation_basis",
+  "validation_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "change_side",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Change Side",
+   "reqd": 1
+  },
+  {
+   "fieldname": "appointment",
+   "fieldtype": "Data",
+   "label": "Appointment"
+  },
+  {
+   "fieldname": "change_action",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Change Action",
+   "reqd": 1
+  },
+  {
+   "fieldname": "responsibility_slot",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Responsibility Slot",
+   "reqd": 1
+  },
+  {
+   "fieldname": "allocation_scope_hash",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Allocation Scope Hash",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_ctzw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source_version_hash",
+   "fieldtype": "Data",
+   "label": "Source Version Hash"
+  },
+  {
+   "fieldname": "effective_boundary",
+   "fieldtype": "Datetime",
+   "label": "Effective Boundary"
+  },
+  {
+   "fieldname": "allocation_basis",
+   "fieldtype": "Small Text",
+   "label": "Allocation Basis"
+  },
+  {
+   "fieldname": "validation_status",
+   "fieldtype": "Select",
+   "label": "Validation Status",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 16:13:23.094622",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Appointment Change Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

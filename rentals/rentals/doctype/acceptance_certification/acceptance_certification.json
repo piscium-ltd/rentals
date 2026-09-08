@@ -1,0 +1,104 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 16:20:03.828780",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "certification_type",
+  "certifying_party",
+  "certifying_user",
+  "certification_status",
+  "certified_at",
+  "column_break_cadb",
+  "scope_hash",
+  "population_hash",
+  "evidence_record",
+  "reconciliation_certificate",
+  "qualification_or_dispute"
+ ],
+ "fields": [
+  {
+   "fieldname": "certification_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Certification Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "certifying_party",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Certifying Party",
+   "reqd": 1
+  },
+  {
+   "fieldname": "certifying_user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Certifying User",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "certification_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Certification Status",
+   "reqd": 1
+  },
+  {
+   "fieldname": "certified_at",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Certified At",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_cadb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "scope_hash",
+   "fieldtype": "Data",
+   "label": "Scope Hash"
+  },
+  {
+   "fieldname": "population_hash",
+   "fieldtype": "Data",
+   "label": "Population Hash"
+  },
+  {
+   "fieldname": "evidence_record",
+   "fieldtype": "Data",
+   "label": "Evidence Record"
+  },
+  {
+   "fieldname": "reconciliation_certificate",
+   "fieldtype": "Data",
+   "label": "Reconciliation Certificate"
+  },
+  {
+   "fieldname": "qualification_or_dispute",
+   "fieldtype": "Small Text",
+   "label": "Qualification Or Dispute"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 16:23:44.713425",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Acceptance Certification",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

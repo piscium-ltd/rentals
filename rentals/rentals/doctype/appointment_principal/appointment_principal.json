@@ -1,0 +1,71 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 15:31:45.688238",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "principal_party",
+  "principal_role",
+  "authority_basis",
+  "allocation_percent",
+  "collective_authority_required",
+  "principal_scope_hash"
+ ],
+ "fields": [
+  {
+   "fieldname": "principal_party",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Principal Party",
+   "reqd": 1
+  },
+  {
+   "fieldname": "principal_role",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Principal Role",
+   "reqd": 1
+  },
+  {
+   "fieldname": "authority_basis",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Authority Basis",
+   "reqd": 1
+  },
+  {
+   "fieldname": "allocation_percent",
+   "fieldtype": "Percent",
+   "label": "Allocation Percent"
+  },
+  {
+   "default": "0",
+   "fieldname": "collective_authority_required",
+   "fieldtype": "Check",
+   "label": "Collective Authority Required"
+  },
+  {
+   "fieldname": "principal_scope_hash",
+   "fieldtype": "Data",
+   "label": "Principal Scope Hash"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 15:35:57.811425",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Appointment Principal",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

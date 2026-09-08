@@ -1,0 +1,99 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 14:28:08.478810",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "scope_kind",
+  "canonical_scope_uid",
+  "scope_locator",
+  "inclusion_mode",
+  "share_basis",
+  "share_percent",
+  "share_numerator",
+  "share_denominator",
+  "rank",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "scope_kind",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Scope Kind",
+   "options": "Scope Kind",
+   "reqd": 1
+  },
+  {
+   "fieldname": "canonical_scope_uid",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Canonical Scope Uid",
+   "reqd": 1
+  },
+  {
+   "fieldname": "scope_locator",
+   "fieldtype": "Data",
+   "label": "Scope Locator"
+  },
+  {
+   "fieldname": "inclusion_mode",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Inclusion Mode",
+   "options": "Inclusion Mode",
+   "reqd": 1
+  },
+  {
+   "fieldname": "share_basis",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Share Basis",
+   "options": "\nShare Basis",
+   "reqd": 1
+  },
+  {
+   "fieldname": "share_percent",
+   "fieldtype": "Percent",
+   "label": "Share Percent"
+  },
+  {
+   "fieldname": "share_numerator",
+   "fieldtype": "Int",
+   "label": "Share Numerator"
+  },
+  {
+   "fieldname": "share_denominator",
+   "fieldtype": "Int",
+   "label": "Share Denominator"
+  },
+  {
+   "fieldname": "rank",
+   "fieldtype": "Int",
+   "label": "Rank"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 14:49:42.579629",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Interest Scope Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

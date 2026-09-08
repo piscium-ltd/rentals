@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 15:27:23.796007",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "scope_kind",
+  "canonical_scope_uid",
+  "inclusion_mode",
+  "source_membership_version",
+  "compiler_version",
+  "scope_hash",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "scope_kind",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Scope Kind",
+   "options": "Scope Kind",
+   "reqd": 1
+  },
+  {
+   "fieldname": "canonical_scope_uid",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Canonical Scope Uid",
+   "reqd": 1
+  },
+  {
+   "fieldname": "inclusion_mode",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Inclusion Mode",
+   "reqd": 1
+  },
+  {
+   "fieldname": "source_membership_version",
+   "fieldtype": "Data",
+   "label": "Source Membership Version"
+  },
+  {
+   "fieldname": "compiler_version",
+   "fieldtype": "Data",
+   "label": "Compiler Version"
+  },
+  {
+   "fieldname": "scope_hash",
+   "fieldtype": "Data",
+   "label": "Scope Hash"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 15:31:30.417828",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Appointment Scope Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

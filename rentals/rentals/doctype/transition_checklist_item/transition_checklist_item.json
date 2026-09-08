@@ -1,0 +1,113 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 16:14:01.506538",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "checklist_category",
+  "item_code",
+  "item_description",
+  "capability_or_audience",
+  "blocking_level",
+  "responsible_party",
+  "responsible_user",
+  "column_break_rscs",
+  "status",
+  "completed_by",
+  "completed_at",
+  "evidence_record",
+  "exception_case"
+ ],
+ "fields": [
+  {
+   "fieldname": "checklist_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Checklist Category",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Code"
+  },
+  {
+   "fieldname": "item_description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Item Description"
+  },
+  {
+   "fieldname": "capability_or_audience",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Capability Or Audience"
+  },
+  {
+   "fieldname": "blocking_level",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Blocking Level"
+  },
+  {
+   "fieldname": "responsible_party",
+   "fieldtype": "Data",
+   "label": "Responsible Party"
+  },
+  {
+   "fieldname": "responsible_user",
+   "fieldtype": "Link",
+   "label": "Responsible User",
+   "options": "User"
+  },
+  {
+   "fieldname": "column_break_rscs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status"
+  },
+  {
+   "fieldname": "completed_by",
+   "fieldtype": "Link",
+   "label": "Completed By",
+   "options": "User"
+  },
+  {
+   "fieldname": "completed_at",
+   "fieldtype": "Date",
+   "label": "Completed At"
+  },
+  {
+   "fieldname": "evidence_record",
+   "fieldtype": "Data",
+   "label": "Evidence Record"
+  },
+  {
+   "fieldname": "exception_case",
+   "fieldtype": "Data",
+   "label": "Exception Case"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 16:19:42.918361",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Transition Checklist Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
