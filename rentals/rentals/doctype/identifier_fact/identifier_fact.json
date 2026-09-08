@@ -1,0 +1,183 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 20:23:43.393920",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "identifier_type",
+  "issuer",
+  "issuing_jurisdiction",
+  "uniqueness_scope",
+  "issue_date",
+  "expiry_date",
+  "provenance_authority_and_effective_dating_tab",
+  "fact_key",
+  "valid_from",
+  "valid_to",
+  "source_class",
+  "authoritative_source",
+  "source_reference",
+  "column_break_nssb",
+  "authority_level",
+  "verification_method",
+  "verification_outcome",
+  "verified_on",
+  "verified_by",
+  "column_break_jhlu",
+  "fresh_until",
+  "evidence_record",
+  "qualification",
+  "lifecycle_state",
+  "content_hash"
+ ],
+ "fields": [
+  {
+   "fieldname": "identifier_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Identifier Type"
+  },
+  {
+   "fieldname": "issuer",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Issuer"
+  },
+  {
+   "fieldname": "issuing_jurisdiction",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Issuing Jurisdiction",
+   "options": "Country"
+  },
+  {
+   "fieldname": "uniqueness_scope",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Uniqueness Scope"
+  },
+  {
+   "fieldname": "issue_date",
+   "fieldtype": "Date",
+   "label": "Issue Date"
+  },
+  {
+   "fieldname": "expiry_date",
+   "fieldtype": "Date",
+   "label": "Expiry Date"
+  },
+  {
+   "fieldname": "provenance_authority_and_effective_dating_tab",
+   "fieldtype": "Tab Break",
+   "label": "Provenance, Authority and Effective Dating"
+  },
+  {
+   "fieldname": "fact_key",
+   "fieldtype": "Data",
+   "label": "Fact Key"
+  },
+  {
+   "fieldname": "valid_from",
+   "fieldtype": "Date",
+   "label": "Valid From"
+  },
+  {
+   "fieldname": "valid_to",
+   "fieldtype": "Date",
+   "label": "Valid To"
+  },
+  {
+   "fieldname": "source_class",
+   "fieldtype": "Select",
+   "label": "Source Class"
+  },
+  {
+   "fieldname": "authoritative_source",
+   "fieldtype": "Data",
+   "label": "Authoritative Source"
+  },
+  {
+   "fieldname": "source_reference",
+   "fieldtype": "Data",
+   "label": "Source Reference"
+  },
+  {
+   "fieldname": "column_break_nssb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "authority_level",
+   "fieldtype": "Select",
+   "label": "Authority Level"
+  },
+  {
+   "fieldname": "verification_method",
+   "fieldtype": "Select",
+   "label": "Verification Method"
+  },
+  {
+   "fieldname": "verification_outcome",
+   "fieldtype": "Select",
+   "label": "Verification Outcome"
+  },
+  {
+   "fieldname": "verified_on",
+   "fieldtype": "Datetime",
+   "label": "Verified On"
+  },
+  {
+   "fieldname": "verified_by",
+   "fieldtype": "Link",
+   "label": "Verified By",
+   "options": "User"
+  },
+  {
+   "fieldname": "column_break_jhlu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fresh_until",
+   "fieldtype": "Date",
+   "label": "Fresh Until"
+  },
+  {
+   "fieldname": "evidence_record",
+   "fieldtype": "Link",
+   "label": "Evidence Record",
+   "options": "Evidence Record"
+  },
+  {
+   "fieldname": "qualification",
+   "fieldtype": "Small Text",
+   "label": "Qualification"
+  },
+  {
+   "fieldname": "lifecycle_state",
+   "fieldtype": "Select",
+   "label": "Lifecycle State"
+  },
+  {
+   "fieldname": "content_hash",
+   "fieldtype": "Data",
+   "label": "Content Hash"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 21:41:03.542355",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Identifier Fact",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,110 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 21:06:37.493176",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "registration_type",
+  "registration_authority",
+  "identifier_fact_key",
+  "registration_identifier_display",
+  "registered_name",
+  "registration_status",
+  "legal_form",
+  "column_break_tddl",
+  "original_registration_date",
+  "effective_date",
+  "cessation_date",
+  "branch_establishment_scope",
+  "renewal_rule"
+ ],
+ "fields": [
+  {
+   "fieldname": "registration_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Registration Type"
+  },
+  {
+   "fieldname": "registration_authority",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Registration Authority"
+  },
+  {
+   "fieldname": "identifier_fact_key",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Identifier Fact Key"
+  },
+  {
+   "fieldname": "registration_identifier_display",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Registration Identifier Display"
+  },
+  {
+   "fieldname": "registered_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Registered Name"
+  },
+  {
+   "fieldname": "registration_status",
+   "fieldtype": "Select",
+   "label": "Registration Status"
+  },
+  {
+   "fieldname": "legal_form",
+   "fieldtype": "Data",
+   "label": "Legal Form"
+  },
+  {
+   "fieldname": "column_break_tddl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "original_registration_date",
+   "fieldtype": "Date",
+   "label": "Original Registration Date"
+  },
+  {
+   "fieldname": "effective_date",
+   "fieldtype": "Date",
+   "label": "Effective Date"
+  },
+  {
+   "fieldname": "cessation_date",
+   "fieldtype": "Date",
+   "label": "Cessation Date"
+  },
+  {
+   "fieldname": "branch_establishment_scope",
+   "fieldtype": "Small Text",
+   "label": "Branch Establishment Scope"
+  },
+  {
+   "fieldname": "renewal_rule",
+   "fieldtype": "Small Text",
+   "label": "Renewal Rule"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 21:11:40.260288",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Statutory Registration Fact",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

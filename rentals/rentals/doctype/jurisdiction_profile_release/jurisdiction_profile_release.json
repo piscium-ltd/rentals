@@ -198,23 +198,27 @@
   },
   {
    "fieldname": "identifier_facts",
-   "fieldtype": "Data",
-   "label": "Identifier Facts"
+   "fieldtype": "Table",
+   "label": "Identifier Facts",
+   "options": "Identifier Fact"
   },
   {
    "fieldname": "statutory_registration_facts",
-   "fieldtype": "Data",
-   "label": "Statutory Registration Facts"
+   "fieldtype": "Table",
+   "label": "Statutory Registration Facts",
+   "options": "Statutory Registration Fact"
   },
   {
    "fieldname": "tax_obligation_facts",
-   "fieldtype": "Data",
-   "label": "Tax Obligation Facts"
+   "fieldtype": "Table",
+   "label": "Tax Obligation Facts",
+   "options": "Tax Obligation Fact"
   },
   {
    "fieldname": "compliance_entitlement_facts",
-   "fieldtype": "Data",
-   "label": "Compliance Entitlement Facts"
+   "fieldtype": "Table",
+   "label": "Compliance Entitlement Facts",
+   "options": "Compliance Entitlement Fact"
   },
   {
    "fieldname": "effective_dating_tab",
@@ -336,7 +340,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-08 17:35:50.655230",
+ "modified": "2026-09-08 21:39:47.920113",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Jurisdiction Profile Release",

@@ -14,7 +14,8 @@
   "column_break_done",
   "jurisdiction_slots",
   "row_version",
-  "last_governed_change_on"
+  "last_governed_change_on",
+  "restriction_status"
  ],
  "fields": [
   {
@@ -51,8 +52,9 @@
   },
   {
    "fieldname": "jurisdiction_slots",
-   "fieldtype": "Select",
-   "label": "Jurisdiction Slots"
+   "fieldtype": "Table",
+   "label": "Jurisdiction Slots",
+   "options": "Jurisdiction Slot"
   },
   {
    "fieldname": "row_version",
@@ -63,12 +65,17 @@
    "fieldname": "last_governed_change_on",
    "fieldtype": "Datetime",
    "label": "Last Governed Change On"
+  },
+  {
+   "fieldname": "restriction_status",
+   "fieldtype": "Select",
+   "label": "Restriction Status"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-08 17:08:51.308609",
+ "modified": "2026-09-08 21:37:29.597811",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Party Legal and Compliance Identity",

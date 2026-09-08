@@ -1,0 +1,85 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 20:05:29.118505",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "country",
+  "jurisdiction_scope",
+  "relationship_basis",
+  "valid_from",
+  "valid_to",
+  "column_break_naqd",
+  "template",
+  "slot_status",
+  "current_release"
+ ],
+ "fields": [
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "jurisdiction_scope",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Jurisdiction Scope"
+  },
+  {
+   "fieldname": "relationship_basis",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Relationship Basis"
+  },
+  {
+   "fieldname": "valid_from",
+   "fieldtype": "Date",
+   "label": "Valid From"
+  },
+  {
+   "fieldname": "valid_to",
+   "fieldtype": "Date",
+   "label": "Valid To"
+  },
+  {
+   "fieldname": "column_break_naqd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "template",
+   "fieldtype": "Data",
+   "label": "Template"
+  },
+  {
+   "fieldname": "slot_status",
+   "fieldtype": "Select",
+   "label": "Slot Status"
+  },
+  {
+   "fieldname": "current_release",
+   "fieldtype": "Data",
+   "label": "Current Release"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 20:12:49.771727",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Jurisdiction Slot",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

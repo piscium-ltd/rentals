@@ -1,0 +1,141 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-08 20:08:03.616333",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "requirement_key",
+  "label",
+  "purpose_statement",
+  "fact_category",
+  "field_type",
+  "applicability",
+  "condition_expression",
+  "cardinality",
+  "minimum_count",
+  "maxmum_count",
+  "normaliser_rule",
+  "format_rule",
+  "allowed_values",
+  "cross_field_rule",
+  "evidence_required",
+  "minimum_authority_level",
+  "freshness_days",
+  "legal_reference"
+ ],
+ "fields": [
+  {
+   "fieldname": "requirement_key",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Requirement Key"
+  },
+  {
+   "fieldname": "label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Label"
+  },
+  {
+   "fieldname": "purpose_statement",
+   "fieldtype": "Small Text",
+   "label": "Purpose Statement"
+  },
+  {
+   "fieldname": "fact_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Fact Category"
+  },
+  {
+   "fieldname": "field_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Field Type"
+  },
+  {
+   "fieldname": "applicability",
+   "fieldtype": "Select",
+   "label": "Applicability"
+  },
+  {
+   "fieldname": "condition_expression",
+   "fieldtype": "Text",
+   "label": "Condition Expression"
+  },
+  {
+   "fieldname": "cardinality",
+   "fieldtype": "Select",
+   "label": "Cardinality"
+  },
+  {
+   "fieldname": "minimum_count",
+   "fieldtype": "Int",
+   "label": "Minimum Count"
+  },
+  {
+   "fieldname": "maxmum_count",
+   "fieldtype": "Int",
+   "label": "Maxmum Count"
+  },
+  {
+   "fieldname": "normaliser_rule",
+   "fieldtype": "Data",
+   "label": "Normaliser Rule"
+  },
+  {
+   "fieldname": "format_rule",
+   "fieldtype": "Data",
+   "label": "Format Rule"
+  },
+  {
+   "fieldname": "allowed_values",
+   "fieldtype": "Small Text",
+   "label": "Allowed Values"
+  },
+  {
+   "fieldname": "cross_field_rule",
+   "fieldtype": "Small Text",
+   "label": "Cross Field Rule"
+  },
+  {
+   "default": "0",
+   "fieldname": "evidence_required",
+   "fieldtype": "Check",
+   "label": "Evidence Required"
+  },
+  {
+   "fieldname": "minimum_authority_level",
+   "fieldtype": "Select",
+   "label": "Minimum authority level"
+  },
+  {
+   "fieldname": "freshness_days",
+   "fieldtype": "Int",
+   "label": "Freshness Days"
+  },
+  {
+   "fieldname": "legal_reference",
+   "fieldtype": "Small Text",
+   "label": "Legal Reference"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 20:22:47.155206",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Compliance Requirement",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
