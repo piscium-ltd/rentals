@@ -2,34 +2,30 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2026-09-08 17:04:14.409135",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "party",
+  "naming_series",
+  "party_code",
   "party_kind",
-  "lifecycle_status",
-  "current_display_name",
-  "primary_jurisdiction_slot_key",
+  "has_business_name",
+  "business_name",
+  "organization_type",
+  "email",
   "column_break_done",
-  "jurisdiction_slots",
-  "row_version",
+  "lifecycle_status",
+  "country",
   "last_governed_change_on",
   "restriction_status"
  ],
  "fields": [
   {
-   "fieldname": "party",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Party",
-   "options": "Party",
-   "reqd": 1
-  },
-  {
    "fieldname": "party_kind",
    "fieldtype": "Select",
-   "label": "Party Kind"
+   "label": "Party Kind",
+   "options": "\nIndividual\nOrganization"
   },
   {
    "fieldname": "lifecycle_status",
@@ -37,29 +33,8 @@
    "label": "Lifecycle Status"
   },
   {
-   "fieldname": "current_display_name",
-   "fieldtype": "Data",
-   "label": "Current Display Name"
-  },
-  {
-   "fieldname": "primary_jurisdiction_slot_key",
-   "fieldtype": "Data",
-   "label": "Primary Jurisdiction Slot Key"
-  },
-  {
    "fieldname": "column_break_done",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "jurisdiction_slots",
-   "fieldtype": "Table",
-   "label": "Jurisdiction Slots",
-   "options": "Jurisdiction Slot"
-  },
-  {
-   "fieldname": "row_version",
-   "fieldtype": "Int",
-   "label": "Row Version"
   },
   {
    "fieldname": "last_governed_change_on",
@@ -70,15 +45,61 @@
    "fieldname": "restriction_status",
    "fieldtype": "Select",
    "label": "Restriction Status"
+  },
+  {
+   "fieldname": "party_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Party Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "PLCI-.YY.-.MM.-.####"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "options": "Email"
+  },
+  {
+   "default": "Kenya",
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country"
+  },
+  {
+   "depends_on": "eval:doc.party_kind==\"Individual\"",
+   "fieldname": "has_business_name",
+   "fieldtype": "Select",
+   "label": "Has Business Name?",
+   "options": "\nYes\nNo"
+  },
+  {
+   "depends_on": "eval:doc.party_kind==\"Individual\" && doc.has_business_name==\"Yes\"",
+   "fieldname": "business_name",
+   "fieldtype": "Data",
+   "label": "Business Name"
+  },
+  {
+   "depends_on": "eval:doc.party_kind==\"Organization\"",
+   "fieldname": "organization_type",
+   "fieldtype": "Select",
+   "label": "Organization Type"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-08 21:37:29.597811",
+ "modified": "2026-09-10 21:25:07.375407",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Party Legal and Compliance Identity",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

@@ -1,7 +1,7 @@
 {
  "app": "rentals",
  "charts": [],
- "content": "[{\"id\":\"pjHhpkXVyg\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Rentals Shortcuts</b>\",\"col\":12}},{\"id\":\"ZTrpBXTA0c\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement\",\"col\":4}},{\"id\":\"gOKGVutiLh\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Termination\",\"col\":4}},{\"id\":\"OvfT7WaVQz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Property Assignment\",\"col\":4}},{\"id\":\"uJNQznj-WF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":4}},{\"id\":\"GcpuGnJGhX\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"v0RCVd1VMd\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Reports &amp; Masters</b>\",\"col\":12}},{\"id\":\"n-qd04gJSr\",\"type\":\"card\",\"data\":{\"card_name\":\"Rentals Masters\",\"col\":6}},{\"id\":\"HHf7gVA8Tv\",\"type\":\"card\",\"data\":{\"card_name\":\"Rentals Shortcuts\",\"col\":6}}]",
+ "content": "[{\"id\":\"pjHhpkXVyg\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Rentals Shortcuts</b>\",\"col\":12}},{\"id\":\"ZTrpBXTA0c\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Agreement\",\"col\":4}},{\"id\":\"gOKGVutiLh\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lease Termination\",\"col\":4}},{\"id\":\"OvfT7WaVQz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Property Assignment\",\"col\":4}},{\"id\":\"uJNQznj-WF\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Reading\",\"col\":4}},{\"id\":\"GcpuGnJGhX\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"v0RCVd1VMd\",\"type\":\"paragraph\",\"data\":{\"text\":\"<b>Reports &amp; Masters</b>\",\"col\":12}},{\"id\":\"n-qd04gJSr\",\"type\":\"card\",\"data\":{\"card_name\":\"Rentals Masters\",\"col\":6}},{\"id\":\"HHf7gVA8Tv\",\"type\":\"card\",\"data\":{\"card_name\":\"Rentals Shortcuts\",\"col\":6}},{\"id\":\"C1L1gTOja0\",\"type\":\"card\",\"data\":{\"card_name\":\"new\",\"col\":4}}]",
  "creation": "2025-04-25 16:09:23.293045",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,7 +13,6 @@
  "indicator_color": "green",
  "is_hidden": 0,
  "label": "Rental Management",
- "link_type": "DocType",
  "links": [
   {
    "hidden": 0,
@@ -212,9 +211,28 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "new",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Party Legal and Compliance Identity",
+   "link_count": 0,
+   "link_to": "Party Legal and Compliance Identity",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2025-07-05 01:01:40.039332",
+ "modified": "2026-09-10 21:04:28.758147",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Rental Management",
