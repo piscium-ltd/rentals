@@ -216,7 +216,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "new",
-   "link_count": 1,
+   "link_count": 7,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -230,9 +230,69 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Jurisdiction Profile Release",
+   "link_count": 0,
+   "link_to": "Jurisdiction Profile Release",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Jurisdiction Compliance Template",
+   "link_count": 0,
+   "link_to": "Jurisdiction Compliance Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Evidence Record",
+   "link_count": 0,
+   "link_to": "Evidence Record",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Property Interest",
+   "link_count": 0,
+   "link_to": "Property Interest",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Management Appointment",
+   "link_count": 0,
+   "link_to": "Management Appointment",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Management Transition",
+   "link_count": 0,
+   "link_to": "Management Transition",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-09-10 21:04:28.758147",
+ "modified": "2026-09-10 21:31:03.986247",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Rental Management",

@@ -89,13 +89,14 @@
    "depends_on": "eval:doc.party_kind==\"Organization\"",
    "fieldname": "organization_type",
    "fieldtype": "Select",
-   "label": "Organization Type"
+   "label": "Organization Type",
+   "options": "Company\nForeigh Company"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-10 21:25:07.375407",
+ "modified": "2026-09-10 21:34:41.270669",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Party Legal and Compliance Identity",
