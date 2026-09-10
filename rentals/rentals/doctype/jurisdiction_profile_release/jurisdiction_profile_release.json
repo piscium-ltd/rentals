@@ -119,8 +119,9 @@
   },
   {
    "fieldname": "template",
-   "fieldtype": "Data",
-   "label": "Template"
+   "fieldtype": "Link",
+   "label": "Template",
+   "options": "Jurisdiction Compliance Template"
   },
   {
    "fieldname": "legal_identity_and_capacity_for_this_period_section",
@@ -211,7 +212,7 @@
   {
    "fieldname": "tax_obligation_facts",
    "fieldtype": "Table",
-   "label": "Tax Obligation Facts",
+   "label": "Tax Details",
    "options": "Tax Obligation Fact"
   },
   {
@@ -340,7 +341,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-08 21:39:47.920113",
+ "modified": "2026-09-10 22:00:33.587376",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Jurisdiction Profile Release",

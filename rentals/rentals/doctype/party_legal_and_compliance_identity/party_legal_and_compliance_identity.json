@@ -90,13 +90,13 @@
    "fieldname": "organization_type",
    "fieldtype": "Select",
    "label": "Organization Type",
-   "options": "Company\nForeign Company\nLimited Liability Partnership\nPartnership\nCo-operative Society\nSociety / Association\nTrust / Incorporated Trustees\nPublic Benefit Organisation\nTrade Union / Employers' Organisation\nBuilding Society\nStatutory Body / Corporation\nState Corporation\nGovernment Owned Enterprise\nCounty Government\nUniversity / Chartered Institution\nInternational / Intergovernmental Organisation\nOther Incorporated / Statutory Organisation"
+   "options": "\nCompany\nForeign Company\nLimited Liability Partnership\nPartnership\nCo-operative Society\nSociety / Association\nTrust / Incorporated Trustees\nPublic Benefit Organisation\nTrade Union / Employers' Organisation\nBuilding Society\nStatutory Body / Corporation\nState Corporation\nGovernment Owned Enterprise\nCounty Government\nUniversity / Chartered Institution\nInternational / Intergovernmental Organisation\nOther Incorporated / Statutory Organisation"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-10 21:40:33.676598",
+ "modified": "2026-09-10 22:41:23.079281",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Party Legal and Compliance Identity",

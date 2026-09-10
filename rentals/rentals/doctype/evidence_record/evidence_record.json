@@ -2,14 +2,41 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2026-09-08 17:48:53.208694",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
+  "record_name",
+  "column_break_juum",
+  "evidence_type",
+  "document_identification_section",
+  "document_type",
+  "document_number",
+  "column_break_mdfe",
+  "issuing_country",
+  "name_as_shown_on_document_section",
+  "full_name_as_document",
+  "surname_as_document",
+  "first_name_as_document",
+  "column_break_lofs",
+  "middle_names_as_document",
+  "other_name_as_document",
+  "personal_identity_attributes_section",
+  "date_of_birth",
+  "place_of_birth",
+  "gender_as_document",
+  "column_break_gnnj",
+  "nationality_as_document",
+  "country_of_birth",
+  "validity_and_issue_details_section",
+  "date_of_issue",
+  "date_of_expiry",
+  "column_break_vovn",
+  "document_status",
   "section_break_cptg",
   "amended_from",
-  "evidence_type",
-  "subject_party",
   "profile",
   "column_break_wotf",
   "country",
@@ -70,14 +97,9 @@
   },
   {
    "fieldname": "evidence_type",
-   "fieldtype": "Data",
-   "label": "Evidence Type"
-  },
-  {
-   "fieldname": "subject_party",
-   "fieldtype": "Link",
-   "label": "Subject Party",
-   "options": "Party"
+   "fieldtype": "Select",
+   "label": "Evidence Type",
+   "options": "\nIdentifier Facts\nStatutory Registration Facts\nTax Details"
   },
   {
    "fieldname": "profile",
@@ -264,8 +286,9 @@
   },
   {
    "fieldname": "predecessor_evidence",
-   "fieldtype": "Data",
-   "label": "Predecessor Evidence"
+   "fieldtype": "Link",
+   "label": "Predecessor Evidence",
+   "options": "Evidence Record"
   },
   {
    "fieldname": "column_break_yqwk",
@@ -273,23 +296,167 @@
   },
   {
    "fieldname": "successor_evidence",
-   "fieldtype": "Data",
-   "label": "Successor Evidence"
+   "fieldtype": "Link",
+   "label": "Successor Evidence",
+   "options": "Evidence Record"
   },
   {
    "fieldname": "lifecycle_status",
    "fieldtype": "Select",
    "label": "Lifecycle Status"
+  },
+  {
+   "fieldname": "record_name",
+   "fieldtype": "Data",
+   "label": "Record Name"
+  },
+  {
+   "default": "ER-.YY.-.MM.-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "ER-.YY.-.MM.-.####"
+  },
+  {
+   "depends_on": "eval:doc.evidence_type ==\"Identifier Facts\"",
+   "fieldname": "document_identification_section",
+   "fieldtype": "Section Break",
+   "label": " Document Identification"
+  },
+  {
+   "fieldname": "document_type",
+   "fieldtype": "Select",
+   "label": "Document Type",
+   "options": "\nKenyan National Identity Card\nKenyan Passport\nForeign Passport\nCertificate of Registration / Naturalisation as a Kenyan Citizen\nForeign Nationals Certificate (Alien Card)\nRefugee Identity Card\nAsylum Seeker Pass\nRefugee Identification Pass\nConvention Travel Document\nCertificate of Identity and Nationality\nDiplomatic Identity Card"
+  },
+  {
+   "fieldname": "document_number",
+   "fieldtype": "Data",
+   "label": "Document Number"
+  },
+  {
+   "fieldname": "column_break_mdfe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "issuing_country",
+   "fieldtype": "Link",
+   "label": "Issuing Country",
+   "options": "Country"
+  },
+  {
+   "depends_on": "eval:doc.evidence_type ==\"Identifier Facts\"",
+   "fieldname": "name_as_shown_on_document_section",
+   "fieldtype": "Section Break",
+   "label": "Name as Shown on Document"
+  },
+  {
+   "fieldname": "full_name_as_document",
+   "fieldtype": "Data",
+   "label": "Full Name As Document"
+  },
+  {
+   "fieldname": "surname_as_document",
+   "fieldtype": "Data",
+   "label": "Surname As Document"
+  },
+  {
+   "fieldname": "first_name_as_document",
+   "fieldtype": "Data",
+   "label": "First Name As Document"
+  },
+  {
+   "fieldname": "column_break_lofs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "middle_names_as_document",
+   "fieldtype": "Data",
+   "label": "Middle Names As Document"
+  },
+  {
+   "fieldname": "other_name_as_document",
+   "fieldtype": "Data",
+   "label": "Other Name As Document"
+  },
+  {
+   "depends_on": "eval:doc.evidence_type ==\"Identifier Facts\"",
+   "fieldname": "personal_identity_attributes_section",
+   "fieldtype": "Section Break",
+   "label": "Personal Identity Attributes"
+  },
+  {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date Of Birth"
+  },
+  {
+   "fieldname": "place_of_birth",
+   "fieldtype": "Data",
+   "label": "Place Of Birth"
+  },
+  {
+   "fieldname": "column_break_gnnj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gender_as_document",
+   "fieldtype": "Link",
+   "label": "Gender As Document",
+   "options": "Gender"
+  },
+  {
+   "fieldname": "nationality_as_document",
+   "fieldtype": "Data",
+   "label": "Nationality As Document"
+  },
+  {
+   "fieldname": "country_of_birth",
+   "fieldtype": "Link",
+   "label": "Country Of Birth",
+   "options": "Country"
+  },
+  {
+   "depends_on": "eval:doc.evidence_type ==\"Identifier Facts\"",
+   "fieldname": "validity_and_issue_details_section",
+   "fieldtype": "Section Break",
+   "label": "Validity and Issue Details"
+  },
+  {
+   "fieldname": "date_of_issue",
+   "fieldtype": "Date",
+   "label": "Date Of Issue"
+  },
+  {
+   "fieldname": "date_of_expiry",
+   "fieldtype": "Date",
+   "label": "Date Of Expiry"
+  },
+  {
+   "fieldname": "column_break_vovn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "document_status",
+   "fieldtype": "Select",
+   "label": "Document Status",
+   "options": "Valid\nExpired\nCancelled\nRevoked\nReplaced\nSuperseded"
+  },
+  {
+   "fieldname": "column_break_juum",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-08 18:14:55.780425",
+ "modified": "2026-09-10 22:42:14.372243",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Evidence Record",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
