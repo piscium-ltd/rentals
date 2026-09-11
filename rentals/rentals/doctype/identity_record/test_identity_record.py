@@ -13,9 +13,9 @@ IGNORE_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
 
 
 
-class IntegrationTestEvidenceRecord(IntegrationTestCase):
+class IntegrationTestIdentityRecord(IntegrationTestCase):
 	"""
-	Integration tests for EvidenceRecord.
+	Integration tests for IdentityRecord.
 	Use this class for testing interactions between multiple components.
 	"""
 

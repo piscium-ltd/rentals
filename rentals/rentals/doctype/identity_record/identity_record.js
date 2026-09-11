@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 
-frappe.ui.form.on('Evidence Record', {
+frappe.ui.form.on('Identity Record', {
     surname_as_document: function(frm) {
         set_full_name(frm);
     },

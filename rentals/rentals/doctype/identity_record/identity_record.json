@@ -74,9 +74,35 @@
   "column_break_yjtq",
   "observed_on",
   "verified_on",
+  "tax_details_tab",
   "section_break_ixkj",
   "certificate_date",
   "personal_identification_number",
+  "column_break_rtip",
+  "taxpayer_name",
+  "email_address",
+  "registered_address_section",
+  "lr_number",
+  "streetroad",
+  "county",
+  "tax_area",
+  "p_o_box",
+  "column_break_uyhc",
+  "building",
+  "citytown",
+  "district",
+  "station",
+  "postal_code",
+  "tax_obligations_registration_section",
+  "uj",
+  "effective_from_date",
+  "column_break_twar",
+  "effective_till_date",
+  "status",
+  "electronic_tax_invoicing_section",
+  "etims",
+  "column_break_tkgv",
+  "tims_registration",
   "authority_and_verification_tab",
   "authority_level",
   "source_competence_summary",
@@ -110,7 +136,7 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Evidence Record",
+   "options": "Identity Record",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
@@ -286,7 +312,7 @@
    "fieldname": "predecessor_evidence",
    "fieldtype": "Link",
    "label": "Predecessor Evidence",
-   "options": "Evidence Record"
+   "options": "Identity Record"
   },
   {
    "fieldname": "column_break_yqwk",
@@ -296,7 +322,7 @@
    "fieldname": "successor_evidence",
    "fieldtype": "Link",
    "label": "Successor Evidence",
-   "options": "Evidence Record"
+   "options": "Identity Record"
   },
   {
    "fieldname": "lifecycle_status",
@@ -360,16 +386,14 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Surname As Document",
-   "mandatory_depends_on": "eval:doc.evidence_type ==\"Identifier Facts\"",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.evidence_type ==\"Identifier Facts\""
   },
   {
    "fieldname": "first_name_as_document",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "First Name As Document",
-   "mandatory_depends_on": "eval:doc.evidence_type ==\"Identifier Facts\"",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.evidence_type ==\"Identifier Facts\""
   },
   {
    "fieldname": "column_break_lofs",
@@ -464,8 +488,7 @@
    "fieldtype": "Link",
    "label": "Doc Type",
    "mandatory_depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\"",
-   "options": "Org Reg Document Type",
-   "reqd": 1
+   "options": "Org Reg Document Type"
   },
   {
    "fieldname": "column_break_lxsn",
@@ -486,8 +509,7 @@
    "fieldname": "organisation_name_as_document",
    "fieldtype": "Data",
    "label": "Organisation Name As Document",
-   "mandatory_depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\"",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\""
   },
   {
    "fieldname": "column_break_qfhr",
@@ -581,16 +603,150 @@
    "fieldname": "personal_identification_number",
    "fieldtype": "Data",
    "label": "Personal Identification Number"
+  },
+  {
+   "depends_on": "eval:doc.evidence_type ==\"Tax Details\"",
+   "fieldname": "tax_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Tax Details"
+  },
+  {
+   "fieldname": "taxpayer_name",
+   "fieldtype": "Data",
+   "label": "Taxpayer Name "
+  },
+  {
+   "fieldname": "email_address",
+   "fieldtype": "Data",
+   "label": "Email Address ",
+   "options": "Email"
+  },
+  {
+   "fieldname": "registered_address_section",
+   "fieldtype": "Section Break",
+   "label": "Registered Address"
+  },
+  {
+   "fieldname": "lr_number",
+   "fieldtype": "Data",
+   "label": "L.R. Number"
+  },
+  {
+   "fieldname": "streetroad",
+   "fieldtype": "Data",
+   "label": "Street/Road "
+  },
+  {
+   "fieldname": "county",
+   "fieldtype": "Link",
+   "label": "County",
+   "options": "County"
+  },
+  {
+   "fieldname": "tax_area",
+   "fieldtype": "Data",
+   "label": "Tax Area"
+  },
+  {
+   "fieldname": "p_o_box",
+   "fieldtype": "Data",
+   "label": "P. O. Box"
+  },
+  {
+   "fieldname": "column_break_uyhc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "building",
+   "fieldtype": "Data",
+   "label": "Building "
+  },
+  {
+   "fieldname": "citytown",
+   "fieldtype": "Link",
+   "label": "City/Town",
+   "options": "Location Name"
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Link",
+   "label": "District",
+   "options": "Constituency"
+  },
+  {
+   "fieldname": "station",
+   "fieldtype": "Link",
+   "label": "Station",
+   "options": "Ward"
+  },
+  {
+   "fieldname": "postal_code",
+   "fieldtype": "Data",
+   "label": "Postal Code"
+  },
+  {
+   "fieldname": "tax_obligations_registration_section",
+   "fieldtype": "Section Break",
+   "label": "Tax Obligation(s) Registration "
+  },
+  {
+   "fieldname": "uj",
+   "fieldtype": "Select",
+   "label": "Tax Obligation(s)"
+  },
+  {
+   "fieldname": "effective_from_date",
+   "fieldtype": "Date",
+   "label": "Effective From Date "
+  },
+  {
+   "fieldname": "column_break_twar",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "effective_till_date",
+   "fieldtype": "Date",
+   "label": "Effective Till Date"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status"
+  },
+  {
+   "fieldname": "electronic_tax_invoicing_section",
+   "fieldtype": "Section Break",
+   "label": "Electronic Tax Invoicing "
+  },
+  {
+   "fieldname": "etims",
+   "fieldtype": "Select",
+   "label": "eTims",
+   "options": "\nActive\nInactive"
+  },
+  {
+   "fieldname": "column_break_tkgv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tims_registration",
+   "fieldtype": "Select",
+   "label": "Tims Registration",
+   "options": "\nActive\nInactive"
+  },
+  {
+   "fieldname": "column_break_rtip",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-11 21:32:51.629897",
+ "modified": "2026-09-11 22:03:52.586063",
  "modified_by": "Administrator",
  "module": "Rentals",
- "name": "Evidence Record",
+ "name": "Identity Record",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [

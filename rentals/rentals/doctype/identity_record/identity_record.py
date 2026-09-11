@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class EvidenceRecord(Document):
+class IdentityRecord(Document):
 	pass
