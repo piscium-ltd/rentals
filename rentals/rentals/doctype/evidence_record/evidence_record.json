@@ -74,6 +74,9 @@
   "column_break_yjtq",
   "observed_on",
   "verified_on",
+  "section_break_ixkj",
+  "certificate_date",
+  "personal_identification_number",
   "authority_and_verification_tab",
   "authority_level",
   "source_competence_summary",
@@ -449,8 +452,7 @@
    "depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\"",
    "fieldname": "document_identity_section",
    "fieldtype": "Section Break",
-   "label": " Document Identity",
-   "mandatory_depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\""
+   "label": " Document Identity"
   },
   {
    "fieldname": "doc_number",
@@ -564,13 +566,28 @@
   {
    "fieldname": "column_break_gmqf",
    "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.evidence_type ==\"Tax Details\"",
+   "fieldname": "section_break_ixkj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "certificate_date",
+   "fieldtype": "Date",
+   "label": "Certificate Date "
+  },
+  {
+   "fieldname": "personal_identification_number",
+   "fieldtype": "Data",
+   "label": "Personal Identification Number"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-11 21:13:17.690390",
+ "modified": "2026-09-11 21:32:51.629897",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Evidence Record",
