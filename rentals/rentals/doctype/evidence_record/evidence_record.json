@@ -11,6 +11,24 @@
   "record_name",
   "column_break_juum",
   "evidence_type",
+  "document_identity_section",
+  "doc_number",
+  "doc_type",
+  "column_break_lxsn",
+  "document_reference",
+  "version_or_revision",
+  "subject_organisation_section",
+  "organisation_name_as_document",
+  "column_break_qfhr",
+  "registration_number_as_document",
+  "issue_and_legal_validity_section",
+  "issue_date",
+  "execution_date",
+  "effective_from",
+  "column_break_jtqb",
+  "expiry_date",
+  "effective_to",
+  "doc_status",
   "document_identification_section",
   "document_type",
   "document_number",
@@ -31,6 +49,7 @@
   "country_of_birth",
   "validity_and_issue_details_section",
   "date_of_issue",
+  "has_expiry",
   "date_of_expiry",
   "column_break_vovn",
   "document_status",
@@ -399,6 +418,7 @@
    "label": "Date Of Issue"
   },
   {
+   "depends_on": "eval:doc.has_expiry ==\"Yes\"",
    "fieldname": "date_of_expiry",
    "fieldtype": "Date",
    "label": "Date Of Expiry"
@@ -411,18 +431,118 @@
    "fieldname": "document_status",
    "fieldtype": "Select",
    "label": "Document Status",
-   "options": "Valid\nExpired\nCancelled\nRevoked\nReplaced\nSuperseded"
+   "options": "\nValid\nExpired\nCancelled\nRevoked\nReplaced\nSuperseded"
   },
   {
    "fieldname": "column_break_juum",
    "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\"",
+   "fieldname": "document_identity_section",
+   "fieldtype": "Section Break",
+   "label": " Document Identity"
+  },
+  {
+   "fieldname": "doc_number",
+   "fieldtype": "Data",
+   "label": "Doc Number"
+  },
+  {
+   "fieldname": "doc_type",
+   "fieldtype": "Link",
+   "label": "Doc Type",
+   "options": "Org Reg Document Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_lxsn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "document_reference",
+   "fieldtype": "Data",
+   "label": "Document Reference"
+  },
+  {
+   "fieldname": "version_or_revision",
+   "fieldtype": "Data",
+   "label": "Version or Revision"
+  },
+  {
+   "depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\"",
+   "fieldname": "subject_organisation_section",
+   "fieldtype": "Section Break",
+   "label": "Subject Organisation"
+  },
+  {
+   "fieldname": "organisation_name_as_document",
+   "fieldtype": "Data",
+   "label": "Organisation Name As Document",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_qfhr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "registration_number_as_document",
+   "fieldtype": "Data",
+   "label": "Registration Number As Document"
+  },
+  {
+   "depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\"",
+   "fieldname": "issue_and_legal_validity_section",
+   "fieldtype": "Section Break",
+   "label": "Issue and Legal Validity"
+  },
+  {
+   "fieldname": "issue_date",
+   "fieldtype": "Date",
+   "label": "Issue Date"
+  },
+  {
+   "fieldname": "execution_date",
+   "fieldtype": "Date",
+   "label": "Execution Date"
+  },
+  {
+   "fieldname": "effective_from",
+   "fieldtype": "Date",
+   "label": "Effective From"
+  },
+  {
+   "fieldname": "column_break_jtqb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expiry_date",
+   "fieldtype": "Date",
+   "label": "Expiry Date"
+  },
+  {
+   "fieldname": "effective_to",
+   "fieldtype": "Date",
+   "label": "Effective To"
+  },
+  {
+   "fieldname": "doc_status",
+   "fieldtype": "Select",
+   "label": "Doc Status",
+   "options": "\nCurrent\nExpired\nRevoked\nReplaced\nSuperseded\nCancelled\nHistorical\nUnknown"
+  },
+  {
+   "fieldname": "has_expiry",
+   "fieldtype": "Select",
+   "label": "Has Expiry?",
+   "options": "\nYes\nNo"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-10 23:07:19.352667",
+ "modified": "2026-09-11 14:03:39.663998",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Evidence Record",
