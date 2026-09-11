@@ -2,10 +2,12 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2026-09-11 13:48:20.792130",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "document_type",
   "document_class",
   "column_break_hxec",
@@ -50,12 +52,18 @@
    "fieldname": "issuing_or_originating_authority",
    "fieldtype": "Data",
    "label": "Issuing or Originating Authority"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "ORDT-.YY.-.MM.-.####"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-11 13:50:54.206990",
+ "modified": "2026-09-11 20:51:57.919020",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Org Reg Document Type",

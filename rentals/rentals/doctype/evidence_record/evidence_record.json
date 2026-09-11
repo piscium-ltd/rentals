@@ -16,7 +16,6 @@
   "doc_type",
   "column_break_lxsn",
   "document_reference",
-  "version_or_revision",
   "subject_organisation_section",
   "organisation_name_as_document",
   "column_break_qfhr",
@@ -24,22 +23,25 @@
   "issue_and_legal_validity_section",
   "issue_date",
   "execution_date",
-  "effective_from",
   "column_break_jtqb",
   "expiry_date",
-  "effective_to",
+  "effective_from",
+  "column_break_dkdo",
   "doc_status",
+  "effective_to",
   "document_identification_section",
   "document_type",
-  "document_number",
   "column_break_mdfe",
+  "document_number",
+  "column_break_aate",
   "issuing_country",
   "name_as_shown_on_document_section",
   "full_name_as_document",
   "surname_as_document",
-  "first_name_as_document",
   "column_break_lofs",
+  "first_name_as_document",
   "middle_names_as_document",
+  "column_break_tbhc",
   "other_name_as_document",
   "personal_identity_attributes_section",
   "date_of_birth",
@@ -50,17 +52,19 @@
   "validity_and_issue_details_section",
   "date_of_issue",
   "has_expiry",
-  "date_of_expiry",
   "column_break_vovn",
+  "date_of_expiry",
   "document_status",
   "section_break_cptg",
-  "amended_from",
-  "profile",
-  "country",
+  "source_class",
+  "select_lfzo",
   "column_break_wotf",
   "issuer_source",
-  "source_class",
+  "profile",
+  "column_break_gmqf",
   "official_reference",
+  "country",
+  "amended_from",
   "controlled_artifact_section",
   "evidence_file",
   "evidence_time_section",
@@ -138,7 +142,9 @@
   {
    "fieldname": "source_class",
    "fieldtype": "Select",
-   "label": "Source Class"
+   "label": "Source Class",
+   "options": "\nOriginal\nCertified Copy\nRegistry Extract\nOfficial Electronic Document\nParty-Supplied Copy\nCompetent-Authority Search",
+   "reqd": 1
   },
   {
    "fieldname": "official_reference",
@@ -351,6 +357,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Surname As Document",
+   "mandatory_depends_on": "eval:doc.evidence_type ==\"Identifier Facts\"",
    "reqd": 1
   },
   {
@@ -358,6 +365,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "First Name As Document",
+   "mandatory_depends_on": "eval:doc.evidence_type ==\"Identifier Facts\"",
    "reqd": 1
   },
   {
@@ -441,7 +449,8 @@
    "depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\"",
    "fieldname": "document_identity_section",
    "fieldtype": "Section Break",
-   "label": " Document Identity"
+   "label": " Document Identity",
+   "mandatory_depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\""
   },
   {
    "fieldname": "doc_number",
@@ -452,6 +461,7 @@
    "fieldname": "doc_type",
    "fieldtype": "Link",
    "label": "Doc Type",
+   "mandatory_depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\"",
    "options": "Org Reg Document Type",
    "reqd": 1
   },
@@ -465,11 +475,6 @@
    "label": "Document Reference"
   },
   {
-   "fieldname": "version_or_revision",
-   "fieldtype": "Data",
-   "label": "Version or Revision"
-  },
-  {
    "depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\"",
    "fieldname": "subject_organisation_section",
    "fieldtype": "Section Break",
@@ -479,6 +484,7 @@
    "fieldname": "organisation_name_as_document",
    "fieldtype": "Data",
    "label": "Organisation Name As Document",
+   "mandatory_depends_on": "eval:doc.evidence_type ==\"Statutory Registration Facts\"",
    "reqd": 1
   },
   {
@@ -536,13 +542,35 @@
    "fieldtype": "Select",
    "label": "Has Expiry?",
    "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "column_break_dkdo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_aate",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_tbhc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "select_lfzo",
+   "fieldtype": "Select",
+   "label": "Acquisition Method",
+   "options": "\nUpload\nAPI\nOfficial Portal\nRegistry Search\nPhysical Scan\nMigration\nOther Approved Method"
+  },
+  {
+   "fieldname": "column_break_gmqf",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-11 14:03:39.663998",
+ "modified": "2026-09-11 21:13:17.690390",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Evidence Record",
