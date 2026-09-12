@@ -7,9 +7,13 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "identifier_type",
-  "issuer",
+  "requirement_type",
+  "is_mandatory",
+  "identity_record",
+  "column_break_ozxo",
   "issuing_jurisdiction",
+  "issuer",
+  "column_break_zhwx",
   "uniqueness_scope",
   "issue_date",
   "expiry_date",
@@ -35,28 +39,19 @@
  ],
  "fields": [
   {
-   "fieldname": "identifier_type",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Identifier Type"
-  },
-  {
    "fieldname": "issuer",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Issuer"
   },
   {
    "fieldname": "issuing_jurisdiction",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Issuing Jurisdiction",
    "options": "Country"
   },
   {
    "fieldname": "uniqueness_scope",
    "fieldtype": "Select",
-   "in_list_view": 1,
    "label": "Uniqueness Scope"
   },
   {
@@ -163,13 +158,40 @@
    "fieldname": "content_hash",
    "fieldtype": "Data",
    "label": "Content Hash"
+  },
+  {
+   "fieldname": "column_break_zhwx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "requirement_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Requirement Type"
+  },
+  {
+   "fieldname": "is_mandatory",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Is Mandatory"
+  },
+  {
+   "fieldname": "identity_record",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Identity Record",
+   "options": "Identity Record"
+  },
+  {
+   "fieldname": "column_break_ozxo",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-11 22:00:43.341179",
+ "modified": "2026-09-12 16:56:27.584575",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Identifier Fact",

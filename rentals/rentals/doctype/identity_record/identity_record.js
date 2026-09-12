@@ -25,3 +25,4 @@ function set_full_name(frm) {
 
     frm.set_value('full_name_as_document', names.join(' '));
 }
+

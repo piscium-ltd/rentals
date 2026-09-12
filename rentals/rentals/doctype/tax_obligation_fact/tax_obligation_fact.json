@@ -7,6 +7,10 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "requirement_type",
+  "is_mandatory",
+  "identity_record",
+  "column_break_coyx",
   "tax_authority",
   "obligation_type",
   "registration_enrolment_status",
@@ -22,25 +26,21 @@
   {
    "fieldname": "tax_authority",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Tax Authority"
   },
   {
    "fieldname": "obligation_type",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Obligation Type"
   },
   {
    "fieldname": "registration_enrolment_status",
    "fieldtype": "Select",
-   "in_list_view": 1,
    "label": "Registration Enrolment Status"
   },
   {
    "fieldname": "registration_identifier_display",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Registration Identifier Display"
   },
   {
@@ -71,13 +71,36 @@
    "fieldname": "status_verified_on",
    "fieldtype": "Datetime",
    "label": "Status Verified On"
+  },
+  {
+   "fieldname": "is_mandatory",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Is Mandatory"
+  },
+  {
+   "fieldname": "identity_record",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Identity Record",
+   "options": "Identity Record"
+  },
+  {
+   "fieldname": "column_break_coyx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "requirement_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Requirement Type"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-08 21:26:44.604723",
+ "modified": "2026-09-12 16:54:57.282290",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Tax Obligation Fact",

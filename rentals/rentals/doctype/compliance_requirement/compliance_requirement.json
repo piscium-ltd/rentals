@@ -7,13 +7,15 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "requirement_key",
+  "requirement_type",
+  "is_mandatory",
+  "fact_type",
+  "column_break_xcsd",
   "label",
   "purpose_statement",
-  "fact_category",
   "field_type",
-  "applicability",
   "condition_expression",
+  "applicability",
   "cardinality",
   "minimum_count",
   "maxmum_count",
@@ -28,15 +30,8 @@
  ],
  "fields": [
   {
-   "fieldname": "requirement_key",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Requirement Key"
-  },
-  {
    "fieldname": "label",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Label"
   },
   {
@@ -45,15 +40,8 @@
    "label": "Purpose Statement"
   },
   {
-   "fieldname": "fact_category",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Fact Category"
-  },
-  {
    "fieldname": "field_type",
    "fieldtype": "Select",
-   "in_list_view": 1,
    "label": "Field Type"
   },
   {
@@ -121,13 +109,39 @@
    "fieldname": "legal_reference",
    "fieldtype": "Small Text",
    "label": "Legal Reference"
+  },
+  {
+   "fieldname": "requirement_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Requirement Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "is_mandatory",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "IS Mandatory?",
+   "options": "\nYes\nNo",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_xcsd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fact_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Fact Type",
+   "options": "\nIdentifier Facts\nStatutory Registration Facts\nTax Details"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-08 20:22:47.155206",
+ "modified": "2026-09-12 16:44:51.246293",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Compliance Requirement",

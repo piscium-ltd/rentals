@@ -15,22 +15,29 @@
   "organization_type",
   "email",
   "column_break_done",
+  "email_verified",
   "lifecycle_status",
   "country",
   "last_governed_change_on",
-  "restriction_status"
+  "restriction_status",
+  "email_verification_token"
  ],
  "fields": [
   {
    "fieldname": "party_kind",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Party Kind",
    "options": "\nIndividual\nOrganization"
   },
   {
+   "default": "Pending Verification",
    "fieldname": "lifecycle_status",
    "fieldtype": "Select",
-   "label": "Lifecycle Status"
+   "in_list_view": 1,
+   "label": "Lifecycle Status",
+   "options": "Pending Verification\nValid"
   },
   {
    "fieldname": "column_break_done",
@@ -50,6 +57,7 @@
    "fieldname": "party_code",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Party Code",
    "reqd": 1
   },
@@ -62,6 +70,8 @@
   {
    "fieldname": "email",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Email",
    "options": "Email"
   },
@@ -91,12 +101,26 @@
    "fieldtype": "Select",
    "label": "Organization Type",
    "options": "\nCompany\nForeign Company\nLimited Liability Partnership\nPartnership\nCo-operative Society\nSociety / Association\nTrust / Incorporated Trustees\nPublic Benefit Organisation\nTrade Union / Employers' Organisation\nBuilding Society\nStatutory Body / Corporation\nState Corporation\nGovernment Owned Enterprise\nCounty Government\nUniversity / Chartered Institution\nInternational / Intergovernmental Organisation\nOther Incorporated / Statutory Organisation"
+  },
+  {
+   "default": "0",
+   "fieldname": "email_verified",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Email Verified",
+   "read_only": 1
+  },
+  {
+   "fieldname": "email_verification_token",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Email Verification Token"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-10 22:41:23.079281",
+ "modified": "2026-09-12 15:05:17.596385",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Party Legal and Compliance Identity",
@@ -120,5 +144,6 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "party_kind"
 }

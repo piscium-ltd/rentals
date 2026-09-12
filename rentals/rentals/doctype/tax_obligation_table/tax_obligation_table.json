@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-11 22:40:57.938249",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tax_obligations",
+  "effective_from_date",
+  "effective_till_date",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "tax_obligations",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tax Obligation(s)",
+   "options": "\nIncome Tax - Resident Individual\nVAT"
+  },
+  {
+   "fieldname": "effective_from_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Effective From Date "
+  },
+  {
+   "fieldname": "effective_till_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Effective Till Date"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "\nActive\nInactive"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-11 22:48:26.053060",
+ "modified_by": "Administrator",
+ "module": "Rentals",
+ "name": "Tax Obligation Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

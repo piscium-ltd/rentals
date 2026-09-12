@@ -2,21 +2,25 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2026-09-08 17:16:19.135435",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "section_break_pyaw",
   "amended_from",
+  "naming_series",
   "profile",
-  "jurisdiction_slot_key",
-  "release_number",
-  "column_break_jjgl",
   "country",
+  "column_break_jjgl",
+  "jurisdiction_compliance_template",
+  "party_kind",
+  "template_content_hash",
+  "column_break_ipyx",
+  "release_number",
+  "jurisdiction_slot_key",
   "jurisdiction_scope",
   "relationship_basis",
-  "template",
-  "template_content_hash",
   "legal_identity_and_capacity_for_this_period_section",
   "legal_name",
   "trading_name",
@@ -77,8 +81,10 @@
    "search_index": 1
   },
   {
+   "description": "(Party Legal and Compliance Identity)",
    "fieldname": "profile",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Profile",
    "options": "Party Legal and Compliance Identity"
   },
@@ -97,10 +103,12 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "profile.country",
    "fieldname": "country",
    "fieldtype": "Link",
    "label": "Country",
-   "options": "Country"
+   "options": "Country",
+   "read_only": 1
   },
   {
    "fieldname": "jurisdiction_scope",
@@ -116,12 +124,6 @@
    "fieldname": "template_content_hash",
    "fieldtype": "Data",
    "label": "Template Content Hash"
-  },
-  {
-   "fieldname": "template",
-   "fieldtype": "Link",
-   "label": "Template",
-   "options": "Jurisdiction Compliance Template"
   },
   {
    "fieldname": "legal_identity_and_capacity_for_this_period_section",
@@ -198,12 +200,14 @@
    "label": "Normalised Legal, Statutory and Tax Facts"
   },
   {
+   "depends_on": "eval:doc.party_kind ==\"Individual\"",
    "fieldname": "identifier_facts",
    "fieldtype": "Table",
    "label": "Identifier Facts",
    "options": "Identifier Fact"
   },
   {
+   "depends_on": "eval:doc.party_kind ==\"Organization\"",
    "fieldname": "statutory_registration_facts",
    "fieldtype": "Table",
    "label": "Statutory Registration Facts",
@@ -335,16 +339,41 @@
    "fieldname": "successor_release",
    "fieldtype": "Data",
    "label": "Successor Release"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "JPR-.YY.-.MM.-.####"
+  },
+  {
+   "fetch_from": "jurisdiction_compliance_template.party_kind",
+   "fieldname": "party_kind",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Party Kind"
+  },
+  {
+   "fieldname": "column_break_ipyx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "jurisdiction_compliance_template",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Jurisdiction Compliance Template",
+   "options": "Jurisdiction Compliance Template"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-10 22:00:33.587376",
+ "modified": "2026-09-12 17:37:14.164951",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Jurisdiction Profile Release",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

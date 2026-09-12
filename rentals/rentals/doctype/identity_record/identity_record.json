@@ -12,9 +12,10 @@
   "column_break_juum",
   "evidence_type",
   "document_identity_section",
-  "doc_number",
   "doc_type",
+  "the_name",
   "column_break_lxsn",
+  "doc_number",
   "document_reference",
   "subject_organisation_section",
   "organisation_name_as_document",
@@ -94,11 +95,7 @@
   "station",
   "postal_code",
   "tax_obligations_registration_section",
-  "uj",
-  "effective_from_date",
-  "column_break_twar",
-  "effective_till_date",
-  "status",
+  "tax_obligations",
   "electronic_tax_invoicing_section",
   "etims",
   "column_break_tkgv",
@@ -332,7 +329,8 @@
   {
    "fieldname": "record_name",
    "fieldtype": "Data",
-   "label": "Record Name"
+   "label": "Record Name",
+   "reqd": 1
   },
   {
    "default": "ER-.YY.-.MM.-.####",
@@ -690,30 +688,6 @@
    "label": "Tax Obligation(s) Registration "
   },
   {
-   "fieldname": "uj",
-   "fieldtype": "Select",
-   "label": "Tax Obligation(s)"
-  },
-  {
-   "fieldname": "effective_from_date",
-   "fieldtype": "Date",
-   "label": "Effective From Date "
-  },
-  {
-   "fieldname": "column_break_twar",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "effective_till_date",
-   "fieldtype": "Date",
-   "label": "Effective Till Date"
-  },
-  {
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "label": "Status"
-  },
-  {
    "fieldname": "electronic_tax_invoicing_section",
    "fieldtype": "Section Break",
    "label": "Electronic Tax Invoicing "
@@ -737,13 +711,25 @@
   {
    "fieldname": "column_break_rtip",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tax_obligations",
+   "fieldtype": "Table",
+   "label": "Tax Obligation(s)",
+   "options": "Tax Obligation Table"
+  },
+  {
+   "fetch_from": "doc_type.document_type",
+   "fieldname": "the_name",
+   "fieldtype": "Read Only",
+   "label": "The Name"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-11 22:03:52.586063",
+ "modified": "2026-09-12 17:34:26.868389",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Identity Record",
@@ -768,5 +754,6 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "record_name"
 }
