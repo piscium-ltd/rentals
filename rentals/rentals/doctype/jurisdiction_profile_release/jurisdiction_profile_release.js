@@ -62,6 +62,50 @@ frappe.ui.form.on("Jurisdiction Profile Release", {
 		});
 	},
 
+	setup(frm) {
+		frm.set_query(
+			"identity_record",
+			"identifier_facts",
+			function(doc, cdt, cdn) {
+				const row = locals[cdt][cdn];
+
+				return {
+					filters: {
+						evidence_type: "Identifier Facts",
+					}
+				};
+			}
+		);
+
+		frm.set_query(
+			"identity_record",
+			"statutory_registration_facts",
+			function(doc, cdt, cdn) {
+				const row = locals[cdt][cdn];
+
+				return {
+					filters: {
+						evidence_type: "Statutory Registration Facts",
+						
+					}
+				};
+			}
+		);
+
+		frm.set_query(
+			"identity_record",
+			"tax_obligation_facts",
+			function(doc) {
+				return {
+					filters: {
+						evidence_type: "Tax Details",
+						
+					}
+				};
+			}
+		);
+	},
+
 	validate(frm) {
 		validate_mandatory_identity_records(frm);
 	},
@@ -80,9 +124,7 @@ function validate_mandatory_identity_records(frm) {
 			const mandatory = String(row.is_mandatory || "").trim().toLowerCase();
 
 			const is_mandatory =
-				mandatory === "yes" ||
-				mandatory === "1" ||
-				mandatory === "true";
+				mandatory === "yes";
 
 			if (is_mandatory && !row.identity_record) {
 				missing_requirements.push(
