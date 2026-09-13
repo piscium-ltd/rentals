@@ -79,7 +79,6 @@ class PartyLegalandComplianceIdentity(Document):
         ):
             send_verification_email(self)
 
-
 @frappe.whitelist(allow_guest=True)
 def verify_email(name, token):
     """Verify the email address and mark the PLCI record as Valid."""
@@ -88,6 +87,12 @@ def verify_email(name, token):
         "Party Legal and Compliance Identity",
         name
     )
+
+    # The email has already been verified.
+    if doc.email_verified:
+        frappe.local.response["type"] = "redirect"
+        frappe.local.response["location"] = "/verify-email-success?already_verified=1"
+        return
 
     if not doc.email_verification_token:
         frappe.throw("This verification link is no longer valid.")

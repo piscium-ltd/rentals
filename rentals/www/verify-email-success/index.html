@@ -35,6 +35,33 @@
             ✓
         </div>
 
+        {% if frappe.form_dict.already_verified %}
+        <h2 style="
+            margin-bottom: 15px;
+            color: #333333;
+        ">
+            Email Already Verified Successfully
+        </h2>
+
+        <p style="
+            margin-bottom: 10px;
+            color: #666666;
+            font-size: 16px;
+            line-height: 1.6;
+        ">
+            Your email address was already verified successfully.
+        </p>
+
+        <p style="
+            color: #666666;
+            font-size: 16px;
+            line-height: 1.6;
+        ">
+            Your identity record remains
+            <strong style="color: #28a745;">Valid</strong>.
+        </p>
+        {% else %}
+
         <h2 style="
             margin-bottom: 15px;
             color: #333333;
@@ -60,6 +87,7 @@
             <strong style="color: #28a745;">Valid</strong>.
         </p>
 
+        {% endif %}
     </div>
 
 </div>
