@@ -85,13 +85,17 @@
   "registered_address_section",
   "lr_number",
   "streetroad",
-  "county",
   "tax_area",
-  "p_o_box",
-  "column_break_uyhc",
   "building",
+  "column_break_riwe",
+  "county",
+  "constituency",
+  "ward",
+  "location",
+  "sub_location",
+  "column_break_uyhc",
+  "p_o_box",
   "citytown",
-  "district",
   "station",
   "postal_code",
   "tax_obligations_registration_section",
@@ -661,21 +665,13 @@
   },
   {
    "fieldname": "citytown",
-   "fieldtype": "Link",
-   "label": "City/Town",
-   "options": "Location Name"
-  },
-  {
-   "fieldname": "district",
-   "fieldtype": "Link",
-   "label": "District",
-   "options": "Constituency"
+   "fieldtype": "Data",
+   "label": "City/Town"
   },
   {
    "fieldname": "station",
-   "fieldtype": "Link",
-   "label": "Station",
-   "options": "Ward"
+   "fieldtype": "Data",
+   "label": "Station"
   },
   {
    "fieldname": "postal_code",
@@ -723,13 +719,41 @@
    "fieldname": "the_name",
    "fieldtype": "Read Only",
    "label": "The Name"
+  },
+  {
+   "fieldname": "column_break_riwe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "constituency",
+   "fieldtype": "Link",
+   "label": "Constituency",
+   "options": "Constituency"
+  },
+  {
+   "fieldname": "ward",
+   "fieldtype": "Link",
+   "label": "Ward",
+   "options": "Ward"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location Name"
+  },
+  {
+   "fieldname": "sub_location",
+   "fieldtype": "Link",
+   "label": "Sub Location",
+   "options": "Sub Location"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-12 17:34:26.868389",
+ "modified": "2026-09-13 13:48:01.467517",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Identity Record",
