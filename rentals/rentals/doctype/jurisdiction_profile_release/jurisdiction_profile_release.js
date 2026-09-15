@@ -2,6 +2,14 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Jurisdiction Profile Release", {
+	profile(frm) {
+		// Clear the selected template when the profile changes
+		frm.set_value("jurisdiction_compliance_template", "");
+
+		// Clear all requirements loaded from the previous template
+		clear_release_fact_tables(frm);
+	},
+
 	jurisdiction_compliance_template(frm) {
 		if (!frm.doc.jurisdiction_compliance_template) {
 			clear_release_fact_tables(frm);
