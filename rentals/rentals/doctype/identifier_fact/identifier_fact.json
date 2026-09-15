@@ -167,13 +167,15 @@
    "fieldname": "requirement_type",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Requirement Type"
+   "label": "Requirement Type",
+   "read_only": 1
   },
   {
    "fieldname": "is_mandatory",
    "fieldtype": "Read Only",
    "in_list_view": 1,
-   "label": "Is Mandatory"
+   "label": "Is Mandatory",
+   "read_only": 1
   },
   {
    "fieldname": "identity_record",
@@ -191,7 +193,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-12 16:56:27.584575",
+ "modified": "2026-09-15 13:11:10.198029",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Identifier Fact",
