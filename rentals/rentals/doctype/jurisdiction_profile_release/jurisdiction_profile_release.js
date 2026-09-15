@@ -4,14 +4,7 @@
 frappe.ui.form.on("Jurisdiction Profile Release", {
 	jurisdiction_compliance_template(frm) {
 		if (!frm.doc.jurisdiction_compliance_template) {
-			frm.clear_table("identifier_facts");
-			frm.clear_table("statutory_registration_facts");
-			frm.clear_table("tax_obligation_facts");
-
-			frm.refresh_field("identifier_facts");
-			frm.refresh_field("statutory_registration_facts");
-			frm.refresh_field("tax_obligation_facts");
-
+			clear_release_fact_tables(frm);
 			return;
 		}
 
@@ -19,7 +12,7 @@ frappe.ui.form.on("Jurisdiction Profile Release", {
 			method: "frappe.client.get",
 			args: {
 				doctype: "Jurisdiction Compliance Template",
-				name: frm.doc.jurisdiction_compliance_template
+				name: frm.doc.jurisdiction_compliance_template,
 			},
 			callback(r) {
 				if (!r.message) {
@@ -28,37 +21,40 @@ frappe.ui.form.on("Jurisdiction Profile Release", {
 
 				const template = r.message;
 
-				frm.clear_table("identifier_facts");
-				frm.clear_table("statutory_registration_facts");
-				frm.clear_table("tax_obligation_facts");
+				clear_release_fact_tables(frm);
 
-				(template.requirements || []).forEach((requirement) => {
-					if (requirement.fact_type === "Identifier Facts") {
-						const row = frm.add_child("identifier_facts");
+				// Identifier Requirements
+				(template.identifier_record || []).forEach((requirement) => {
+					const row = frm.add_child("identifier_facts");
 
-						row.requirement_type = requirement.requirement_type;
-						row.is_mandatory = requirement.is_mandatory;
-					}
+					row.requirement_type = requirement.requirement_type;
+					row.is_mandatory = requirement.is_mandatory;
+				});
 
-					if (requirement.fact_type === "Statutory Registration Facts") {
-						const row = frm.add_child("statutory_registration_facts");
-
-						row.requirement_type = requirement.requirement_type;
-						row.is_mandatory = requirement.is_mandatory;
-					}
-
-					if (requirement.fact_type === "Tax Details") {
-						const row = frm.add_child("tax_obligation_facts");
+				// Statutory Registration Requirements
+				(template.statutory_registration_requirement || []).forEach(
+					(requirement) => {
+						const row = frm.add_child(
+							"statutory_registration_facts"
+						);
 
 						row.requirement_type = requirement.requirement_type;
 						row.is_mandatory = requirement.is_mandatory;
 					}
+				);
+
+				// Tax Requirements
+				(template.tax_details || []).forEach((requirement) => {
+					const row = frm.add_child("tax_obligation_facts");
+
+					row.requirement_type = requirement.requirement_type;
+					row.is_mandatory = requirement.is_mandatory;
 				});
 
 				frm.refresh_field("identifier_facts");
 				frm.refresh_field("statutory_registration_facts");
 				frm.refresh_field("tax_obligation_facts");
-			}
+			},
 		});
 	},
 
@@ -66,13 +62,12 @@ frappe.ui.form.on("Jurisdiction Profile Release", {
 		frm.set_query(
 			"identity_record",
 			"identifier_facts",
-			function(doc, cdt, cdn) {
-				const row = locals[cdt][cdn];
-
+			function () {
 				return {
 					filters: {
 						evidence_type: "Identifier Facts",
-					}
+						profile: frm.doc.profile,
+					},
 				};
 			}
 		);
@@ -80,14 +75,12 @@ frappe.ui.form.on("Jurisdiction Profile Release", {
 		frm.set_query(
 			"identity_record",
 			"statutory_registration_facts",
-			function(doc, cdt, cdn) {
-				const row = locals[cdt][cdn];
-
+			function () {
 				return {
 					filters: {
 						evidence_type: "Statutory Registration Facts",
-						
-					}
+						profile: frm.doc.profile,
+					},
 				};
 			}
 		);
@@ -95,15 +88,23 @@ frappe.ui.form.on("Jurisdiction Profile Release", {
 		frm.set_query(
 			"identity_record",
 			"tax_obligation_facts",
-			function(doc) {
+			function () {
 				return {
 					filters: {
 						evidence_type: "Tax Details",
-						
-					}
+						profile: frm.doc.profile,
+					},
 				};
 			}
 		);
+
+		frm.set_query("jurisdiction_compliance_template", function () {
+			return {
+				filters: {
+					party_kind: frm.doc.party_kind,
+				},
+			};
+		});
 	},
 
 	validate(frm) {
@@ -112,19 +113,29 @@ frappe.ui.form.on("Jurisdiction Profile Release", {
 
 	before_submit(frm) {
 		validate_mandatory_identity_records(frm);
-	}
+	},
 });
 
+function clear_release_fact_tables(frm) {
+	frm.clear_table("identifier_facts");
+	frm.clear_table("statutory_registration_facts");
+	frm.clear_table("tax_obligation_facts");
+
+	frm.refresh_field("identifier_facts");
+	frm.refresh_field("statutory_registration_facts");
+	frm.refresh_field("tax_obligation_facts");
+}
 
 function validate_mandatory_identity_records(frm) {
 	const missing_requirements = [];
 
 	function check_rows(rows) {
 		(rows || []).forEach((row) => {
-			const mandatory = String(row.is_mandatory || "").trim().toLowerCase();
+			const mandatory = String(row.is_mandatory || "")
+				.trim()
+				.toLowerCase();
 
-			const is_mandatory =
-				mandatory === "yes";
+			const is_mandatory = mandatory === "yes";
 
 			if (is_mandatory && !row.identity_record) {
 				missing_requirements.push(
@@ -162,7 +173,7 @@ function validate_mandatory_identity_records(frm) {
 				<p>
 					Please provide an Identity Record before continuing.
 				</p>
-			`
+			`,
 		});
 	}
 }

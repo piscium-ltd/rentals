@@ -2,47 +2,38 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
- "creation": "2026-09-08 20:08:03.616333",
+ "creation": "2026-09-15 22:04:38.850220",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "requirement_type",
-  "is_mandatory",
-  "fact_type"
+  "is_mandatory"
  ],
  "fields": [
   {
    "fieldname": "requirement_type",
-   "fieldtype": "Data",
+   "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Requirement Type",
-   "reqd": 1
+   "options": "\nKenyan National Identity Card\nKenyan Passport\nForeign Passport\nCertificate of Registration / Naturalisation as a Kenyan Citizen\nForeign Nationals Certificate (Alien Card)\nRefugee Identity Card\nAsylum Seeker Pass\nRefugee Identification Pass\nConvention Travel Document\nCertificate of Identity and Nationality\nDiplomatic Identity Card"
   },
   {
    "fieldname": "is_mandatory",
    "fieldtype": "Select",
    "in_list_view": 1,
-   "label": "IS Mandatory?",
-   "options": "\nYes\nNo",
-   "reqd": 1
-  },
-  {
-   "fieldname": "fact_type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Fact Type",
-   "options": "\nIdentifier Facts\nStatutory Registration Facts\nTax Details"
+   "label": "Is Mandatory",
+   "options": "\nYes\nNo"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-15 21:53:48.641293",
+ "modified": "2026-09-15 23:01:24.725640",
  "modified_by": "Administrator",
  "module": "Rentals",
- "name": "Compliance Requirement",
+ "name": "Identifier Requirement",
  "owner": "Administrator",
  "permissions": [],
  "row_format": "Dynamic",

@@ -2,26 +2,26 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
- "creation": "2026-09-08 17:05:25.172294",
+ "creation": "2026-09-15 20:55:12.005299",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "party"
+  "station_name"
  ],
  "fields": [
   {
-   "fieldname": "party",
+   "fieldname": "station_name",
    "fieldtype": "Data",
-   "label": "Party"
+   "label": "Station Name"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-08 17:05:38.389205",
+ "modified": "2026-09-15 20:55:39.362026",
  "modified_by": "Administrator",
  "module": "Rentals",
- "name": "Party",
+ "name": "Polling Station",
  "owner": "Administrator",
  "permissions": [
   {

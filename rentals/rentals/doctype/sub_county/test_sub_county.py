@@ -13,9 +13,9 @@ IGNORE_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
 
 
 
-class IntegrationTestParty(IntegrationTestCase):
+class IntegrationTestSubCounty(IntegrationTestCase):
 	"""
-	Integration tests for Party.
+	Integration tests for SubCounty.
 	Use this class for testing interactions between multiple components.
 	"""
 

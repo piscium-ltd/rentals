@@ -31,14 +31,9 @@
   "source_bundle",
   "interpretation_notes",
   "compliance_requirements_tab",
-  "requirements",
-  "approval_and_integrity_section",
-  "approved_by",
-  "approved_on",
-  "content_hash",
-  "column_break_eveo",
-  "predecessor_template",
-  "successor_template"
+  "identifier_record",
+  "statutory_registration_requirement",
+  "tax_details"
  ],
  "fields": [
   {
@@ -142,47 +137,6 @@
    "label": "Compliance Requirements"
   },
   {
-   "fieldname": "requirements",
-   "fieldtype": "Table",
-   "label": "Requirements",
-   "options": "Compliance Requirement"
-  },
-  {
-   "fieldname": "approval_and_integrity_section",
-   "fieldtype": "Section Break",
-   "label": "Approval and Integrity"
-  },
-  {
-   "fieldname": "approved_by",
-   "fieldtype": "Link",
-   "label": "Approved By",
-   "options": "User"
-  },
-  {
-   "fieldname": "approved_on",
-   "fieldtype": "Datetime",
-   "label": "Approved On"
-  },
-  {
-   "fieldname": "content_hash",
-   "fieldtype": "Data",
-   "label": "Content Hash"
-  },
-  {
-   "fieldname": "column_break_eveo",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "predecessor_template",
-   "fieldtype": "Data",
-   "label": "Predecessor Template"
-  },
-  {
-   "fieldname": "successor_template",
-   "fieldtype": "Data",
-   "label": "Successor Template"
-  },
-  {
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Naming Series",
@@ -210,13 +164,33 @@
   {
    "fieldname": "column_break_npqq",
    "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.party_kind ==\"Individual\"",
+   "fieldname": "identifier_record",
+   "fieldtype": "Table",
+   "label": "Identifier Record",
+   "options": "Identifier Requirement"
+  },
+  {
+   "depends_on": "eval:doc.party_kind ==\"Organization\"",
+   "fieldname": "statutory_registration_requirement",
+   "fieldtype": "Table",
+   "label": "Statutory Registration Requirement",
+   "options": "Statutory Registration Requirement"
+  },
+  {
+   "fieldname": "tax_details",
+   "fieldtype": "Table",
+   "label": "Tax Details",
+   "options": "Tax Requirement"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-12 13:15:39.848602",
+ "modified": "2026-09-15 22:21:23.092364",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Jurisdiction Compliance Template",

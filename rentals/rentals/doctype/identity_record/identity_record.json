@@ -9,13 +9,16 @@
  "field_order": [
   "naming_series",
   "record_name",
+  "profile",
   "column_break_juum",
+  "source_class",
+  "select_lfzo",
   "evidence_type",
-  "document_identity_section",
+  "column_break_coco",
   "doc_type",
-  "the_name",
-  "column_break_lxsn",
+  "document_identity_section",
   "doc_number",
+  "column_break_lxsn",
   "document_reference",
   "subject_organisation_section",
   "organisation_name_as_document",
@@ -57,24 +60,13 @@
   "date_of_expiry",
   "document_status",
   "section_break_cptg",
-  "source_class",
-  "select_lfzo",
-  "column_break_wotf",
-  "issuer_source",
-  "profile",
-  "column_break_gmqf",
-  "official_reference",
-  "country",
-  "amended_from",
-  "controlled_artifact_section",
-  "evidence_file",
-  "evidence_time_section",
-  "issued_on",
   "received_on",
-  "expires_on",
-  "column_break_yjtq",
-  "observed_on",
-  "verified_on",
+  "evidence_file",
+  "column_break_wotf",
+  "country",
+  "issued_on",
+  "column_break_gmqf",
+  "amended_from",
   "tax_details_tab",
   "section_break_ixkj",
   "certificate_date",
@@ -89,14 +81,17 @@
   "building",
   "column_break_riwe",
   "county",
+  "administrative_unit_type",
+  "sub_county",
   "constituency",
   "ward",
+  "column_break_efwe",
   "location",
   "sub_location",
+  "station",
   "column_break_uyhc",
   "p_o_box",
   "citytown",
-  "station",
   "postal_code",
   "tax_obligations_registration_section",
   "tax_obligations",
@@ -149,10 +144,12 @@
    "options": "\nIdentifier Facts\nStatutory Registration Facts\nTax Details"
   },
   {
+   "description": "Party",
    "fieldname": "profile",
    "fieldtype": "Link",
    "label": "Profile",
-   "options": "Party Legal and Compliance Identity"
+   "options": "Party Legal and Compliance Identity",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_wotf",
@@ -165,11 +162,7 @@
    "options": "Country"
   },
   {
-   "fieldname": "issuer_source",
-   "fieldtype": "Data",
-   "label": "Issuer Source"
-  },
-  {
+   "default": "Certified Copy",
    "fieldname": "source_class",
    "fieldtype": "Select",
    "label": "Source Class",
@@ -177,24 +170,9 @@
    "reqd": 1
   },
   {
-   "fieldname": "official_reference",
-   "fieldtype": "Data",
-   "label": "Official Reference"
-  },
-  {
-   "fieldname": "controlled_artifact_section",
-   "fieldtype": "Section Break",
-   "label": "Controlled Artifact"
-  },
-  {
    "fieldname": "evidence_file",
    "fieldtype": "Attach",
    "label": "Evidence File"
-  },
-  {
-   "fieldname": "evidence_time_section",
-   "fieldtype": "Section Break",
-   "label": "Evidence Time"
   },
   {
    "fieldname": "issued_on",
@@ -205,25 +183,6 @@
    "fieldname": "received_on",
    "fieldtype": "Datetime",
    "label": "Received On"
-  },
-  {
-   "fieldname": "observed_on",
-   "fieldtype": "Datetime",
-   "label": "Observed On"
-  },
-  {
-   "fieldname": "verified_on",
-   "fieldtype": "Datetime",
-   "label": "Verified On"
-  },
-  {
-   "fieldname": "expires_on",
-   "fieldtype": "Datetime",
-   "label": "Expires On"
-  },
-  {
-   "fieldname": "column_break_yjtq",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "authority_and_verification_tab",
@@ -486,6 +445,7 @@
    "label": "Doc Number"
   },
   {
+   "depends_on": "eval:doc.evidence_type != \"Identifier Facts\"",
    "fieldname": "doc_type",
    "fieldtype": "Link",
    "label": "Doc Type",
@@ -582,6 +542,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "Upload",
    "fieldname": "select_lfzo",
    "fieldtype": "Select",
    "label": "Acquisition Method",
@@ -669,9 +630,11 @@
    "label": "City/Town"
   },
   {
+   "depends_on": "eval: doc.administrative_unit_type == \"Constituency\"",
    "fieldname": "station",
-   "fieldtype": "Data",
-   "label": "Station"
+   "fieldtype": "Link",
+   "label": "Polling Areas/ Polling Stations",
+   "options": "Polling Station"
   },
   {
    "fieldname": "postal_code",
@@ -715,16 +678,11 @@
    "options": "Tax Obligation Table"
   },
   {
-   "fetch_from": "doc_type.document_type",
-   "fieldname": "the_name",
-   "fieldtype": "Read Only",
-   "label": "The Name"
-  },
-  {
    "fieldname": "column_break_riwe",
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval: doc.administrative_unit_type == \"Constituency\"",
    "fieldname": "constituency",
    "fieldtype": "Link",
    "label": "Constituency",
@@ -747,13 +705,34 @@
    "fieldtype": "Link",
    "label": "Sub Location",
    "options": "Sub Location"
+  },
+  {
+   "depends_on": "eval: doc.administrative_unit_type == \"Sub County\"",
+   "fieldname": "sub_county",
+   "fieldtype": "Link",
+   "label": "Sub County",
+   "options": "Sub County"
+  },
+  {
+   "fieldname": "column_break_efwe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "administrative_unit_type",
+   "fieldtype": "Select",
+   "label": "Administrative Unit Type",
+   "options": "\nSub County\nConstituency"
+  },
+  {
+   "fieldname": "column_break_coco",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-13 13:48:01.467517",
+ "modified": "2026-09-15 23:08:34.706428",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Identity Record",

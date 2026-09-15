@@ -11,10 +11,10 @@
   "amended_from",
   "naming_series",
   "profile",
-  "country",
+  "party_kind",
   "column_break_jjgl",
   "jurisdiction_compliance_template",
-  "party_kind",
+  "country",
   "template_content_hash",
   "column_break_ipyx",
   "release_number",
@@ -86,7 +86,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Profile",
-   "options": "Party Legal and Compliance Identity"
+   "options": "Party Legal and Compliance Identity",
+   "reqd": 1
   },
   {
    "fieldname": "jurisdiction_slot_key",
@@ -347,7 +348,7 @@
    "options": "JPR-.YY.-.MM.-.####"
   },
   {
-   "fetch_from": "jurisdiction_compliance_template.party_kind",
+   "fetch_from": "profile.party_kind",
    "fieldname": "party_kind",
    "fieldtype": "Read Only",
    "in_list_view": 1,
@@ -358,18 +359,20 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval: doc.profile",
    "fieldname": "jurisdiction_compliance_template",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Jurisdiction Compliance Template",
-   "options": "Jurisdiction Compliance Template"
+   "options": "Jurisdiction Compliance Template",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-12 17:37:14.164951",
+ "modified": "2026-09-15 23:24:50.600449",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Jurisdiction Profile Release",
