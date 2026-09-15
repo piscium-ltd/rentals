@@ -10,13 +10,13 @@
   "naming_series",
   "record_name",
   "profile",
-  "column_break_juum",
   "source_class",
+  "column_break_juum",
   "select_lfzo",
   "evidence_type",
-  "column_break_coco",
-  "doc_type",
+  "tax_details",
   "document_identity_section",
+  "doc_type",
   "doc_number",
   "column_break_lxsn",
   "document_reference",
@@ -445,7 +445,6 @@
    "label": "Doc Number"
   },
   {
-   "depends_on": "eval:doc.evidence_type != \"Identifier Facts\"",
    "fieldname": "doc_type",
    "fieldtype": "Link",
    "label": "Doc Type",
@@ -724,15 +723,18 @@
    "options": "\nSub County\nConstituency"
   },
   {
-   "fieldname": "column_break_coco",
-   "fieldtype": "Column Break"
+   "depends_on": "eval:doc.evidence_type ==\"Tax Details\"",
+   "fieldname": "tax_details",
+   "fieldtype": "Link",
+   "label": "Tax Details",
+   "options": "Tax Details Master"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-15 23:08:34.706428",
+ "modified": "2026-09-16 00:29:15.466933",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Identity Record",

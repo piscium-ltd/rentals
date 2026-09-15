@@ -16,8 +16,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Requirement Type",
-   "link_filters": "[[\"Org Reg Document Type\",\"fact_type\",\"=\",\"Tax Details\"]]",
-   "options": "Org Reg Document Type"
+   "options": "Tax Details Master"
   },
   {
    "fieldname": "is_mandatory",
@@ -31,7 +30,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-15 23:19:49.445768",
+ "modified": "2026-09-16 00:30:46.039816",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Tax Requirement",

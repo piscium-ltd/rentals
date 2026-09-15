@@ -7,12 +7,11 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "document_class",
   "document_type",
-  "country",
+  "document_class",
   "column_break_hxec",
-  "issuing_or_originating_authority",
-  "fact_type"
+  "country",
+  "issuing_or_originating_authority"
  ],
  "fields": [
   {
@@ -47,18 +46,12 @@
    "fieldname": "issuing_or_originating_authority",
    "fieldtype": "Data",
    "label": "Issuing or Originating Authority"
-  },
-  {
-   "fieldname": "fact_type",
-   "fieldtype": "Select",
-   "label": "Fact Type",
-   "options": "Statutory Registration Facts\nTax Details"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-15 23:15:23.384698",
+ "modified": "2026-09-16 00:18:21.344280",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Org Reg Document Type",
