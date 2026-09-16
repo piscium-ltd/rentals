@@ -154,7 +154,8 @@ scheduler_events = {
 		"rentals.tasks.daily.generate_sales_invoices",
 		"rentals.tasks.daily.check_expired_leases",
 		"rentals.sms.reminders.run_daily_sms_reminders",
-		"rentals.sms.cleanup.run_scheduled_sms_cleanup"
+		"rentals.sms.cleanup.run_scheduled_sms_cleanup",
+		"rentals.rentals.doctype.identity_record.identity_record.expire_identity_records"
 	],
 # 	"hourly": [
 # 		"rentals.tasks.hourly"
