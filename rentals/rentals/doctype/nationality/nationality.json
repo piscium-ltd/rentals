@@ -2,6 +2,7 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
+ "autoname": "field:nationality",
  "creation": "2026-09-21 12:56:05.818292",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -12,16 +13,18 @@
   {
    "fieldname": "nationality",
    "fieldtype": "Data",
-   "label": "Nationality"
+   "label": "Nationality",
+   "unique": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-21 12:56:33.773222",
+ "modified": "2026-09-21 19:51:52.114037",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Nationality",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

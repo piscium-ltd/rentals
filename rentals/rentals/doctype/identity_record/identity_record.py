@@ -8,7 +8,16 @@ from frappe.model.document import Document
 class IdentityRecord(Document):
 	pass
 
+def validate(self):
+	for field in ("first_name_as_document", "middle_names_as_document", "surname_as_document"):
+		value = self.get(field)
+		if value:
+			self.set(field, " ".join(value.split()).title())
 
+	self.full_name_as_document = " ".join(
+		filter(None, [self.first_name_as_document, self.middle_names_as_document, self.surname_as_document])
+	)
+	
 def expire_identity_records():
 
 	today = frappe.utils.today()

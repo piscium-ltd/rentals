@@ -9,6 +9,7 @@ def get_data():
 				"label": _("Connection"),
 				"items": [
 					"Identity Record",
+					"Jurisdiction Profile Release",
 				],
 			},
 		],

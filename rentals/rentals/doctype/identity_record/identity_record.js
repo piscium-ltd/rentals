@@ -1,5 +1,10 @@
 // Copyright (c) 2026, Piscium Solutions LTD and contributors
 // For license information, please see license.txt
+const NAME_FIELDS = [
+	"first_name_as_document",
+	"middle_names_as_document",
+	"surname_as_document",
+];
 
 
 const DATE_RULES = {
@@ -105,15 +110,15 @@ frappe.ui.form.on("Identity Record", {
 	},
 
 	surname_as_document(frm) {
-		set_full_name(frm);
+		format_name_field(frm, "surname_as_document");
 	},
 
 	first_name_as_document(frm) {
-		set_full_name(frm);
+		format_name_field(frm, "first_name_as_document");
 	},
 
 	middle_names_as_document(frm) {
-		set_full_name(frm);
+		format_name_field(frm, "middle_names_as_document");
 	},
 
 	has_expiry(frm) {
@@ -163,6 +168,12 @@ frappe.ui.form.on("Identity Record", {
 	},
 
 	before_save(frm) {
+		// Safety net: covers pasted or pre-filled values
+		NAME_FIELDS.forEach(fieldname => {
+			frm.doc[fieldname] = to_title_case(frm.doc[fieldname]);
+		});
+
+		set_full_name(frm);
 		update_document_status(frm);
 	},
 });
@@ -222,18 +233,40 @@ function update_location_field_states(frm) {
 	});
 }
 
+function to_title_case(value) {
+	if (!value) {
+		return value;
+	}
+
+	return value
+		.trim()
+		.replace(/\s+/g, " ")
+		.toLowerCase()
+		.replace(
+			/(^|[\s\-'’])(\p{L})/gu,
+			(match, separator, letter) => separator + letter.toUpperCase()
+		);
+}
+
+
+function format_name_field(frm, fieldname) {
+	const current = frm.doc[fieldname];
+	const formatted = to_title_case(current);
+
+	if (formatted !== current) {
+		frm.set_value(fieldname, formatted).then(() => set_full_name(frm));
+	} else {
+		set_full_name(frm);
+	}
+}
+
 
 function set_full_name(frm) {
-	const names = [
-		frm.doc.first_name_as_document,
-		frm.doc.middle_names_as_document,
-		frm.doc.surname_as_document,
-	].filter(Boolean);
+	const names = NAME_FIELDS
+		.map(fieldname => to_title_case(frm.doc[fieldname]))
+		.filter(Boolean);
 
-	frm.set_value(
-		"full_name_as_document",
-		names.join(" ")
-	);
+	frm.set_value("full_name_as_document", names.join(" "));
 }
 
 function setup_date_restrictions(frm) {

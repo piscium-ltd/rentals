@@ -10,6 +10,7 @@
   "naming_series",
   "record_name",
   "profile",
+  "party_kind",
   "source_class",
   "column_break_juum",
   "select_lfzo",
@@ -143,11 +144,12 @@
   },
   {
    "description": "Party",
+   "fetch_from": "jurisdiction_profile_release.profile",
    "fieldname": "profile",
    "fieldtype": "Link",
    "label": "Profile",
    "options": "Party Legal and Compliance Identity",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "column_break_wotf",
@@ -421,7 +423,8 @@
    "fieldname": "document_status",
    "fieldtype": "Select",
    "label": "Document Status",
-   "options": "\nValid\nExpired\nCancelled\nRevoked\nReplaced\nSuperseded"
+   "options": "\nValid\nExpired\nCancelled\nRevoked\nReplaced\nSuperseded",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_juum",
@@ -514,7 +517,8 @@
    "fieldname": "doc_status",
    "fieldtype": "Select",
    "label": "Doc Status",
-   "options": "\nValid\nExpired\nCancelled\nRevoked\nReplaced\nSuperseded"
+   "options": "\nValid\nExpired\nCancelled\nRevoked\nReplaced\nSuperseded",
+   "read_only": 1
   },
   {
    "fieldname": "has_expiry",
@@ -713,15 +717,21 @@
    "depends_on": "eval:doc.evidence_type ==\"Tax Details\"",
    "fieldname": "tax_details",
    "fieldtype": "Link",
-   "label": "Detail Type",
+   "label": "Document Type",
    "options": "Tax Details Master"
+  },
+  {
+   "fetch_from": "profile.party_kind",
+   "fieldname": "party_kind",
+   "fieldtype": "Read Only",
+   "label": "Party Kind"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-21 14:21:08.902386",
+ "modified": "2026-09-21 21:30:24.134671",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Identity Record",
