@@ -60,11 +60,10 @@
   "date_of_expiry",
   "document_status",
   "section_break_cptg",
-  "received_on",
+  "issued_on",
   "evidence_file",
   "column_break_wotf",
   "country",
-  "issued_on",
   "column_break_gmqf",
   "amended_from",
   "tax_details_tab",
@@ -81,7 +80,6 @@
   "building",
   "column_break_riwe",
   "county",
-  "administrative_unit_type",
   "sub_county",
   "constituency",
   "ward",
@@ -178,11 +176,6 @@
    "fieldname": "issued_on",
    "fieldtype": "Date",
    "label": "Issued On"
-  },
-  {
-   "fieldname": "received_on",
-   "fieldtype": "Datetime",
-   "label": "Received On"
   },
   {
    "fieldname": "authority_and_verification_tab",
@@ -393,8 +386,9 @@
   },
   {
    "fieldname": "nationality_as_document",
-   "fieldtype": "Data",
-   "label": "Nationality As Document"
+   "fieldtype": "Link",
+   "label": "Nationality As Document",
+   "options": "Nationality"
   },
   {
    "fieldname": "country_of_birth",
@@ -520,12 +514,13 @@
    "fieldname": "doc_status",
    "fieldtype": "Select",
    "label": "Doc Status",
-   "options": "\nCurrent\nExpired\nRevoked\nReplaced\nSuperseded\nCancelled\nHistorical\nUnknown"
+   "options": "\nValid\nExpired\nCancelled\nRevoked\nReplaced\nSuperseded"
   },
   {
    "fieldname": "has_expiry",
    "fieldtype": "Select",
    "label": "Has Expiry?",
+   "mandatory_depends_on": "eval:doc.evidence_type ==\"Identifier Facts\"",
    "options": "\nYes\nNo"
   },
   {
@@ -681,7 +676,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "eval: doc.administrative_unit_type == \"Constituency\"",
    "fieldname": "constituency",
    "fieldtype": "Link",
    "label": "Constituency",
@@ -706,7 +700,6 @@
    "options": "Sub Location"
   },
   {
-   "depends_on": "eval: doc.administrative_unit_type == \"Sub County\"",
    "fieldname": "sub_county",
    "fieldtype": "Link",
    "label": "Sub County",
@@ -717,16 +710,10 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "administrative_unit_type",
-   "fieldtype": "Select",
-   "label": "Administrative Unit Type",
-   "options": "\nSub County\nConstituency"
-  },
-  {
    "depends_on": "eval:doc.evidence_type ==\"Tax Details\"",
    "fieldname": "tax_details",
    "fieldtype": "Link",
-   "label": "Tax Details",
+   "label": "Detail Type",
    "options": "Tax Details Master"
   }
  ],
@@ -734,7 +721,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-16 00:29:15.466933",
+ "modified": "2026-09-21 14:21:08.902386",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Identity Record",

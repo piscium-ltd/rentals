@@ -13,7 +13,8 @@ def expire_identity_records():
 
 	today = frappe.utils.today()
 
-	records = frappe.get_all(
+	# Mark expired records
+	expired_records = frappe.get_all(
 		"Identity Record",
 		filters={
 			"evidence_type": "Identifier Facts",
@@ -24,11 +25,32 @@ def expire_identity_records():
 		pluck="name",
 	)
 
-	for name in records:
+	for name in expired_records:
 		frappe.db.set_value(
 			"Identity Record",
 			name,
 			"document_status",
 			"Expired",
+			update_modified=False,
+		)
+
+	# Mark valid records
+	valid_records = frappe.get_all(
+		"Identity Record",
+		filters={
+			"evidence_type": "Identifier Facts",
+			"has_expiry": "Yes",
+			"date_of_expiry": [">=", today],
+			"document_status": ["!=", "Valid"],
+		},
+		pluck="name",
+	)
+
+	for name in valid_records:
+		frappe.db.set_value(
+			"Identity Record",
+			name,
+			"document_status",
+			"Valid",
 			update_modified=False,
 		)

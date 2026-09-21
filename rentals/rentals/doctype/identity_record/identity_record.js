@@ -12,6 +12,10 @@ const DATE_RULES = {
 		relationship: ["date_of_expiry", "Date of Issue", "Date of Expiry"],
 	},
 
+	date_of_birth: {
+		type: "past",
+	},
+
 	issued_on: {
 		type: "past",
 	},
@@ -35,7 +39,7 @@ const DATE_RULES = {
 	},
 
 	date_of_expiry: {
-		type: "future",
+		type: "any",
 		relationship: ["date_of_issue", "Date of Expiry", "Date of Issue"],
 	},
 
@@ -122,6 +126,11 @@ frappe.ui.form.on("Identity Record", {
 
 	date_of_issue(frm) {
 		validate_date(frm, "date_of_issue");
+		update_document_status(frm);
+	},
+
+	date_of_birth(frm) {
+		validate_date(frm, "date_of_birth");
 	},
 
 	issued_on(frm) {
@@ -157,6 +166,7 @@ frappe.ui.form.on("Identity Record", {
 		update_document_status(frm);
 	},
 });
+
 
 function configure_location_queries(frm) {
 	frm.set_query("constituency", () => ({
@@ -236,7 +246,7 @@ function setup_date_restrictions(frm) {
 
 		const properties = {
 			max: rule.type === "past" ? today : null,
-			min: rule.type === "future" ? today : "1900-01-01",
+			min: rule.type === "future" ? today : null,
 		};
 
 		Object.entries(properties).forEach(([property, value]) => {
@@ -303,15 +313,48 @@ function validate_date_relationship(frm, fieldname) {
 		return;
 	}
 
-	if (rule.type === "past" && current_date > related_date) {
+	if (
+		fieldname === "date_of_issue" &&
+		current_date > related_date
+	) {
 		clear_invalid_date(
 			frm,
 			fieldname,
 			`${field_label} cannot be after ${related_label}.`
 		);
+
+		return;
 	}
 
-	if (rule.type === "future" && current_date < related_date) {
+	if (
+		fieldname === "date_of_expiry" &&
+		current_date < related_date
+	) {
+		clear_invalid_date(
+			frm,
+			fieldname,
+			`${field_label} cannot be before ${related_label}.`
+		);
+
+		return;
+	}
+
+	if (
+		rule.type === "past" &&
+		current_date > related_date
+	) {
+		clear_invalid_date(
+			frm,
+			fieldname,
+			`${field_label} cannot be after ${related_label}.`
+		);
+		return;
+	}
+
+	if (
+		rule.type === "future" &&
+		current_date < related_date
+	) {
 		clear_invalid_date(
 			frm,
 			fieldname,
@@ -329,7 +372,6 @@ function clear_invalid_date(frm, fieldname, message) {
 		indicator: "red",
 	});
 }
-
 
 
 function handle_has_expiry(frm) {
@@ -368,13 +410,10 @@ function update_document_status(frm) {
 
 	const today = frappe.datetime.get_today();
 
-	if (
-		frm.doc.date_of_expiry < today &&
-		frm.doc.document_status !== "Expired"
-	) {
-		frm.set_value(
-			"document_status",
-			"Expired"
-		);
-	}
+	frm.set_value(
+		"document_status",
+		frm.doc.date_of_expiry < today
+			? "Expired"
+			: "Valid"
+	);
 }

@@ -10,16 +10,13 @@
   "section_break_dz7s",
   "amended_from",
   "naming_series",
-  "template_key",
   "country",
   "column_break_ydwy",
-  "jurisdiction_scope",
   "party_kind",
   "has_business_name",
   "organization_type",
   "column_break_npqq",
   "version",
-  "context_key",
   "template_status",
   "legal_and_system_effectivity_section",
   "legal_effective_from",
@@ -67,20 +64,10 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "jurisdiction_scope",
-   "fieldtype": "Data",
-   "label": "Jurisdiction Scope"
-  },
-  {
    "fieldname": "party_kind",
    "fieldtype": "Select",
    "label": "Party Kind",
    "options": "\nIndividual\nOrganization"
-  },
-  {
-   "fieldname": "context_key",
-   "fieldtype": "Data",
-   "label": "Context Key"
   },
   {
    "fieldname": "template_status",
@@ -157,11 +144,6 @@
    "options": "\nCompany\nForeign Company\nLimited Liability Partnership\nPartnership\nCo-operative Society\nSociety / Association\nTrust / Incorporated Trustees\nPublic Benefit Organisation\nTrade Union / Employers' Organisation\nBuilding Society\nStatutory Body / Corporation\nState Corporation\nGovernment Owned Enterprise\nCounty Government\nUniversity / Chartered Institution\nInternational / Intergovernmental Organisation\nOther Incorporated / Statutory Organisation"
   },
   {
-   "fieldname": "template_key",
-   "fieldtype": "Data",
-   "label": "Template Key"
-  },
-  {
    "fieldname": "column_break_npqq",
    "fieldtype": "Column Break"
   },
@@ -173,7 +155,7 @@
    "options": "Identifier Requirement"
   },
   {
-   "depends_on": "eval:doc.party_kind ==\"Organization\"",
+   "depends_on": "eval: doc.party_kind == \"Organization\" || doc.has_business_name == \"Yes\"",
    "fieldname": "statutory_registration_requirement",
    "fieldtype": "Table",
    "label": "Statutory Registration Requirement",
@@ -190,7 +172,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-15 22:21:23.092364",
+ "modified": "2026-09-21 13:06:41.547917",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Jurisdiction Compliance Template",

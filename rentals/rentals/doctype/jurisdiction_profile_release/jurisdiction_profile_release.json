@@ -14,6 +14,7 @@
   "party_kind",
   "column_break_jjgl",
   "jurisdiction_compliance_template",
+  "has_business_name",
   "country",
   "template_content_hash",
   "column_break_ipyx",
@@ -208,7 +209,7 @@
    "options": "Identifier Fact"
   },
   {
-   "depends_on": "eval:doc.party_kind ==\"Organization\"",
+   "depends_on": "eval: doc.party_kind == \"Organization\" || doc.has_business_name == \"Yes\"",
    "fieldname": "statutory_registration_facts",
    "fieldtype": "Table",
    "label": "Statutory Registration Facts",
@@ -366,13 +367,20 @@
    "label": "Jurisdiction Compliance Template",
    "options": "Jurisdiction Compliance Template",
    "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.party_kind ==\"Individual\"",
+   "fetch_from": "jurisdiction_compliance_template.has_business_name",
+   "fieldname": "has_business_name",
+   "fieldtype": "Read Only",
+   "label": "Has Business Name"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-15 23:24:50.600449",
+ "modified": "2026-09-21 13:16:17.599329",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Jurisdiction Profile Release",
