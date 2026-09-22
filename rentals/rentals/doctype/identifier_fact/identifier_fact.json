@@ -12,11 +12,6 @@
   "identity_record",
   "column_break_ozxo",
   "issuing_jurisdiction",
-  "issuer",
-  "column_break_zhwx",
-  "uniqueness_scope",
-  "issue_date",
-  "expiry_date",
   "provenance_authority_and_effective_dating_tab",
   "fact_key",
   "valid_from",
@@ -38,30 +33,10 @@
  ],
  "fields": [
   {
-   "fieldname": "issuer",
-   "fieldtype": "Data",
-   "label": "Issuer"
-  },
-  {
    "fieldname": "issuing_jurisdiction",
    "fieldtype": "Link",
    "label": "Issuing Jurisdiction",
    "options": "Country"
-  },
-  {
-   "fieldname": "uniqueness_scope",
-   "fieldtype": "Select",
-   "label": "Uniqueness Scope"
-  },
-  {
-   "fieldname": "issue_date",
-   "fieldtype": "Date",
-   "label": "Issue Date"
-  },
-  {
-   "fieldname": "expiry_date",
-   "fieldtype": "Date",
-   "label": "Expiry Date"
   },
   {
    "fieldname": "provenance_authority_and_effective_dating_tab",
@@ -153,10 +128,6 @@
    "label": "Content Hash"
   },
   {
-   "fieldname": "column_break_zhwx",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "requirement_type",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -186,7 +157,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-16 12:47:44.284495",
+ "modified": "2026-09-22 11:21:00.105891",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Identifier Fact",
