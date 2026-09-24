@@ -1,14 +1,14 @@
 :root {
-	--gold-50: #fff8e1;
-	--gold-100: #ffecb3;
-	--gold-200: #ffe082;
-	--gold-300: #ffd54f;
-	--gold-400: #ffca28;
-	--gold-500: #ffb300;
-	--gold-600: #ffa000;
-	--gold-700: #ff8f00;
-	--gold-800: #f57c00;
-	--gold-900: #e65100;
+	--gold-50: #f7f3e8;
+	--gold-100: #ede5cc;
+	--gold-200: #ddd0a8;
+	--gold-300: #c8b477;
+	--gold-400: #b39a52;
+	--gold-500: #9c843f;
+	--gold-600: #806b32;
+	--gold-700: #665526;
+	--gold-800: #55461f;
+	--gold-900: #4a3e1d;
 }
 .filter-icon.active,
 :root,
@@ -94,11 +94,12 @@
 	--btn-primary: var(--gold-900);
 	--btn-default-bg: var(--gold-100);
 	--btn-default-hover-bg: var(--gold-300);
-	--border-primary: var(--gold-900);
+	--border-primary: var(--gold-800);
 	--sidebar-select-color: var(--gold-100);
 	--scrollbar-thumb-color: var(--gold-400);
 	--scrollbar-track-color: var(--gold-200);
-	--shadow-inset:inset 0px -1px 0px var(--gold-300);
+	--shadow-inset:
+		inset 0px -1px 0px var(--gold-300);
 	--border-color: var(--gold-200);
 	--dark-border-color: var(--gold-300);
 	--table-border-color: var(--gold-200);
@@ -106,19 +107,28 @@
 	--yellow-highlight-color: var(--gold-50);
 	--btn-group-border-color: var(--gold-300);
 	--placeholder-color: var(--gold-50);
-	--highlight-shadow:1px 1px 10px var(--gold-50),0px 0px 4px var(--gold-600);
+	--highlight-shadow:
+		1px 1px 10px var(--gold-50),
+		0px 0px 4px var(--gold-500);
 	--code-block-bg: var(--gold-900);
-	--code-block-text: var(--gold-400);
-	--primary-color: var(--gold-900);
+	--code-block-text: var(--gold-300);
+	--primary-color: var(--gold-800);
 	--btn-height: 28px;
 	--input-height: 28px;
 	--input-disabled-bg: var(--gold-200);
 	--checkbox-right-margin: var(--margin-xs);
 	--checkbox-size: 16px;
-	--checkbox-color: var(--gold-400);
-	--checkbox-focus-shadow:0 0 0 2px var(--gold-300);
-	--checkbox-gradient:linear-gradient(180deg,var(--primary) -124.51%,var(--primary) 100%);
-	--checkbox-disabled-gradient:linear-gradient(
+	--checkbox-color: var(--gold-500);
+	--checkbox-focus-shadow:
+		0 0 0 2px var(--gold-300);
+	--checkbox-gradient:
+		linear-gradient(
+			180deg,
+			var(--primary) -124.51%,
+			var(--primary) 100%
+		);
+	--checkbox-disabled-gradient:
+		linear-gradient(
 			180deg,
 			var(--disabled-control-bg) -124.51%,
 			var(--disabled-control-bg) 100%
@@ -203,5 +213,5 @@ input[type="checkbox"]:checked {
 }
 
 .form-control:focus {
-	box-shadow: 0 0 0 2px var(--gold-800);
+	box-shadow: 0 0 0 2px var(--gold-700);
 }
