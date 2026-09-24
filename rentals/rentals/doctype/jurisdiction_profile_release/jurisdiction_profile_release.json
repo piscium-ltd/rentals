@@ -16,12 +16,10 @@
   "jurisdiction_compliance_template",
   "has_business_name",
   "country",
-  "template_content_hash",
   "column_break_ipyx",
   "release_number",
   "jurisdiction_slot_key",
   "jurisdiction_scope",
-  "relationship_basis",
   "legal_identity_and_capacity_for_this_period_section",
   "legal_name",
   "trading_name",
@@ -116,16 +114,6 @@
    "fieldname": "jurisdiction_scope",
    "fieldtype": "Data",
    "label": "Jurisdiction Scope"
-  },
-  {
-   "fieldname": "relationship_basis",
-   "fieldtype": "Select",
-   "label": "Relationship Basis"
-  },
-  {
-   "fieldname": "template_content_hash",
-   "fieldtype": "Data",
-   "label": "Template Content Hash"
   },
   {
    "fieldname": "legal_identity_and_capacity_for_this_period_section",
@@ -380,7 +368,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-21 13:16:17.599329",
+ "modified": "2026-09-24 14:19:12.152807",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Jurisdiction Profile Release",

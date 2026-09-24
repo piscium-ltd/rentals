@@ -1,10 +1,12 @@
 // Copyright (c) 2026, Piscium Solutions LTD and contributors
+
 // For license information, please see license.txt
 
 const NAME_FIELDS = [
 	"first_name_as_document",
 	"middle_names_as_document",
 	"surname_as_document",
+	"organisation_name_as_document",
 ];
 
 const IDENTITY_RECORD_CONTEXT_KEY =
@@ -12,6 +14,7 @@ const IDENTITY_RECORD_CONTEXT_KEY =
 
 const IDENTITY_RECORD_CREATED_KEY =
 	"jurisdiction_profile_release_identity_record_created";
+
 
 const DATE_RULES = {
 	issue_date: {
@@ -80,6 +83,7 @@ const DATE_RULES = {
 	},
 };
 
+
 frappe.ui.form.on("Identity Record", {
 	setup(frm) {
 		configure_location_queries(frm);
@@ -94,99 +98,6 @@ frappe.ui.form.on("Identity Record", {
 			"new:",
 			frm.is_new()
 		);
-
-		/*
-		 * Capture route_options immediately.
-		 *
-		 * Frappe can consume route_options while creating
-		 * the new document. We keep a copy on the form so
-		 * the context is still available during rendering.
-		 */
-		if (
-			frm.is_new() &&
-			frappe.route_options
-		) {
-			frm.__jpr_route_options = {
-				...frappe.route_options,
-			};
-
-			console.log(
-				"[IR] Captured route options:",
-				frm.__jpr_route_options
-			);
-		}
-	},
-
-	onload_post_render(frm) {
-		console.log(
-			"[IR] onload_post_render:",
-			frm.doc.name,
-			"new:",
-			frm.is_new()
-		);
-
-		if (
-			frm.is_new() &&
-			!frm.__jpr_identity_context_restored
-		) {
-			const restored =
-				restore_identity_record_context(
-					frm
-				);
-
-			/*
-			 * Only mark the context as restored when
-			 * an actual Release context or route options
-			 * were found and applied.
-			 */
-			if (restored) {
-				frm.__jpr_identity_context_restored =
-					true;
-
-				console.log(
-					"[IR] Context restoration completed."
-				);
-			} else {
-				console.log(
-					"[IR] Context not available yet."
-				);
-
-				/*
-				 * One retry gives Frappe time to finish
-				 * consuming route options / initializing
-				 * the new document.
-				 */
-				setTimeout(() => {
-			
-					if (
-						frm.is_new() &&
-						!frm.__jpr_identity_context_restored
-					) {
-						const restored =
-							restore_identity_record_context(frm);
-
-						if (!restored) {
-							setTimeout(() => {
-								if (
-									frm.is_new() &&
-									!frm.__jpr_identity_context_restored
-								) {
-									const retry_result =
-										restore_identity_record_context(frm);
-
-									if (retry_result) {
-										frm.__jpr_identity_context_restored =
-											true;
-									}
-								}
-							}, 300);
-						} else {
-							frm.__jpr_identity_context_restored = true;
-						}
-					}
-				}, 300);
-			}
-		}
 	},
 
 	refresh(frm) {
@@ -256,59 +167,100 @@ frappe.ui.form.on("Identity Record", {
 		);
 	},
 
+	organisation_name_as_document(frm) {
+		format_name_field(
+			frm,
+			"organisation_name_as_document"
+		);
+	},
+
 	has_expiry(frm) {
 		handle_has_expiry(frm);
 	},
 
 	issue_date(frm) {
-		validate_date(frm, "issue_date");
+		validate_date(
+			frm,
+			"issue_date"
+		);
 	},
 
 	date_of_issue(frm) {
-		validate_date(frm, "date_of_issue");
+		validate_date(
+			frm,
+			"date_of_issue"
+		);
+
 		update_document_status(frm);
 	},
 
 	date_of_birth(frm) {
-		validate_date(frm, "date_of_birth");
+		validate_date(
+			frm,
+			"date_of_birth"
+		);
 	},
 
 	issued_on(frm) {
-		validate_date(frm, "issued_on");
+		validate_date(
+			frm,
+			"issued_on"
+		);
 	},
 
 	execution_date(frm) {
-		validate_date(frm, "execution_date");
+		validate_date(
+			frm,
+			"execution_date"
+		);
 	},
 
 	certificate_date(frm) {
-		validate_date(frm, "certificate_date");
+		validate_date(
+			frm,
+			"certificate_date"
+		);
 	},
 
 	effective_from(frm) {
-		validate_date(frm, "effective_from");
+		validate_date(
+			frm,
+			"effective_from"
+		);
 	},
 
 	expiry_date(frm) {
-		validate_date(frm, "expiry_date");
+		validate_date(
+			frm,
+			"expiry_date"
+		);
 	},
 
 	date_of_expiry(frm) {
-		validate_date(frm, "date_of_expiry");
+		validate_date(
+			frm,
+			"date_of_expiry"
+		);
+
 		update_document_status(frm);
 	},
 
 	effective_to(frm) {
-		validate_date(frm, "effective_to");
+		validate_date(
+			frm,
+			"effective_to"
+		);
 	},
 
 	before_save(frm) {
-		NAME_FIELDS.forEach((fieldname) => {
-			frm.doc[fieldname] =
-				to_title_case(
-					frm.doc[fieldname]
-				);
-		});
+		NAME_FIELDS.forEach(
+			(fieldname) => {
+				frm.doc[fieldname] =
+					to_title_case(
+						frm.doc[fieldname]
+					);
+			}
+		);
 
 		set_full_name(frm);
 		update_document_status(frm);
@@ -319,376 +271,113 @@ frappe.ui.form.on("Identity Record", {
 	},
 });
 
+
 /*
  * ============================================================
- * RELEASE -> IDENTITY RECORD
+ * RETURN TO JURISDICTION PROFILE RELEASE
  * ============================================================
  */
 
-function restore_identity_record_context(frm) {
-	console.log(
-		"[IR] ===== RESTORE IDENTITY RECORD CONTEXT ====="
-	);
-
-	/*
-	 * First try the sessionStorage context.
-	 */
-	let context =
-		get_identity_record_context();
-
-	/*
-	 * If sessionStorage is not available yet, use the
-	 * route options captured during onload.
-	 */
-	const route_options =
-		frm.__jpr_route_options;
-
-	if (!context && route_options) {
-		console.log(
-			"[IR] No sessionStorage context. Using captured route options."
-		);
-
-		context = {
-			profile:
-				route_options.profile || "",
-
-			party_kind:
-				route_options.party_kind || "",
-
-			country:
-				route_options.country || "",
-
-			evidence_type:
-				route_options.evidence_type || "",
-
-			source_class:
-				route_options.source_class ||
-				"Certified Copy",
-
-			document_type:
-				route_options.document_type || "",
-
-			doc_type:
-				route_options.doc_type || "",
-
-			tax_details:
-				route_options.tax_details || "",
-
-			issuing_jurisdiction:
-				route_options.issuing_jurisdiction ||
-				"",
-
-			fact_key:
-				route_options.fact_key || "",
-
-			valid_from:
-				route_options.valid_from || "",
-
-			valid_to:
-				route_options.valid_to || "",
-
-			authoritative_source:
-				route_options.authoritative_source ||
-				"",
-
-			source_reference:
-				route_options.source_reference ||
-				"",
-
-			authority_level:
-				route_options.authority_level || "",
-
-			verification_method:
-				route_options.verification_method ||
-				"",
-
-			verification_outcome:
-				route_options.verification_outcome ||
-				"",
-
-			verified_on:
-				route_options.verified_on || "",
-
-			verified_by:
-				route_options.verified_by || "",
-
-			fresh_until:
-				route_options.fresh_until || "",
-
-			qualification:
-				route_options.qualification || "",
-
-			lifecycle_state:
-				route_options.lifecycle_state || "",
-
-			content_hash:
-				route_options.content_hash || "",
-		};
-	}
-
-	if (!context) {
-		console.log(
-			"[IR] No Release context found."
-		);
-
-		return false;
-	}
-
-	/*
-	 * Only populate a newly created Identity Record.
-	 */
-	if (!frm.is_new()) {
-		console.log(
-			"[IR] Existing Identity Record. Context will not be restored."
-		);
-
-		return false;
-	}
-
-	console.log(
-		"[IR] Context being applied:",
-		context
-	);
-
-	/*
-	 * ----------------------------------------------------------
-	 * Parent Release values
-	 * ----------------------------------------------------------
-	 */
-
-	set_if_field_exists(
-		frm,
-		"profile",
-		context.profile
-	);
-
-	set_if_field_exists(
-		frm,
-		"party_kind",
-		context.party_kind
-	);
-
-	set_if_field_exists(
-		frm,
-		"country",
-		context.country
-	);
-
-	/*
-	 * ----------------------------------------------------------
-	 * Evidence information
-	 * ----------------------------------------------------------
-	 */
-
-	set_if_field_exists(
-		frm,
-		"evidence_type",
-		context.evidence_type
-	);
-
-	set_if_field_exists(
-		frm,
-		"source_class",
-		context.source_class ||
-			"Certified Copy"
-	);
-
-	/*
-	 * ----------------------------------------------------------
-	 * Requirement type
-	 *
-	 * Identifier Fact:
-	 * requirement_type -> document_type
-	 *
-	 * Statutory Registration Fact:
-	 * requirement_type -> doc_type
-	 *
-	 * Tax Obligation Fact:
-	 * requirement_type -> tax_details
-	 * ----------------------------------------------------------
-	 */
-
-	if (
-		context.requirement_type &&
-		context.requirement_field
-	) {
-		set_if_field_exists(
-			frm,
-			context.requirement_field,
-			context.requirement_type
-		);
-	}
-
-	/*
-	 * When restoring from route_options, requirement
-	 * fields are already mapped directly.
-	 */
-	if (context.document_type) {
-		set_if_field_exists(
-			frm,
-			"document_type",
-			context.document_type
-		);
-	}
-
-	if (context.doc_type) {
-		set_if_field_exists(
-			frm,
-			"doc_type",
-			context.doc_type
-		);
-	}
-
-	if (context.tax_details) {
-		set_if_field_exists(
-			frm,
-			"tax_details",
-			context.tax_details
-		);
-	}
-
-	/*
-	 * ----------------------------------------------------------
-	 * Fields already known from the selected Fact.
-	 * ----------------------------------------------------------
-	 */
-
-	const known_fields = [
-		"issuing_jurisdiction",
-		"fact_key",
-		"valid_from",
-		"valid_to",
-		"source_class",
-		"authoritative_source",
-		"source_reference",
-		"authority_level",
-		"verification_method",
-		"verification_outcome",
-		"verified_on",
-		"verified_by",
-		"fresh_until",
-		"qualification",
-		"lifecycle_state",
-		"content_hash",
-	];
-
-	known_fields.forEach(
-		(fieldname) => {
-			set_if_field_exists(
-				frm,
-				fieldname,
-				context[fieldname]
-			);
-		}
-	);
-
-	/*
-	 * ----------------------------------------------------------
-	 * Refresh populated fields.
-	 * ----------------------------------------------------------
-	 */
-
-	refresh_existing_fields(frm);
-
-	configure_location_queries(frm);
-	setup_date_restrictions(frm);
-	update_location_field_states(frm);
-	handle_has_expiry(frm);
-	update_document_status(frm);
-	set_full_name(frm);
-
-	console.log(
-		"[IR] Restored Identity Record values:",
-		{
-			profile:
-				frm.doc.profile,
-
-			party_kind:
-				frm.doc.party_kind,
-
-			country:
-				frm.doc.country,
-
-			evidence_type:
-				frm.doc.evidence_type,
-
-			document_type:
-				frm.doc.document_type,
-
-			doc_type:
-				frm.doc.doc_type,
-
-			tax_details:
-				frm.doc.tax_details,
-
-			issuing_jurisdiction:
-				frm.doc.issuing_jurisdiction,
-
-			fact_key:
-				frm.doc.fact_key,
-
-			source_class:
-				frm.doc.source_class,
-
-			authoritative_source:
-				frm.doc.authoritative_source,
-
-			source_reference:
-				frm.doc.source_reference,
-
-			authority_level:
-				frm.doc.authority_level,
-
-			verification_method:
-				frm.doc.verification_method,
-
-			verification_outcome:
-				frm.doc.verification_outcome,
-
-			verified_on:
-				frm.doc.verified_on,
-
-			verified_by:
-				frm.doc.verified_by,
-
-			fresh_until:
-				frm.doc.fresh_until,
-
-			qualification:
-				frm.doc.qualification,
-
-			lifecycle_state:
-				frm.doc.lifecycle_state,
-
-			content_hash:
-				frm.doc.content_hash,
-		}
-	);
-
-	return true;
-}
-
 function return_identity_record_to_release(frm) {
+	console.log(
+		"[IR] ===== RETURN TO JURISDICTION PROFILE RELEASE ====="
+	);
+
 	const context =
 		get_identity_record_context();
 
 	if (!context) {
+		console.log(
+			"[IR] No Release context found after save."
+		);
+
 		return;
 	}
 
+	/*
+	 * The document must now have its actual saved name.
+	 */
+	if (
+		!frm.doc.name ||
+		frm.is_new()
+	) {
+		console.error(
+			"[IR] Identity Record has not received its saved name."
+		);
+
+		return;
+	}
+
+	/*
+	 * Store the EXACT saved Identity Record name.
+	 *
+	 * Example:
+	 * ER-26-09-0038
+	 */
 	sessionStorage.setItem(
 		IDENTITY_RECORD_CREATED_KEY,
 		frm.doc.name
 	);
 
-	if (context.release_name) {
-		frappe.set_route(
-			"Form",
-			"Jurisdiction Profile Release",
-			context.release_name
+	const stored_identity_record =
+		sessionStorage.getItem(
+			IDENTITY_RECORD_CREATED_KEY
 		);
+
+	console.log(
+		"[IR] Identity Record saved:",
+		frm.doc.name
+	);
+
+	console.log(
+		"[IR] Identity Record stored for JPR:",
+		stored_identity_record
+	);
+
+	/*
+	 * Make absolutely sure the saved name was stored
+	 * before returning to the Release.
+	 */
+	if (
+		stored_identity_record !==
+		frm.doc.name
+	) {
+		console.error(
+			"[IR] Failed to store Identity Record name."
+		);
+
+		return;
 	}
+
+	/*
+	 * Return to the exact unsaved Jurisdiction Profile Release.
+	 */
+	if (!context.release_name) {
+		console.error(
+			"[IR] No release_name found in stored context."
+		);
+
+		return;
+	}
+
+	console.log(
+		"[IR] Returning to Release:",
+		context.release_name
+	);
+
+	frappe.set_route(
+		"Form",
+		"Jurisdiction Profile Release",
+		context.release_name
+	);
 }
+
+
+/*
+ * ============================================================
+ * CONTEXT
+ * ============================================================
+ */
 
 function get_identity_record_context() {
 	const raw_context =
@@ -701,7 +390,9 @@ function get_identity_record_context() {
 	}
 
 	try {
-		return JSON.parse(raw_context);
+		return JSON.parse(
+			raw_context
+		);
 	} catch (error) {
 		console.error(
 			"[IR] Unable to read Identity Record context:",
@@ -712,9 +403,14 @@ function get_identity_record_context() {
 			IDENTITY_RECORD_CONTEXT_KEY
 		);
 
+		sessionStorage.removeItem(
+			IDENTITY_RECORD_CREATED_KEY
+		);
+
 		return null;
 	}
 }
+
 
 /*
  * ============================================================
@@ -751,6 +447,7 @@ function set_if_field_exists(
 	);
 }
 
+
 function refresh_existing_fields(frm) {
 	const fields_to_refresh = [
 		"profile",
@@ -758,49 +455,11 @@ function refresh_existing_fields(frm) {
 		"country",
 		"evidence_type",
 		"source_class",
-
 		"document_type",
 		"doc_type",
 		"tax_details",
-
-		"issuing_jurisdiction",
-		"fact_key",
-		"valid_from",
-		"valid_to",
-		"authoritative_source",
-		"source_reference",
-		"authority_level",
-		"verification_method",
-		"verification_outcome",
-		"verified_on",
-		"verified_by",
-		"fresh_until",
-		"qualification",
-		"lifecycle_state",
-		"content_hash",
-
 		"document_number",
 		"issuing_country",
-
-		"first_name_as_document",
-		"middle_names_as_document",
-		"surname_as_document",
-		"other_name_as_document",
-
-		"date_of_birth",
-		"gender_as_document",
-		"nationality_as_document",
-		"country_of_birth",
-
-		"date_of_issue",
-		"has_expiry",
-		"date_of_expiry",
-
-		"county",
-		"constituency",
-		"ward",
-		"location",
-		"sub_location",
 	];
 
 	fields_to_refresh.forEach(
@@ -815,6 +474,7 @@ function refresh_existing_fields(frm) {
 		}
 	);
 }
+
 
 /*
  * ============================================================
@@ -864,6 +524,7 @@ function configure_location_queries(frm) {
 	);
 }
 
+
 function clear_fields(
 	frm,
 	fields
@@ -882,6 +543,7 @@ function clear_fields(
 		}
 	);
 }
+
 
 function update_location_field_states(
 	frm
@@ -911,6 +573,7 @@ function update_location_field_states(
 	);
 }
 
+
 /*
  * ============================================================
  * NAME FORMATTING
@@ -933,6 +596,7 @@ function to_title_case(value) {
 				letter.toUpperCase()
 		);
 }
+
 
 function format_name_field(
 	frm,
@@ -958,6 +622,7 @@ function format_name_field(
 	}
 }
 
+
 function set_full_name(frm) {
 	if (
 		!frm.fields_dict
@@ -967,10 +632,11 @@ function set_full_name(frm) {
 	}
 
 	const names = NAME_FIELDS
-		.map((fieldname) =>
-			to_title_case(
-				frm.doc[fieldname]
-			)
+		.map(
+			(fieldname) =>
+				to_title_case(
+					frm.doc[fieldname]
+				)
 		)
 		.filter(Boolean);
 
@@ -979,6 +645,7 @@ function set_full_name(frm) {
 		names.join(" ")
 	);
 }
+
 
 /*
  * ============================================================
@@ -1026,6 +693,7 @@ function setup_date_restrictions(frm) {
 		}
 	);
 }
+
 
 function validate_date(
 	frm,
@@ -1078,6 +746,7 @@ function validate_date(
 		fieldname
 	);
 }
+
 
 function validate_date_relationship(
 	frm,
@@ -1160,6 +829,7 @@ function validate_date_relationship(
 	}
 }
 
+
 function clear_invalid_date(
 	frm,
 	fieldname,
@@ -1176,6 +846,7 @@ function clear_invalid_date(
 		indicator: "red",
 	});
 }
+
 
 /*
  * ============================================================
@@ -1216,11 +887,6 @@ function handle_has_expiry(frm) {
 	}
 }
 
-/*
- * ============================================================
- * DOCUMENT STATUS
- * ============================================================
- */
 
 function update_document_status(frm) {
 	if (

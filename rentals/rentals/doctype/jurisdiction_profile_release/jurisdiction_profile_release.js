@@ -1,617 +1,346 @@
 // Copyright (c) 2026, Piscium Solutions LTD and contributors
 // For license information, please see license.txt
 
+
 const IDENTITY_RECORD_CONTEXT_KEY =
 	"jurisdiction_profile_release_identity_record_context";
 
 const IDENTITY_RECORD_CREATED_KEY =
 	"jurisdiction_profile_release_identity_record_created";
 
+const IDENTITY_RECORD_LINK_FIELD =
+	"identity_record";
 
-frappe.ui.form.on("Jurisdiction Profile Release", {
-	onload(frm) {
-		console.log(
-			"[JPR] onload:",
-			frm.doc.name,
-			"new:",
-			frm.is_new()
-		);
+const IDENTITY_RECORD_DOCTYPE =
+	"Identity Record";
 
-		restore_release_after_identity_record(frm);
-	},
+const JURISDICTION_PROFILE_RELEASE_DOCTYPE =
+	"Jurisdiction Profile Release";
 
-	setup(frm) {
-		console.log("[JPR] setup");
 
-		frm.set_query(
-			"identity_record",
-			"identifier_facts",
-			function () {
-				return {
-					filters: {
-						evidence_type: "Identifier Facts",
-					},
-				};
-			}
-		);
+// -----------------------------------------------------------------------------
+// FORM EVENTS
+// -----------------------------------------------------------------------------
 
-		frm.set_query(
-			"identity_record",
-			"statutory_registration_facts",
-			function () {
-				return {
-					filters: {
-						evidence_type: "Statutory Registration Facts",
-					},
-				};
-			}
-		);
-
-		frm.set_query(
-			"identity_record",
-			"tax_obligation_facts",
-			function () {
-				return {
-					filters: {
-						evidence_type: "Tax Details",
-					},
-				};
-			}
-		);
-
-		frm.set_query(
-			"jurisdiction_compliance_template",
-			function () {
-				if (!frm.doc.profile) {
-					return {};
-				}
-
-				return {
-					filters: {
-						country: frm.doc.country,
-						party_kind: frm.doc.party_kind,
-					},
-				};
-			}
-		);
-	},
-
-	profile(frm) {
-		console.log("[JPR] profile changed:", frm.doc.profile);
-
-		/*
-		 * While we're rehydrating an unsaved Release from a stored
-		 * Identity Record context, the stored child tables are the
-		 * source of truth. Running the normal reset cascade here
-		 * would clear/reload the template asynchronously and wipe
-		 * out the child rows we're about to restore (including the
-		 * identity_record link that triggered this whole flow).
-		 */
-		if (frm.__restoring_identity_record_context) {
-			return;
-		}
-
-		frm.set_value("jurisdiction_compliance_template", "");
-
-		clear_release_fact_tables(frm);
-	},
-
-	jurisdiction_compliance_template(frm) {
-		console.log(
-			"[JPR] template changed:",
-			frm.doc.jurisdiction_compliance_template
-		);
-
-		if (frm.__restoring_identity_record_context) {
-			return;
-		}
-
-		if (!frm.doc.jurisdiction_compliance_template) {
-			clear_release_fact_tables(frm);
-			return;
-		}
-
-		frappe.call({
-			method: "frappe.client.get",
-			args: {
-				doctype: "Jurisdiction Compliance Template",
-				name: frm.doc.jurisdiction_compliance_template,
-			},
-			callback(r) {
-				if (!r.message) {
-					console.warn(
-						"[JPR] No template response."
-					);
-					return;
-				}
-
-				const template = r.message;
-
-				console.log(
-					"[JPR] template response:",
-					template
-				);
-
-				clear_release_fact_tables(frm);
-
-				/*
-				 * IDENTIFIER FACTS
-				 */
-				(template.identifier_record || []).forEach(
-					(requirement) => {
-						const row = frm.add_child(
-							"identifier_facts"
-						);
-
-						row.requirement_type =
-							requirement.requirement_type;
-
-						row.is_mandatory =
-							requirement.is_mandatory;
-
-						copy_if_present(
-							requirement,
-							row,
-							"issuing_jurisdiction"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"fact_key"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"valid_from"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"valid_to"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"source_class"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"authoritative_source"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"source_reference"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"authority_level"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"verification_method"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"verification_outcome"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"verified_on"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"verified_by"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"fresh_until"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"qualification"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"lifecycle_state"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"content_hash"
-						);
-					}
-				);
-
-				console.log(
-					"[JPR] identifier facts after template load:",
-					frm.doc.identifier_facts
-				);
-
-				/*
-				 * STATUTORY REGISTRATION FACTS
-				 */
-				(
-					template.statutory_registration_requirement ||
-					[]
-				).forEach((requirement) => {
-					const row = frm.add_child(
-						"statutory_registration_facts"
-					);
-
-					row.requirement_type =
-						requirement.requirement_type;
-
-					row.is_mandatory =
-						requirement.is_mandatory;
-
-					copy_if_present(
-						requirement,
-						row,
-						"issuing_jurisdiction"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"fact_key"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"valid_from"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"valid_to"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"source_class"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"authoritative_source"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"source_reference"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"authority_level"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"verification_method"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"verification_outcome"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"verified_on"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"verified_by"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"fresh_until"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"qualification"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"lifecycle_state"
-					);
-
-					copy_if_present(
-						requirement,
-						row,
-						"content_hash"
-					);
-				});
-
-				console.log(
-					"[JPR] statutory facts after template load:",
-					frm.doc.statutory_registration_facts
-				);
-
-				/*
-				 * TAX OBLIGATION FACTS
-				 */
-				(template.tax_details || []).forEach(
-					(requirement) => {
-						const row = frm.add_child(
-							"tax_obligation_facts"
-						);
-
-						row.requirement_type =
-							requirement.requirement_type;
-
-						row.is_mandatory =
-							requirement.is_mandatory;
-
-						copy_if_present(
-							requirement,
-							row,
-							"issuing_jurisdiction"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"fact_key"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"valid_from"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"valid_to"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"source_class"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"authoritative_source"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"source_reference"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"authority_level"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"verification_method"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"verification_outcome"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"verified_on"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"verified_by"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"fresh_until"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"qualification"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"lifecycle_state"
-						);
-
-						copy_if_present(
-							requirement,
-							row,
-							"content_hash"
-						);
-					}
-				);
-
-				console.log(
-					"[JPR] tax facts after template load:",
-					frm.doc.tax_obligation_facts
-				);
-
-				/*
-				 * IMPORTANT:
-				 * The standard Frappe Link field action
-				 * "Create a new Identity Record" is hooked
-				 * here after the grid rows exist.
-				 */
-				setup_identity_record_create_handlers(frm);
-
-				frm.refresh_field("identifier_facts");
-				frm.refresh_field(
-					"statutory_registration_facts"
-				);
-				frm.refresh_field(
-					"tax_obligation_facts"
-				);
-
-				/*
-				 * Refresh again after the grid has rendered,
-				 * because Frappe can recreate grid controls.
-				 */
-				setTimeout(() => {
-					setup_identity_record_create_handlers(frm);
-				}, 100);
-			},
-		});
-	},
-
-	refresh(frm) {
-		setup_identity_record_create_handlers(frm);
-	},
-});
-
-
-/*
- * ============================================================
- * STANDARD LINK FIELD "CREATE A NEW" HANDLER
- * ============================================================
- */
-
-function setup_identity_record_create_handlers(frm) {
-	const tables = [
-		{
-			fieldname: "identifier_facts",
-			evidence_type: "Identifier Facts",
-			requirement_field: "document_type",
-		},
-		{
-			fieldname: "statutory_registration_facts",
-			evidence_type: "Statutory Registration Facts",
-			requirement_field: "doc_type",
-		},
-		{
-			fieldname: "tax_obligation_facts",
-			evidence_type: "Tax Details",
-			requirement_field: "tax_details",
-		},
-	];
-
-	tables.forEach((config) => {
-		const table = frm.fields_dict[config.fieldname];
-
-		if (!table || !table.grid) {
-			return;
-		}
-
-		table.grid.grid_rows.forEach((grid_row) => {
-			const field =
-				grid_row.on_grid_fields_dict.identity_record;
-
-			if (!field) {
-				return;
-			}
-
-			if (field.__jpr_new_doc_hooked) {
-				return;
-			}
-
-			field.__jpr_new_doc_hooked = true;
-
+frappe.ui.form.on(
+	"Jurisdiction Profile Release",
+	{
+		onload(frm) {
 			console.log(
-				"[JPR] Hooking identity_record.new_doc:",
-				config.fieldname,
-				grid_row.doc.name
+				"[JPR] onload:",
+				frm.doc.name,
+				"new:",
+				frm.is_new() ? 1 : 0
 			);
 
-			field.new_doc = function () {
+			restore_release_after_identity_record(frm);
+		},
+
+		setup(frm) {
+			console.log(
+				"[JPR] setup"
+			);
+
+			setup_identity_record_create_handler();
+
+			configure_identity_record_queries(
+				frm
+			);
+
+			configure_template_query(
+				frm
+			);
+		},
+
+		profile(frm) {
+			if (
+				frm.__restoring_identity_record_context
+			) {
 				console.log(
-					"[JPR] ===== CREATE IDENTITY RECORD CLICKED ====="
+					"[JPR] profile changed: ignored during restore"
 				);
 
+				return;
+			}
+
+			console.log(
+				"[JPR] profile changed:",
+				frm.doc.profile
+			);
+
+			clear_release_fact_tables(
+				frm
+			);
+		},
+
+		jurisdiction_compliance_template(frm) {
+			if (
+				frm.__restoring_identity_record_context
+			) {
 				console.log(
-					"[JPR] Table:",
-					config.fieldname
+					"[JPR] template changed: ignored during restore"
 				);
 
-				console.log(
-					"[JPR] Child row:",
-					grid_row.doc
+				return;
+			}
+
+			console.log(
+				"[JPR] template changed:",
+				frm.doc.jurisdiction_compliance_template
+			);
+
+			if (
+				!frm.doc
+					.jurisdiction_compliance_template
+			) {
+				clear_release_fact_tables(
+					frm
 				);
 
-				open_identity_record_from_release(
-					frm,
-					grid_row.doc,
-					config.evidence_type,
-					config.requirement_field,
-					config.fieldname
+				return;
+			}
+
+			load_template_requirements(
+				frm
+			);
+		},
+
+		refresh(frm) {
+			console.log(
+				"[JPR] refresh:",
+				frm.doc.name,
+				"new:",
+				frm.is_new() ? 1 : 0
+			);
+
+			setup_identity_record_create_handler();
+
+			configure_identity_record_queries(
+				frm
+			);
+
+			configure_template_query(
+				frm
+			);
+
+			/*
+			 * Frappe can reuse the existing unsaved
+			 * Release form when returning from
+			 * Identity Record.
+			 *
+			 * Therefore restoration is attempted
+			 * from refresh as well as onload.
+			 */
+			restore_release_after_identity_record(
+				frm
+			);
+		},
+	}
+);
+
+
+// -----------------------------------------------------------------------------
+// IDENTITY RECORD CREATE HANDLER
+// -----------------------------------------------------------------------------
+//
+// Frappe v16's ControlLink uses:
+//
+//     action: this.new_doc
+//
+// for the "Create a new ..." option.
+//
+// We intercept ControlLink.new_doc() before Frappe creates its normal blank
+// document.
+//
+// The interception only applies to:
+//
+//     Jurisdiction Profile Release
+//         -> identity_record
+//         -> Identity Record
+//
+// All other Link fields continue using normal Frappe behaviour.
+// -----------------------------------------------------------------------------
+
+function setup_identity_record_create_handler() {
+	if (
+		frappe.ui.form.ControlLink.prototype
+			.__jpr_identity_record_new_doc_patched
+	) {
+		return;
+	}
+
+	const original_new_doc =
+		frappe.ui.form.ControlLink.prototype
+			.new_doc;
+
+	frappe.ui.form.ControlLink.prototype.new_doc =
+		function () {
+			const field = this;
+
+			const is_identity_record_link =
+				field &&
+				field.get_options &&
+				field.get_options() ===
+					IDENTITY_RECORD_DOCTYPE &&
+				field.df &&
+				field.df.fieldname ===
+					IDENTITY_RECORD_LINK_FIELD &&
+				field.frm &&
+				field.frm.doctype ===
+					JURISDICTION_PROFILE_RELEASE_DOCTYPE;
+
+			if (
+				!is_identity_record_link
+			) {
+				return original_new_doc.apply(
+					this,
+					arguments
+				);
+			}
+
+			console.log(
+				"[JPR] ===== CREATE IDENTITY RECORD INTERCEPTED ====="
+			);
+
+			const frm =
+				field.frm;
+
+			const row =
+				field.doc;
+
+			if (!row) {
+				console.error(
+					"[JPR] Could not determine child row for identity_record."
 				);
 
-				// IMPORTANT:
-				// Do NOT call the original field.new_doc().
-				// Frappe's default action would open a blank
-				// Identity Record before our custom values
-				// are applied.
-			};
-		});
-	});
+				return original_new_doc.apply(
+					this,
+					arguments
+				);
+			}
+
+			const child_table_fieldname =
+				row.parentfield;
+
+			if (
+				!child_table_fieldname
+			) {
+				console.error(
+					"[JPR] Child row has no parentfield.",
+					row
+				);
+
+				return original_new_doc.apply(
+					this,
+					arguments
+				);
+			}
+
+			const evidence_type =
+				get_identity_record_evidence_type(
+					child_table_fieldname
+				);
+
+			const requirement_field =
+				get_identity_record_requirement_field(
+					child_table_fieldname
+				);
+
+			console.log(
+				"[JPR] Table:",
+				child_table_fieldname
+			);
+
+			console.log(
+				"[JPR] Child row:",
+				row
+			);
+
+			console.log(
+				"[JPR] Evidence type:",
+				evidence_type
+			);
+
+			open_identity_record_from_release(
+				frm,
+				row,
+				evidence_type,
+				requirement_field,
+				child_table_fieldname
+			);
+
+			/*
+			 * Do NOT call original_new_doc().
+			 *
+			 * Calling it would create Frappe's normal
+			 * blank Identity Record.
+			 */
+			return false;
+		};
+
+	frappe.ui.form.ControlLink.prototype
+		.__jpr_identity_record_new_doc_patched =
+		true;
+
+	console.log(
+		"[JPR] ControlLink.new_doc() patched for Identity Record."
+	);
 }
 
-/*
- * ============================================================
- * OPEN IDENTITY RECORD FROM UNSAVED RELEASE
- * ============================================================
- */
+
+// -----------------------------------------------------------------------------
+// DETERMINE EVIDENCE TYPE
+// -----------------------------------------------------------------------------
+
+function get_identity_record_evidence_type(
+	child_table_fieldname
+) {
+	switch (
+		child_table_fieldname
+	) {
+		case "identifier_facts":
+			return "Identifier Facts";
+
+		case "statutory_registration_facts":
+			return "Statutory Registration Facts";
+
+		case "tax_obligation_facts":
+			return "Tax Details";
+
+		default:
+			return "";
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+// DETERMINE REQUIREMENT FIELD
+// -----------------------------------------------------------------------------
+
+function get_identity_record_requirement_field(
+	child_table_fieldname
+) {
+	switch (
+		child_table_fieldname
+	) {
+		case "identifier_facts":
+			return "document_type";
+
+		case "statutory_registration_facts":
+			return "doc_type";
+
+		case "tax_obligation_facts":
+			return "tax_details";
+
+		default:
+			return "";
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+// OPEN PREFILLED IDENTITY RECORD
+// -----------------------------------------------------------------------------
 
 function open_identity_record_from_release(
 	frm,
@@ -639,14 +368,14 @@ function open_identity_record_from_release(
 		evidence_type
 	);
 
-	/*
-	 * ----------------------------------------------------------
-	 * Build complete context.
-	 * ----------------------------------------------------------
-	 */
+
+	// -------------------------------------------------------------------------
+	// STORE EVERYTHING REQUIRED TO RESTORE THE UNSAVED RELEASE
+	// -------------------------------------------------------------------------
 
 	const context = {
-		release_name: frm.doc.name,
+		release_name:
+			frm.doc.name,
 
 		child_table_fieldname:
 			child_table_fieldname,
@@ -660,9 +389,11 @@ function open_identity_record_from_release(
 		child_row_idx:
 			row.idx,
 
-		evidence_type,
+		evidence_type:
+			evidence_type,
 
-		requirement_field,
+		requirement_field:
+			requirement_field,
 
 		requirement_type:
 			row.requirement_type || "",
@@ -684,221 +415,185 @@ function open_identity_record_from_release(
 		is_mandatory:
 			row.is_mandatory || "",
 
-		issuing_jurisdiction:
-			row.issuing_jurisdiction || "",
-
-		fact_key:
-			row.fact_key || "",
-
-		valid_from:
-			row.valid_from || "",
-
-		valid_to:
-			row.valid_to || "",
-
-		source_class:
-			row.source_class || "",
-
-		authoritative_source:
-			row.authoritative_source || "",
-
-		source_reference:
-			row.source_reference || "",
-
-		authority_level:
-			row.authority_level || "",
-
-		verification_method:
-			row.verification_method || "",
-
-		verification_outcome:
-			row.verification_outcome || "",
-
-		verified_on:
-			row.verified_on || "",
-
-		verified_by:
-			row.verified_by || "",
-
-		fresh_until:
-			row.fresh_until || "",
-
-		qualification:
-			row.qualification || "",
-
-		lifecycle_state:
-			row.lifecycle_state || "",
-
-		content_hash:
-			row.content_hash || "",
-
 		identifier_facts:
 			frm.doc.identifier_facts || [],
 
 		statutory_registration_facts:
 			frm.doc
-				.statutory_registration_facts || [],
+				.statutory_registration_facts ||
+			[],
 
 		tax_obligation_facts:
 			frm.doc.tax_obligation_facts || [],
 
 		compliance_entitlement_facts:
 			frm.doc
-				.compliance_entitlement_facts || [],
+				.compliance_entitlement_facts ||
+			[],
 	};
 
 	console.log(
-		"[JPR] Identity Record context:",
+		"[JPR] Release restoration context:",
 		context
 	);
 
-	/*
-	 * ----------------------------------------------------------
-	 * Store context BEFORE opening the new document.
-	 *
-	 * This remains the source of truth for returning to the
-	 * unsaved Release.
-	 * ----------------------------------------------------------
-	 */
 
 	sessionStorage.setItem(
 		IDENTITY_RECORD_CONTEXT_KEY,
 		JSON.stringify(context)
 	);
 
-	console.log(
-		"[JPR] Context stored in sessionStorage:",
-		sessionStorage.getItem(
-			IDENTITY_RECORD_CONTEXT_KEY
-		)
-	);
 
 	/*
-	 * ----------------------------------------------------------
-	 * Build values for the new Identity Record.
-	 *
-	 * These are passed directly to frappe.new_doc().
-	 * ----------------------------------------------------------
+	 * Always remove an old created-record marker
+	 * before starting a new Identity Record flow.
 	 */
+	sessionStorage.removeItem(
+		IDENTITY_RECORD_CREATED_KEY
+	);
 
-	const new_identity_record_values = {
+	console.log(
+		"[JPR] Context stored:",
+		JSON.stringify(context)
+	);
+
+
+	// -------------------------------------------------------------------------
+	// ONLY THESE VALUES ARE COPIED TO IDENTITY RECORD
+	// -------------------------------------------------------------------------
+
+	const values = {
 		profile:
-			context.profile,
+			frm.doc.profile || "",
 
 		party_kind:
-			context.party_kind,
+			frm.doc.party_kind || "",
 
 		country:
-			context.country,
+			frm.doc.country || "",
 
 		evidence_type:
-			context.evidence_type,
+			evidence_type || "",
 
 		source_class:
-			context.source_class ||
+			row.source_class ||
 			"Certified Copy",
+
+		document_type:
+			"",
+
+		doc_type:
+			"",
+
+		tax_details:
+			"",
 	};
 
-	/*
-	 * Requirement type mapping:
-	 *
-	 * Identifier Fact:
-	 * requirement_type -> document_type
-	 *
-	 * Statutory Registration Fact:
-	 * requirement_type -> doc_type
-	 *
-	 * Tax Obligation Fact:
-	 * requirement_type -> tax_details
-	 */
+
+	// -------------------------------------------------------------------------
+	// COPY REQUIREMENT TYPE INTO CORRECT IDENTITY RECORD FIELD
+	// -------------------------------------------------------------------------
 
 	if (
-		context.requirement_type &&
-		context.requirement_field
+		row.requirement_type &&
+		requirement_field
 	) {
-		new_identity_record_values[
-			context.requirement_field
+		values[
+			requirement_field
 		] =
-			context.requirement_type;
+			row.requirement_type;
 	}
 
-	/*
-	 * ----------------------------------------------------------
-	 * Carry every already-known field into the new document.
-	 * ----------------------------------------------------------
-	 */
-
-	const known_identity_fields = [
-		"issuing_jurisdiction",
-		"fact_key",
-		"valid_from",
-		"valid_to",
-		"source_class",
-		"authoritative_source",
-		"source_reference",
-		"authority_level",
-		"verification_method",
-		"verification_outcome",
-		"verified_on",
-		"verified_by",
-		"fresh_until",
-		"qualification",
-		"lifecycle_state",
-		"content_hash",
-	];
-
-	known_identity_fields.forEach(
-		(fieldname) => {
-			if (
-				context[fieldname] !==
-					undefined &&
-				context[fieldname] !== null &&
-				context[fieldname] !== ""
-			) {
-				new_identity_record_values[
-					fieldname
-				] =
-					context[fieldname];
-			}
-		}
-	);
 
 	console.log(
-		"[JPR] New Identity Record values:",
-		new_identity_record_values
+		"[JPR] Identity Record values before creation:",
+		values
 	);
 
-	/*
-	 * ----------------------------------------------------------
-	 * IMPORTANT:
-	 *
-	 * Use frappe.new_doc() instead of manually assigning
-	 * frappe.route_options and calling frappe.set_route().
-	 *
-	 * This allows Frappe's new-document lifecycle to receive
-	 * the values directly when creating the document.
-	 * ----------------------------------------------------------
-	 */
 
-	frappe.new_doc(
-		"Identity Record",
-		new_identity_record_values
+	// -------------------------------------------------------------------------
+	// CREATE LOCAL IDENTITY RECORD FIRST
+	// -------------------------------------------------------------------------
+
+	frappe.model.with_doctype(
+		IDENTITY_RECORD_DOCTYPE,
+		() => {
+			console.log(
+				"[JPR] Identity Record DocType loaded."
+			);
+
+			const identity_record =
+				frappe.model.get_new_doc(
+					IDENTITY_RECORD_DOCTYPE
+				);
+
+
+			Object.keys(
+				values
+			).forEach(
+				(fieldname) => {
+					if (
+						Object.prototype.hasOwnProperty.call(
+							values,
+							fieldname
+						)
+					) {
+						identity_record[
+							fieldname
+						] =
+							values[
+								fieldname
+							];
+					}
+				}
+			);
+
+
+			console.log(
+				"[JPR] New Identity Record created in memory:",
+				identity_record
+			);
+
+			console.log(
+				"[JPR] Routing to prefilled Identity Record:",
+				identity_record.name
+			);
+
+
+			frappe.set_route(
+				"Form",
+				IDENTITY_RECORD_DOCTYPE,
+				identity_record.name
+			);
+		}
 	);
 }
 
 
-/*
- * ============================================================
- * RESTORE RELEASE AFTER IDENTITY RECORD CREATION
- * ============================================================
- */
+// -----------------------------------------------------------------------------
+// RESTORE RELEASE AFTER IDENTITY RECORD SAVE
+// -----------------------------------------------------------------------------
 
-function restore_release_after_identity_record(frm) {
+function restore_release_after_identity_record(
+	frm
+) {
 	console.log(
-		"[JPR] ===== RESTORE RELEASE ====="
+		"[JPR] ===== CHECK IDENTITY RECORD RESTORE ====="
 	);
 
-	const raw_context =
+
+	if (
+		frm.__identity_record_restore_running
+	) {
+		console.log(
+			"[JPR] Restore already running. Skipping."
+		);
+
+		return;
+	}
+
+
+	const stored_context =
 		sessionStorage.getItem(
 			IDENTITY_RECORD_CONTEXT_KEY
 		);
@@ -908,9 +603,10 @@ function restore_release_after_identity_record(frm) {
 			IDENTITY_RECORD_CREATED_KEY
 		);
 
+
 	console.log(
-		"[JPR] Stored Release context:",
-		raw_context
+		"[JPR] Stored context exists:",
+		!!stored_context
 	);
 
 	console.log(
@@ -918,200 +614,607 @@ function restore_release_after_identity_record(frm) {
 		created_identity_record
 	);
 
-	if (!raw_context) {
+
+	if (
+		!stored_context ||
+		!created_identity_record
+	) {
 		console.log(
-			"[JPR] No stored context. Nothing to restore."
+			"[JPR] Nothing to restore."
 		);
 
 		return;
 	}
+
 
 	/*
-	 * This restore only ever applies to a freshly opened, unsaved
-	 * Release form (the one recreated after routing back from the
-	 * Identity Record detour). A saved/existing Release should
-	 * never be silently overwritten with stored context.
-	 *
-	 * Note: we deliberately do NOT compare frm.doc.name against
-	 * context.release_name here. Frappe regenerates a new
-	 * "new-jurisdiction-profile-release-*" name every time a
-	 * fresh form is opened, so that name is never stable across
-	 * the route-away/route-back detour and is not a reliable
-	 * match key.
+	 * Only restore the unsaved Release.
 	 */
-	if (!frm.is_new()) {
+	if (
+		!frm.is_new()
+	) {
 		console.log(
-			"[JPR] Current form is not new. Discarding stored context."
-		);
-
-		sessionStorage.removeItem(
-			IDENTITY_RECORD_CONTEXT_KEY
-		);
-
-		sessionStorage.removeItem(
-			IDENTITY_RECORD_CREATED_KEY
+			"[JPR] JPR is not new. Skipping restore:",
+			frm.doc.name
 		);
 
 		return;
 	}
+
 
 	let context;
 
+
 	try {
-		context = JSON.parse(raw_context);
+		context =
+			JSON.parse(
+				stored_context
+			);
 	} catch (error) {
 		console.error(
-			"[JPR] Could not parse stored context:",
+			"[JPR] Failed to parse restore context:",
 			error
 		);
 
-		sessionStorage.removeItem(
-			IDENTITY_RECORD_CONTEXT_KEY
-		);
+		clear_identity_record_restore_storage();
 
 		return;
 	}
 
+
 	console.log(
-		"[JPR] Restoring Release context:",
-		context
+		"[JPR] ===== RESTORING RELEASE ====="
 	);
 
+	console.log(
+		"[JPR] Release:",
+		context.release_name
+	);
+
+	console.log(
+		"[JPR] Child table:",
+		context.child_table_fieldname
+	);
+
+	console.log(
+		"[JPR] Original child row:",
+		context.child_row_name
+	);
+
+	console.log(
+		"[JPR] Original child row idx:",
+		context.child_row_idx
+	);
+
+	console.log(
+		"[JPR] Identity Record to link:",
+		created_identity_record
+	);
+
+
 	/*
-	 * Suppress the profile/template change cascade for the
-	 * duration of the restore. Without this, frm.set_value(
-	 * "profile", ...) below triggers the normal profile(frm)
-	 * handler, which clears the fact tables and (via the
-	 * jurisdiction_compliance_template default/fetch) kicks off
-	 * an async template reload. That reload finishes AFTER the
-	 * child tables below have already been restored, and clears
-	 * + rebuilds them from the template again — silently
-	 * discarding the restored rows and the identity_record link
-	 * we are about to set.
+	 * Prevent duplicate restore calls from
+	 * onload + refresh.
 	 */
-	frm.__restoring_identity_record_context = true;
+	frm.__identity_record_restore_running =
+		true;
 
-	try {
-		/*
-		 * Restore the parent fields.
-		 */
-		if (context.profile) {
-			frm.set_value(
-				"profile",
-				context.profile
-			);
-		}
 
-		if (context.party_kind) {
-			frm.set_value(
-				"party_kind",
-				context.party_kind
-			);
-		}
+	/*
+	 * Prevent profile/template handlers from
+	 * clearing restored child tables.
+	 */
+	frm.__restoring_identity_record_context =
+		true;
 
-		if (context.country) {
-			frm.set_value(
-				"country",
-				context.country
-			);
-		}
 
-		if (context.jurisdiction_compliance_template) {
-			frm.set_value(
-				"jurisdiction_compliance_template",
-				context.jurisdiction_compliance_template
-			);
-		}
+	// -------------------------------------------------------------------------
+	// RESTORE PARENT FIELDS
+	// -------------------------------------------------------------------------
 
-		/*
-		 * Restore all child tables.
-		 */
-		restore_child_table(
-			frm,
-			"identifier_facts",
-			context.identifier_facts
-		);
-
-		restore_child_table(
-			frm,
-			"statutory_registration_facts",
-			context.statutory_registration_facts
-		);
-
-		restore_child_table(
-			frm,
-			"tax_obligation_facts",
-			context.tax_obligation_facts
-		);
-
-		restore_child_table(
-			frm,
-			"compliance_entitlement_facts",
-			context.compliance_entitlement_facts
-		);
-
-		/*
-		 * Restore the Identity Record link only after the
-		 * child rows have been recreated.
-		 *
-		 * We use idx instead of child_row_name because
-		 * Frappe generates a new local name when frm.add_child()
-		 * recreates an unsaved row.
-		 */
-		if (created_identity_record) {
-			let target_row = null;
-
-			const rows =
-				frm.doc[context.child_table_fieldname] || [];
-
-			if (context.child_row_idx !== undefined) {
-				target_row = rows.find(
-					(row) => row.idx === context.child_row_idx
-				);
-			}
-
-			if (!target_row && context.requirement_type) {
-				target_row = rows.find(
-					(row) =>
-						row.requirement_type ===
-						context.requirement_type
-				);
-			}
-
-			if (!target_row) {
-				console.warn(
-					"[JPR] Could not find target child row:",
-					context
-				);
-			} else {
-				target_row.identity_record =
-					created_identity_record;
-
-				frm.refresh_field(
-					context.child_table_fieldname
-				);
-			}
-		}
-	} finally {
-		/*
-		 * Always re-enable the normal cascade, even if something
-		 * above throws, so the form isn't left in a state where
-		 * legitimate future profile/template changes are ignored.
-		 */
-		frm.__restoring_identity_record_context = false;
+	if (
+		context.profile
+	) {
+		frm.doc.profile =
+			context.profile;
 	}
 
-	/*
-	 * Reinstall the standard Link-field Create handler
-	 * after rebuilding the grids.
-	 */
-	setTimeout(() => {
-		setup_identity_record_create_handlers(frm);
-	}, 100);
+	if (
+		context.party_kind
+	) {
+		frm.doc.party_kind =
+			context.party_kind;
+	}
+
+	if (
+		context.country
+	) {
+		frm.doc.country =
+			context.country;
+	}
+
+	if (
+		context.jurisdiction_compliance_template
+	) {
+		frm.doc
+			.jurisdiction_compliance_template =
+			context
+				.jurisdiction_compliance_template;
+	}
+
+
+	// -------------------------------------------------------------------------
+	// RESTORE CHILD TABLES
+	// -------------------------------------------------------------------------
+
+	restore_child_table(
+		frm,
+		"identifier_facts",
+		context.identifier_facts
+	);
+
+	restore_child_table(
+		frm,
+		"statutory_registration_facts",
+		context.statutory_registration_facts
+	);
+
+	restore_child_table(
+		frm,
+		"tax_obligation_facts",
+		context.tax_obligation_facts
+	);
+
+	restore_child_table(
+		frm,
+		"compliance_entitlement_facts",
+		context.compliance_entitlement_facts
+	);
+
+
+	// -------------------------------------------------------------------------
+	// FIND THE NEW RESTORED CHILD ROW
+	// -------------------------------------------------------------------------
+
+	const rows =
+		frm.doc[
+			context.child_table_fieldname
+		] || [];
+
+
+	console.log(
+		"[JPR] Restored rows:",
+		rows
+	);
+
+
+	let target_row =
+		null;
+
 
 	/*
-	 * Context has now been consumed.
+	 * First try the original idx.
 	 */
+	if (
+		context.child_row_idx
+	) {
+		target_row =
+			rows.find(
+				(row) =>
+					Number(
+						row.idx
+					) ===
+					Number(
+						context.child_row_idx
+					)
+			);
+	}
+
+
+	/*
+	 * Fallback to requirement_type.
+	 */
+	if (
+		!target_row &&
+		context.requirement_type
+	) {
+		target_row =
+			rows.find(
+				(row) =>
+					row.requirement_type ===
+					context.requirement_type
+			);
+	}
+
+
+	if (
+		!target_row
+	) {
+		console.error(
+			"[JPR] FAILED: Could not find restored child row."
+		);
+
+		console.error(
+			"[JPR] Table:",
+			context.child_table_fieldname
+		);
+
+		console.error(
+			"[JPR] Stored idx:",
+			context.child_row_idx
+		);
+
+		console.error(
+			"[JPR] Requirement type:",
+			context.requirement_type
+		);
+
+		console.error(
+			"[JPR] Rows:",
+			rows
+		);
+
+
+		frm.__restoring_identity_record_context =
+			false;
+
+		frm.__identity_record_restore_running =
+			false;
+
+		return;
+	}
+
+
+	console.log(
+		"[JPR] Restored target row:",
+		target_row
+	);
+
+
+	// -------------------------------------------------------------------------
+	// WRITE IDENTITY RECORD TO RESTORED ROW
+	// -------------------------------------------------------------------------
+
+	console.log(
+		"[JPR] Writing Identity Record:",
+		created_identity_record
+	);
+
+	console.log(
+		"[JPR] Into child row:",
+		target_row.name
+	);
+
+
+	/*
+	 * Directly write the actual saved Identity Record
+	 * into the NEW restored child-row object.
+	 */
+	target_row.identity_record =
+		created_identity_record;
+
+	target_row.__unsaved =
+		1;
+
+
+	/*
+	 * Also use Frappe's model setter.
+	 *
+	 * The direct assignment above is intentional:
+	 * the restored row is a newly-created local
+	 * child row and its name is different from
+	 * the original row.
+	 */
+	if (
+		frappe.model &&
+		frappe.model.set_value
+	) {
+		frappe.model.set_value(
+			target_row.doctype,
+			target_row.name,
+			IDENTITY_RECORD_LINK_FIELD,
+			created_identity_record
+		);
+	}
+
+
+	// -------------------------------------------------------------------------
+	// MARK RELEASE DIRTY
+	// -------------------------------------------------------------------------
+
+	frm.dirty();
+
+
+	// -------------------------------------------------------------------------
+	// REFRESH CHILD TABLE
+	// -------------------------------------------------------------------------
+
+	frm.refresh_field(
+		context.child_table_fieldname
+	);
+
+
+	// -------------------------------------------------------------------------
+	// FIRST VERIFICATION
+	// -------------------------------------------------------------------------
+
+	let current_rows =
+		frm.doc[
+			context.child_table_fieldname
+		] || [];
+
+
+	let current_target =
+		current_rows.find(
+			(row) =>
+				row.name ===
+				target_row.name
+		);
+
+
+	console.log(
+		"[JPR] ===== FIRST LINK VERIFICATION ====="
+	);
+
+	console.log(
+		"[JPR] Expected:",
+		created_identity_record
+	);
+
+	console.log(
+		"[JPR] Actual:",
+		current_target
+			? current_target.identity_record
+			: null
+	);
+
+
+	// -------------------------------------------------------------------------
+	// FINAL VERIFICATION AFTER GRID REFRESH
+	// -----------------------------------------------------------------------------
+	//
+	// Frappe can rebuild the grid during refresh.
+	// Therefore perform one final lookup and write.
+	//
+
+	setTimeout(
+		() => {
+			console.log(
+				"[JPR] ===== FINAL IDENTITY RECORD LINK ====="
+			);
+
+
+			const latest_rows =
+				frm.doc[
+					context.child_table_fieldname
+				] || [];
+
+
+			let latest_target =
+				latest_rows.find(
+					(row) =>
+						row.name ===
+						target_row.name
+				);
+
+
+			/*
+			 * If the row received a different local name,
+			 * locate it again by idx.
+			 */
+			if (
+				!latest_target &&
+				context.child_row_idx
+			) {
+				latest_target =
+					latest_rows.find(
+						(row) =>
+							Number(
+								row.idx
+							) ===
+							Number(
+								context.child_row_idx
+							)
+					);
+			}
+
+
+			/*
+			 * Final fallback by requirement_type.
+			 */
+			if (
+				!latest_target &&
+				context.requirement_type
+			) {
+				latest_target =
+					latest_rows.find(
+						(row) =>
+							row.requirement_type ===
+							context.requirement_type
+					);
+			}
+
+
+			if (
+				!latest_target
+			) {
+				console.error(
+					"[JPR] FINAL FAILURE: Target row disappeared."
+				);
+
+				console.error(
+					"[JPR] Latest rows:",
+					latest_rows
+				);
+
+
+				frm.__restoring_identity_record_context =
+					false;
+
+				frm.__identity_record_restore_running =
+					false;
+
+				return;
+			}
+
+
+			console.log(
+				"[JPR] Final target row:",
+				latest_target
+			);
+
+
+			// -----------------------------------------------------------------
+			// FORCE FINAL IDENTITY RECORD VALUE
+			// -----------------------------------------------------------------
+
+			latest_target.identity_record =
+				created_identity_record;
+
+			latest_target.__unsaved =
+				1;
+
+
+			// -----------------------------------------------------------------
+			// MARK RELEASE DIRTY
+			// -----------------------------------------------------------------
+
+			frm.dirty();
+
+
+			// -----------------------------------------------------------------
+			// REFRESH THE GRID
+			// -----------------------------------------------------------------
+
+			frm.refresh_field(
+				context.child_table_fieldname
+			);
+
+
+			// -----------------------------------------------------------------
+			// FINAL MODEL VERIFICATION
+			// -----------------------------------------------------------------
+
+			const verified_rows =
+				frm.doc[
+					context.child_table_fieldname
+				] || [];
+
+
+			let verified_target =
+				verified_rows.find(
+					(row) =>
+						Number(
+							row.idx
+						) ===
+						Number(
+							context.child_row_idx
+						)
+				);
+
+
+			/*
+			 * Fallback by requirement_type.
+			 */
+			if (
+				!verified_target &&
+				context.requirement_type
+			) {
+				verified_target =
+					verified_rows.find(
+						(row) =>
+							row.requirement_type ===
+							context.requirement_type
+					);
+			}
+
+
+			console.log(
+				"[JPR] ===== FINAL VERIFICATION RESULT ====="
+			);
+
+			console.log(
+				"[JPR] Expected Identity Record:",
+				created_identity_record
+			);
+
+			console.log(
+				"[JPR] Final child row:",
+				verified_target
+			);
+
+			console.log(
+				"[JPR] Actual Identity Record:",
+				verified_target
+					? verified_target.identity_record
+					: null
+			);
+
+
+			// -----------------------------------------------------------------
+			// SUCCESS
+			// -----------------------------------------------------------------
+
+			if (
+				verified_target &&
+				verified_target.identity_record ===
+					created_identity_record
+			) {
+				console.log(
+					"[JPR] SUCCESS: Identity Record linked:",
+					created_identity_record
+				);
+
+
+				/*
+				 * Only clear sessionStorage after
+				 * the value has actually been verified.
+				 */
+				clear_identity_record_restore_storage();
+			} else {
+				console.error(
+					"[JPR] FAILED: Identity Record is still not linked."
+				);
+
+				console.error(
+					"[JPR] Final rows:",
+					verified_rows
+				);
+
+				/*
+				 * Do NOT clear sessionStorage.
+				 *
+				 * This preserves the context so the
+				 * problem can be diagnosed/retried.
+				 */
+			}
+
+
+			frm.__restoring_identity_record_context =
+				false;
+
+			frm.__identity_record_restore_running =
+				false;
+
+
+			console.log(
+				"[JPR] Release restoration finished."
+			);
+		},
+		500
+	);
+}
+
+
+// -----------------------------------------------------------------------------
+// CLEAR IDENTITY RECORD RESTORE STORAGE
+// -----------------------------------------------------------------------------
+
+function clear_identity_record_restore_storage() {
+	console.log(
+		"[JPR] Clearing Identity Record restore storage."
+	);
+
 	sessionStorage.removeItem(
 		IDENTITY_RECORD_CONTEXT_KEY
 	);
@@ -1122,101 +1225,450 @@ function restore_release_after_identity_record(frm) {
 }
 
 
-/*
- * ============================================================
- * RESTORE CHILD TABLE
- * ============================================================
- */
+// -----------------------------------------------------------------------------
+// RESTORE CHILD TABLE
+// -----------------------------------------------------------------------------
 
 function restore_child_table(
 	frm,
 	fieldname,
 	rows
 ) {
-	if (!frm.fields_dict[fieldname]) {
-		return;
-	}
-
-	if (!Array.isArray(rows)) {
-		return;
-	}
-
-	frm.clear_table(fieldname);
-
-	rows.forEach((stored_row) => {
-		const row = frm.add_child(
+	if (
+		!Array.isArray(rows)
+	) {
+		console.log(
+			"[JPR] No rows to restore for:",
 			fieldname
 		);
 
-		Object.keys(stored_row).forEach(
-			(key) => {
-				if (
-					key === "name" ||
-					key === "doctype" ||
-					key === "parent" ||
-					key === "parentfield" ||
-					key === "parenttype" ||
-					key === "owner" ||
-					key === "creation" ||
-					key === "modified" ||
-					key === "modified_by"
-				) {
-					return;
-				}
+		return;
+	}
 
-				if (
-					stored_row[key] !==
-						undefined &&
-					stored_row[key] !== null
-				) {
-					row[key] =
-						stored_row[key];
-				}
-			}
-		);
-	});
 
-	frm.refresh_field(fieldname);
+	/*
+	 * Remove the current generated rows.
+	 */
+	frm.doc[fieldname] =
+		[];
+
+
+	rows.forEach(
+		(row) => {
+			const restored_row =
+				frappe.model.add_child(
+					frm.doc,
+					row.doctype,
+					fieldname
+				);
+
+
+			Object.keys(
+				row
+			).forEach(
+				(row_fieldname) => {
+					if (
+						[
+							"name",
+							"parent",
+							"parentfield",
+							"parenttype",
+							"idx",
+							"__islocal",
+							"__unsaved",
+						].includes(
+							row_fieldname
+						)
+					) {
+						return;
+					}
+
+
+					restored_row[
+						row_fieldname
+					] =
+						row[
+							row_fieldname
+						];
+				}
+			);
+		}
+	);
 }
 
 
-/*
- * ============================================================
- * HELPERS
- * ============================================================
- */
+// -----------------------------------------------------------------------------
+// CLEAR RELEASE FACT TABLES
+// -----------------------------------------------------------------------------
 
-function copy_if_present(
-	source,
-	target,
-	fieldname
+function clear_release_fact_tables(
+	frm
 ) {
 	if (
-		source[fieldname] !==
-			undefined &&
-		source[fieldname] !== null &&
-		source[fieldname] !== ""
+		frm.__restoring_identity_record_context
 	) {
-		target[fieldname] =
-			source[fieldname];
+		console.log(
+			"[JPR] Clearing fact tables skipped during restore."
+		);
+
+		return;
 	}
-}
 
 
-function clear_release_fact_tables(frm) {
 	console.log(
 		"[JPR] Clearing release fact tables."
 	);
 
+
+	frm.clear_table(
+		"identifier_facts"
+	);
+
+	frm.clear_table(
+		"statutory_registration_facts"
+	);
+
+	frm.clear_table(
+		"tax_obligation_facts"
+	);
+
+	frm.clear_table(
+		"compliance_entitlement_facts"
+	);
+
+
+	frm.refresh_field(
+		"identifier_facts"
+	);
+
+	frm.refresh_field(
+		"statutory_registration_facts"
+	);
+
+	frm.refresh_field(
+		"tax_obligation_facts"
+	);
+
+	frm.refresh_field(
+		"compliance_entitlement_facts"
+	);
+}
+
+
+// -----------------------------------------------------------------------------
+// LOAD TEMPLATE REQUIREMENTS
+// -----------------------------------------------------------------------------
+
+function load_template_requirements(
+	frm
+) {
+	if (
+		frm.__restoring_identity_record_context
+	) {
+		console.log(
+			"[JPR] Template load skipped during restore."
+		);
+
+		return;
+	}
+
+
+	frappe.call({
+		method:
+			"frappe.client.get",
+
+		args: {
+			doctype:
+				"Jurisdiction Compliance Template",
+
+			name:
+				frm.doc
+					.jurisdiction_compliance_template,
+		},
+
+		callback(r) {
+			/*
+			 * The user may have returned from Identity
+			 * Record while this asynchronous request
+			 * was still running.
+			 *
+			 * Never let that response destroy the
+			 * restored Release.
+			 */
+			if (
+				frm.__restoring_identity_record_context
+			) {
+				console.log(
+					"[JPR] Template response ignored during restore."
+				);
+
+				return;
+			}
+
+
+			console.log(
+				"[JPR] template response:",
+				r.message
+			);
+
+
+			if (
+				!r.message
+			) {
+				return;
+			}
+
+
+			const template =
+				r.message;
+
+
+			// -----------------------------------------------------------------
+			// CLEAR EXISTING GENERATED ROWS
+			// -----------------------------------------------------------------
+
+			clear_release_fact_tables(
+				frm
+			);
+
+
+			// -----------------------------------------------------------------
+			// IDENTIFIER FACTS
+			// -----------------------------------------------------------------
+
+			if (
+				Array.isArray(
+					template.identifier_record
+				)
+			) {
+				template
+					.identifier_record
+					.forEach(
+						(requirement) => {
+							const row =
+								frm.add_child(
+									"identifier_facts"
+								);
+
+
+							row.requirement_type =
+								requirement
+									.requirement_type ||
+								"";
+
+
+							row.is_mandatory =
+								requirement
+									.is_mandatory ||
+								"No";
+						}
+					);
+			}
+
+
+			// -----------------------------------------------------------------
+			// STATUTORY REGISTRATION FACTS
+			// -----------------------------------------------------------------
+
+			if (
+				Array.isArray(
+					template
+						.statutory_registration_requirement
+				)
+			) {
+				template
+					.statutory_registration_requirement
+					.forEach(
+						(requirement) => {
+							const row =
+								frm.add_child(
+									"statutory_registration_facts"
+								);
+
+
+							row.requirement_type =
+								requirement
+									.requirement_type ||
+								"";
+
+
+							row.is_mandatory =
+								requirement
+									.is_mandatory ||
+								"No";
+						}
+					);
+			}
+
+
+			// -----------------------------------------------------------------
+			// TAX OBLIGATION FACTS
+			// -----------------------------------------------------------------
+
+			if (
+				Array.isArray(
+					template.tax_details
+				)
+			) {
+				template
+					.tax_details
+					.forEach(
+						(requirement) => {
+							const row =
+								frm.add_child(
+									"tax_obligation_facts"
+								);
+
+
+							row.requirement_type =
+								requirement
+									.requirement_type ||
+								"";
+
+
+							row.is_mandatory =
+								requirement
+									.is_mandatory ||
+								"No";
+						}
+					);
+			}
+
+
+			// -----------------------------------------------------------------
+			// REFRESH TABLES
+			// -----------------------------------------------------------------
+
+			frm.refresh_field(
+				"identifier_facts"
+			);
+
+			frm.refresh_field(
+				"statutory_registration_facts"
+			);
+
+			frm.refresh_field(
+				"tax_obligation_facts"
+			);
+
+
+			console.log(
+				"[JPR] identifier facts after template load:",
+				frm.doc.identifier_facts
+			);
+
+			console.log(
+				"[JPR] statutory facts after template load:",
+				frm.doc.statutory_registration_facts
+			);
+
+			console.log(
+				"[JPR] tax facts after template load:",
+				frm.doc.tax_obligation_facts
+			);
+		},
+	});
+}
+
+
+// -----------------------------------------------------------------------------
+// IDENTITY RECORD LINK QUERIES
+// -----------------------------------------------------------------------------
+
+function configure_identity_record_queries(
+	frm
+) {
 	[
 		"identifier_facts",
 		"statutory_registration_facts",
 		"tax_obligation_facts",
-		"compliance_entitlement_facts",
-	].forEach((fieldname) => {
-		if (frm.fields_dict[fieldname]) {
-			frm.clear_table(fieldname);
-			frm.refresh_field(fieldname);
+	].forEach(
+		(table_fieldname) => {
+			const grid =
+				frm.fields_dict[
+					table_fieldname
+				]?.grid;
+
+
+			if (
+				!grid
+			) {
+				return;
+			}
+
+
+			const identity_record_field =
+				grid.get_field(
+					IDENTITY_RECORD_LINK_FIELD
+				);
+
+
+			if (
+				!identity_record_field
+			) {
+				return;
+			}
+
+
+			identity_record_field.get_query =
+				function () {
+					return {
+						filters: {
+							profile:
+								frm.doc
+									.profile ||
+								"",
+
+							evidence_type:
+								get_identity_record_evidence_type(
+									table_fieldname
+								),
+						},
+					};
+				};
 		}
-	});
+	);
+}
+
+
+// -----------------------------------------------------------------------------
+// TEMPLATE QUERY
+// -----------------------------------------------------------------------------
+
+function configure_template_query(
+	frm
+) {
+	const field =
+		frm.fields_dict
+			.jurisdiction_compliance_template;
+
+
+	if (
+		!field
+	) {
+		return;
+	}
+
+
+	field.get_query =
+		function () {
+			const filters =
+				{};
+
+
+			if (
+				frm.doc.profile
+			) {
+				filters.country =
+					frm.doc.country;
+
+				filters.party_kind =
+					frm.doc.party_kind;
+			}
+
+
+			return {
+				filters,
+			};
+		};
 }
