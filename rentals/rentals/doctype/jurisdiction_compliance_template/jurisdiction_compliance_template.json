@@ -16,14 +16,15 @@
   "has_business_name",
   "organization_type",
   "column_break_npqq",
-  "version",
   "template_status",
   "legal_and_system_effectivity_section",
   "legal_effective_from",
   "legal_effective_to",
   "column_break_sctg",
-  "system_active_from",
-  "system_active_to",
+  "predecessor",
+  "successor",
+  "column_break_pcqg",
+  "superseded_on",
   "legal__authority_source_basis_section",
   "source_bundle",
   "interpretation_notes",
@@ -49,15 +50,12 @@
    "search_index": 1
   },
   {
-   "fieldname": "version",
-   "fieldtype": "Int",
-   "label": "Version"
-  },
-  {
    "fieldname": "country",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Country",
-   "options": "Country"
+   "options": "Country",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_ydwy",
@@ -67,41 +65,32 @@
    "fieldname": "party_kind",
    "fieldtype": "Select",
    "label": "Party Kind",
-   "options": "\nIndividual\nOrganization"
+   "options": "Individual\nOrganization"
   },
   {
    "fieldname": "template_status",
    "fieldtype": "Select",
-   "label": "Template Status"
+   "label": "Status",
+   "options": "\nActive\nAwaiting\nInactive"
   },
   {
    "fieldname": "legal_and_system_effectivity_section",
    "fieldtype": "Section Break",
-   "label": "Legal and System Effectivity"
+   "label": "Effectivity"
   },
   {
    "fieldname": "legal_effective_from",
    "fieldtype": "Date",
-   "label": "Legal Effective From"
+   "label": "Effective From"
   },
   {
    "fieldname": "legal_effective_to",
    "fieldtype": "Date",
-   "label": "Legal Effective To"
+   "label": "Effective To"
   },
   {
    "fieldname": "column_break_sctg",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "system_active_from",
-   "fieldtype": "Datetime",
-   "label": "System Active From"
-  },
-  {
-   "fieldname": "system_active_to",
-   "fieldtype": "Datetime",
-   "label": "System Active To"
   },
   {
    "fieldname": "legal__authority_source_basis_section",
@@ -134,14 +123,14 @@
    "fieldname": "has_business_name",
    "fieldtype": "Select",
    "label": "Has Business Name?",
-   "options": "\nYes\nNo"
+   "options": "Yes\nNo"
   },
   {
    "depends_on": "eval:doc.party_kind==\"Organization\"",
    "fieldname": "organization_type",
    "fieldtype": "Select",
    "label": "Organization Type",
-   "options": "\nCompany\nForeign Company\nLimited Liability Partnership\nPartnership\nCo-operative Society\nSociety / Association\nTrust / Incorporated Trustees\nPublic Benefit Organisation\nTrade Union / Employers' Organisation\nBuilding Society\nStatutory Body / Corporation\nState Corporation\nGovernment Owned Enterprise\nCounty Government\nUniversity / Chartered Institution\nInternational / Intergovernmental Organisation\nOther Incorporated / Statutory Organisation"
+   "options": "Company\nForeign Company\nLimited Liability Partnership\nPartnership\nCo-operative Society\nSociety / Association\nTrust / Incorporated Trustees\nPublic Benefit Organisation\nTrade Union / Employers' Organisation\nBuilding Society\nStatutory Body / Corporation\nState Corporation\nGovernment Owned Enterprise\nCounty Government\nUniversity / Chartered Institution\nInternational / Intergovernmental Organisation\nOther Incorporated / Statutory Organisation"
   },
   {
    "fieldname": "column_break_npqq",
@@ -166,13 +155,32 @@
    "fieldtype": "Table",
    "label": "Tax Details",
    "options": "Tax Requirement"
+  },
+  {
+   "fieldname": "superseded_on",
+   "fieldtype": "Datetime",
+   "label": "Superseded On?"
+  },
+  {
+   "fieldname": "predecessor",
+   "fieldtype": "Data",
+   "label": "Predecessor"
+  },
+  {
+   "fieldname": "successor",
+   "fieldtype": "Data",
+   "label": "Successor"
+  },
+  {
+   "fieldname": "column_break_pcqg",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-21 13:06:41.547917",
+ "modified": "2026-10-23 17:55:12.924405",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Jurisdiction Compliance Template",

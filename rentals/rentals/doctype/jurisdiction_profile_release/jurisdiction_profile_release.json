@@ -11,6 +11,7 @@
   "amended_from",
   "naming_series",
   "profile",
+  "linked_user",
   "party_kind",
   "column_break_jjgl",
   "jurisdiction_compliance_template",
@@ -362,13 +363,22 @@
    "fieldname": "has_business_name",
    "fieldtype": "Read Only",
    "label": "Has Business Name"
+  },
+  {
+   "fieldname": "linked_user",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Linked User",
+   "no_copy": 1,
+   "options": "User",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-24 14:19:12.152807",
+ "modified": "2026-10-23 18:22:17.470530",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Jurisdiction Profile Release",

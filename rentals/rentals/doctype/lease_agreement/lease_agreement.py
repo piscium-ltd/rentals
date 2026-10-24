@@ -2,7 +2,6 @@
 # For license information, please see license.txt
 
 import frappe
-import random
 
 from frappe.model.document import Document
 from frappe import _
@@ -10,6 +9,8 @@ from frappe.utils import (
     today, getdate, nowdate, get_url, flt
 )
 from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request
+
+from rentals.utils.id_generator import generate_luhn_number
 
 from rentals.billing.periods import get_initial_billing_date, get_initial_charge_amount
 
@@ -422,32 +423,3 @@ class LeaseAgreement(Document):
             alert=True,
             indicator="green"
         )
-
-def generate_luhn_number(num_digits):
-    """
-    Generate a random number string of specified length that passes the Luhn algorithm.
-    The last digit is a check digit.
-    """
-    if num_digits < 2:
-        raise ValueError("Length must be at least 2 to include a check digit.")
-
-    base = [random.randint(0, 9) for _ in range(num_digits - 1)]
-    check_digit = calculate_luhn_check_digit(base)
-    return ''.join(map(str, base + [check_digit]))
-
-def calculate_luhn_check_digit(digits):
-    """
-    Calculate the Luhn check digit for a list of digits.
-    This digit ensures the full number passes the Luhn checksum.
-    """
-    total = 0
-    reverse_digits = digits[::-1]
-
-    for i, digit in enumerate(reverse_digits):
-        if i % 2 == 0:
-            doubled = digit * 2
-            total += doubled if doubled < 10 else sum(map(int, str(doubled)))
-        else:
-            total += digit
-
-    return (10 - (total % 10)) % 10
