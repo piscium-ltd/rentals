@@ -11,7 +11,6 @@
   "party_code",
   "party_kind",
   "has_business_name",
-  "business_name",
   "organization_type",
   "email",
   "column_break_done",
@@ -97,12 +96,6 @@
    "reqd": 1
   },
   {
-   "depends_on": "eval:doc.party_kind==\"Individual\" && doc.has_business_name==\"Yes\"",
-   "fieldname": "business_name",
-   "fieldtype": "Data",
-   "label": "Business Name"
-  },
-  {
    "depends_on": "eval:doc.party_kind==\"Organization\"",
    "fieldname": "organization_type",
    "fieldtype": "Select",
@@ -153,7 +146,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-10-24 10:26:25.734120",
+ "modified": "2026-10-26 20:02:39.774468",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Party Legal and Compliance Identity",

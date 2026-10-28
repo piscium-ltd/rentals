@@ -17,6 +17,7 @@
   "organization_type",
   "column_break_npqq",
   "template_status",
+  "template_type",
   "legal_and_system_effectivity_section",
   "legal_effective_from",
   "legal_effective_to",
@@ -65,13 +66,17 @@
    "fieldname": "party_kind",
    "fieldtype": "Select",
    "label": "Party Kind",
-   "options": "Individual\nOrganization"
+   "options": "Individual\nOrganization",
+   "reqd": 1
   },
   {
    "fieldname": "template_status",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nActive\nAwaiting\nInactive"
+   "options": "Awaiting\nActive\nScheduled\nInactive",
+   "read_only": 1
   },
   {
    "fieldname": "legal_and_system_effectivity_section",
@@ -81,7 +86,8 @@
   {
    "fieldname": "legal_effective_from",
    "fieldtype": "Date",
-   "label": "Effective From"
+   "label": "Effective From",
+   "reqd": 1
   },
   {
    "fieldname": "legal_effective_to",
@@ -123,6 +129,7 @@
    "fieldname": "has_business_name",
    "fieldtype": "Select",
    "label": "Has Business Name?",
+   "mandatory_depends_on": "eval:doc.party_kind==\"Individual\"",
    "options": "Yes\nNo"
   },
   {
@@ -130,6 +137,7 @@
    "fieldname": "organization_type",
    "fieldtype": "Select",
    "label": "Organization Type",
+   "mandatory_depends_on": "eval:doc.party_kind==\"Organization\"",
    "options": "Company\nForeign Company\nLimited Liability Partnership\nPartnership\nCo-operative Society\nSociety / Association\nTrust / Incorporated Trustees\nPublic Benefit Organisation\nTrade Union / Employers' Organisation\nBuilding Society\nStatutory Body / Corporation\nState Corporation\nGovernment Owned Enterprise\nCounty Government\nUniversity / Chartered Institution\nInternational / Intergovernmental Organisation\nOther Incorporated / Statutory Organisation"
   },
   {
@@ -159,28 +167,42 @@
   {
    "fieldname": "superseded_on",
    "fieldtype": "Datetime",
-   "label": "Superseded On?"
+   "label": "Superseded On?",
+   "read_only": 1
   },
   {
    "fieldname": "predecessor",
-   "fieldtype": "Data",
-   "label": "Predecessor"
+   "fieldtype": "Link",
+   "label": "Predecessor",
+   "options": "Jurisdiction Compliance Template",
+   "read_only": 1
   },
   {
    "fieldname": "successor",
-   "fieldtype": "Data",
-   "label": "Successor"
+   "fieldtype": "Link",
+   "label": "Successor",
+   "options": "Jurisdiction Compliance Template",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_pcqg",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "template_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Template Type",
+   "options": "Initial\nRevision",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-23 17:55:12.924405",
+ "modified": "2026-10-28 11:25:53.473249",
  "modified_by": "Administrator",
  "module": "Rentals",
  "name": "Jurisdiction Compliance Template",
