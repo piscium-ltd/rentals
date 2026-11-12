@@ -44,18 +44,22 @@ VERIFY_METHOD = (
     "party_legal_and_compliance_identity.verify_email"
 )
 
+INVALID_VERIFICATION_LINK = (
+    "Invalid or expired verification link."
+)
+
 
 # ---------------------------------------------------------
 # Verification token helpers
 # ---------------------------------------------------------
 
 def generate_verification_token():
-    """Generate a cryptographically secure token."""
+    """Generate a cryptographically secure verification token."""
     return secrets.token_urlsafe(32)
 
 
 def _token_hash(token):
-    """Hash the token before database storage."""
+    """Hash a verification token before database storage."""
     return (
         "sha256:"
         + hashlib.sha256(
@@ -65,7 +69,12 @@ def _token_hash(token):
 
 
 def _prepare_email_verification(doc):
-    """Generate a fresh email verification token."""
+    """
+    Reset verification state and generate a fresh token.
+
+    The plaintext token exists only in memory.
+    Only its SHA-256 digest is stored in the database.
+    """
 
     doc.email_verified = 0
     doc.lifecycle_status = "Pending Verification"
@@ -82,24 +91,19 @@ def _prepare_email_verification(doc):
     raw_token = generate_verification_token()
     now = now_datetime()
 
-    doc.email_verification_token = _token_hash(
-        raw_token
-    )
+    doc.email_verification_token = _token_hash(raw_token)
 
     doc.email_verification_expires_at = (
-        now + timedelta(
-            hours=VERIFICATION_EXPIRY_HOURS
-        )
+        now + timedelta(hours=VERIFICATION_EXPIRY_HOURS)
     )
 
     doc.last_email_verification_sent_at = now
 
-    # Keep plaintext token only in memory.
     doc.flags.plain_email_verification_token = raw_token
 
 
 def _verification_url(doc, raw_token):
-    """Generate a public verification link."""
+    """Generate the public email verification URL."""
 
     query = urlencode({
         "name": doc.name,
@@ -111,16 +115,41 @@ def _verification_url(doc, raw_token):
     )
 
 
-def redirect_verification_success(already_verified=False):
-    """Redirect to the verification success page."""
+def _is_valid_verification_token(stored_token, supplied_token):
+    """
+    Verify a token using constant-time comparison.
 
-    location = "/verify-email-success"
+    Supports hashed tokens and legacy plaintext tokens.
+    """
 
-    if already_verified:
-        location += "?already_verified=1"
+    if not stored_token or not supplied_token:
+        return False
+
+    if not isinstance(supplied_token, str):
+        return False
+
+    stored_token = str(stored_token)
+
+    if stored_token.startswith("sha256:"):
+        expected = _token_hash(supplied_token)
+    else:
+        # Legacy plaintext-token compatibility.
+        expected = supplied_token
+
+    return secrets.compare_digest(
+        stored_token,
+        expected,
+    )
+
+
+def redirect_verification_success():
+    """
+    Redirect only after successful verification
+    and committed User provisioning.
+    """
 
     frappe.local.response["type"] = "redirect"
-    frappe.local.response["location"] = location
+    frappe.local.response["location"] = "/verify-email-success"
     frappe.local.response["http_status_code"] = 302
 
     return None
@@ -131,12 +160,12 @@ def redirect_verification_success(already_verified=False):
 # ---------------------------------------------------------
 
 def send_verification_email(doc):
-    """Send the verification email immediately."""
+    """Send an email containing the verification link."""
 
     raw_token = getattr(
         doc.flags,
         "plain_email_verification_token",
-        None
+        None,
     )
 
     if (
@@ -148,26 +177,26 @@ def send_verification_email(doc):
 
     template = frappe.get_doc(
         "Email Template",
-        EMAIL_TEMPLATE
+        EMAIL_TEMPLATE,
     )
 
     context = {
         "doc": doc,
         "verification_url": _verification_url(
             doc,
-            raw_token
+            raw_token,
         ),
         "expiry_hours": VERIFICATION_EXPIRY_HOURS,
     }
 
     subject = frappe.render_template(
         template.subject,
-        context
+        context,
     )
 
     message = frappe.render_template(
         template.response_html or template.response,
-        context
+        context,
     )
 
     frappe.sendmail(
@@ -180,6 +209,7 @@ def send_verification_email(doc):
         now=True,
     )
 
+    # The raw token must not remain attached to the document.
     doc.flags.plain_email_verification_token = None
 
 
@@ -188,7 +218,7 @@ def send_verification_email(doc):
 # ---------------------------------------------------------
 
 def _is_valid_party_code(code):
-    """Validate PLCI-prefixed seven-digit Luhn codes."""
+    """Validate PLCI-prefixed, seven-digit Luhn codes."""
 
     if (
         not isinstance(code, str)
@@ -211,7 +241,6 @@ def _new_party_code():
     """Generate an unused Party Code."""
 
     for _ in range(100):
-
         code = (
             f"{PARTY_CODE_PREFIX}"
             f"{generate_luhn_number(7)}"
@@ -219,7 +248,7 @@ def _new_party_code():
 
         if not frappe.db.exists(
             DOCTYPE,
-            {"party_code": code}
+            {"party_code": code},
         ):
             return code
 
@@ -235,12 +264,12 @@ def get_new_party_code():
 
     if not frappe.has_permission(
         DOCTYPE,
-        "create"
+        "create",
     ):
         frappe.throw(
             "Not permitted to create "
-            "Party Legal and Compliance Identity",
-            frappe.PermissionError
+            "Party Legal and Compliance Identity.",
+            frappe.PermissionError,
         )
 
     return _new_party_code()
@@ -259,7 +288,7 @@ class PartyLegalandComplianceIdentity(Document):
             not _is_valid_party_code(self.party_code)
             or frappe.db.exists(
                 DOCTYPE,
-                {"party_code": self.party_code}
+                {"party_code": self.party_code},
             )
         ):
             self.party_code = _new_party_code()
@@ -267,17 +296,16 @@ class PartyLegalandComplianceIdentity(Document):
         _prepare_email_verification(self)
 
     def before_validate(self):
-        """Reset verification when email changes."""
+        """Reset verification when the email changes."""
 
         if (
             not self.is_new()
             and self.has_value_changed("email")
         ):
-            # A verified identity already linked to a
-            # Frappe account must not silently transfer
-            # that relationship to another email.
             previous = self.get_doc_before_save()
 
+            # A verified, linked identity must not be
+            # silently transferred to another email.
             if (
                 previous
                 and previous.email_verified
@@ -301,16 +329,16 @@ class PartyLegalandComplianceIdentity(Document):
                 "Party Code cannot be changed after creation."
             )
 
-        if getattr(
-            self.flags,
-            "allow_email_verification_update",
-            False
-        ):
-            return
-
         previous = self.get_doc_before_save()
 
         if not previous:
+            return
+
+        if getattr(
+            self.flags,
+            "allow_email_verification_update",
+            False,
+        ):
             return
 
         protected_fields = (
@@ -324,14 +352,20 @@ class PartyLegalandComplianceIdentity(Document):
         if self.meta.has_field("portal_user"):
             protected_fields += ("portal_user",)
 
-        for field in protected_fields:
+        email_changed = self.has_value_changed("email")
 
+        for field in protected_fields:
             if self.get(field) == previous.get(field):
                 continue
 
+            # Email changes legitimately reset
+            # verification state in before_validate().
+            #
+            # A portal_user relationship cannot
+            # be changed through this exception.
             if (
                 field != "portal_user"
-                and self.has_value_changed("email")
+                and email_changed
             ):
                 continue
 
@@ -340,12 +374,11 @@ class PartyLegalandComplianceIdentity(Document):
             )
 
     def after_insert(self):
-        """Send initial verification email."""
-
+        """Send the initial verification email."""
         send_verification_email(self)
 
     def on_update(self):
-        """Send another verification email when email changes."""
+        """Send a fresh email after an email-address change."""
 
         if (
             self.get_doc_before_save()
@@ -355,15 +388,21 @@ class PartyLegalandComplianceIdentity(Document):
 
 
 # ---------------------------------------------------------
-# Create User and assign applicant role
+# Create or reuse User and assign all applicant roles
 # ---------------------------------------------------------
 
 def create_user_from_verified_plci(doc):
     """
     Create or reuse a Frappe User after email verification.
 
-    Assign all three applicant roles.
-    Preserve existing User roles and account settings.
+    Assign:
+    - Jurisdiction Compliance Template
+    - Jurisdiction Profile Release Applicant
+    - Identity Record
+
+    Preserve any existing roles and account settings.
+
+    Called within the email verification transaction.
     """
 
     if not doc.email or not doc.email_verified:
@@ -372,7 +411,7 @@ def create_user_from_verified_plci(doc):
             "before creating a User account."
         )
 
-    # Validate that all required roles exist.
+    # All roles must exist before provisioning.
     for role in APPLICANT_ROLES:
         if not frappe.db.exists("Role", role):
             frappe.throw(
@@ -381,15 +420,15 @@ def create_user_from_verified_plci(doc):
 
     email = doc.email.strip().lower()
 
+    # ---------------------------------------------
+    # Check for an existing User
+    # ---------------------------------------------
+
     existing_user = frappe.db.get_value(
         "User",
         {"email": email},
         "name",
     )
-
-    # ---------------------------------------------
-    # Existing User
-    # ---------------------------------------------
 
     if existing_user:
         user = frappe.get_doc(
@@ -415,7 +454,7 @@ def create_user_from_verified_plci(doc):
         return user.name
 
     # ---------------------------------------------
-    # New User
+    # Create a new User
     # ---------------------------------------------
 
     user = frappe.get_doc({
@@ -435,22 +474,27 @@ def create_user_from_verified_plci(doc):
 
     return user.name
 
+
 # ---------------------------------------------------------
 # Resend verification email
 # ---------------------------------------------------------
 
 @frappe.whitelist(methods=["POST"])
 def resend_verification_email(name):
-    """Resend verification with a 60-second cooldown."""
+    """
+    Resend verification with a 60-second cooldown.
+
+    Lock the PLCI row to prevent concurrent resends.
+    """
 
     if not frappe.has_permission(
         DOCTYPE,
         "write",
-        doc=name
+        doc=name,
     ):
         frappe.throw(
             "Not permitted to update this identity.",
-            frappe.PermissionError
+            frappe.PermissionError,
         )
 
     matched = frappe.db.sql(
@@ -461,7 +505,7 @@ def resend_verification_email(name):
         FOR UPDATE
         """,
         (name,),
-        as_dict=True
+        as_dict=True,
     )
 
     if not matched:
@@ -469,16 +513,14 @@ def resend_verification_email(name):
             "Identity record not found."
         )
 
-    doc = frappe.get_doc(
-        DOCTYPE,
-        name
-    )
+    doc = frappe.get_doc(DOCTYPE, name)
 
     doc.check_permission("write")
 
     if not doc.email:
         frappe.throw(
-            "Add an email address before requesting verification."
+            "Add an email address before "
+            "requesting verification."
         )
 
     if doc.email_verified:
@@ -489,18 +531,14 @@ def resend_verification_email(name):
     last_sent = doc.last_email_verification_sent_at
 
     if last_sent:
-
         elapsed = (
             now_datetime() - get_datetime(last_sent)
         ).total_seconds()
 
         if elapsed < RESEND_COOLDOWN_SECONDS:
-
             remaining = max(
                 1,
-                int(
-                    RESEND_COOLDOWN_SECONDS - elapsed
-                ) + 1
+                int(RESEND_COOLDOWN_SECONDS - elapsed) + 1,
             )
 
             frappe.throw(
@@ -512,6 +550,7 @@ def resend_verification_email(name):
 
     doc.flags.allow_email_verification_update = True
 
+    # Frappe commits the successful POST request.
     doc.save()
 
     send_verification_email(doc)
@@ -523,133 +562,200 @@ def resend_verification_email(name):
 
 
 # ---------------------------------------------------------
-# Verify email and create User account
+# Verify email and provision Frappe User
 # ---------------------------------------------------------
 
 @frappe.whitelist(
     allow_guest=True,
-    methods=["GET"]
+    methods=["GET"],
 )
 def verify_email(name, token):
     """
-    Verify email and provision a Frappe User.
+    Verify a PLCI email and provision its User account.
 
-    After verification:
-    - Mark PLCI as Valid.
-    - Invalidate verification token.
-    - Create or reuse User.
-    - Assign applicant role.
-    - Link User to PLCI if field exists.
+    Operations:
+    1. Lock the PLCI row.
+    2. Reject used, invalid, or expired tokens.
+    3. Validate any existing User relationship.
+    4. Mark email as verified.
+    5. Create or reuse the Frappe User.
+    6. Assign all three applicant roles.
+    7. Link the User to the PLCI.
+    8. Commit the database transaction.
+    9. Redirect to the success page.
+
+    Any exception before commit rolls back the database
+    changes made in the transaction.
+
+    GET is retained for existing email-link compatibility.
     """
 
-    matched = frappe.db.sql(
-        f"""
-        SELECT name
-        FROM `tab{DOCTYPE}`
-        WHERE name = %s
-        FOR UPDATE
-        """,
-        (name,),
-        as_dict=True
-    )
-
-    if not matched:
-        frappe.throw(
-            "Invalid verification link."
-        )
-
-    doc = frappe.get_doc(
-        DOCTYPE,
-        name
-    )
-
-    # Already verified:
-    # Do not consume the token again or repeat provisioning.
-    if doc.email_verified:
-        return redirect_verification_success(
-            already_verified=True
-        )
-
-    stored_token = doc.email_verification_token
-
     if (
-        not doc.email
-        or not stored_token
+        not isinstance(name, str)
+        or not isinstance(token, str)
+        or not name
         or not token
     ):
+        frappe.throw(INVALID_VERIFICATION_LINK)
+
+    # Account ownership must be persisted.
+    # Never provision an unlinked applicant User.
+    if not frappe.get_meta(DOCTYPE).has_field("portal_user"):
         frappe.throw(
-            "This verification link is no longer valid."
+            "The portal_user field is required "
+            "for PLCI account provisioning."
         )
 
-    # Validate hashed token.
-    if str(stored_token).startswith("sha256:"):
-        expected = _token_hash(str(token))
-    else:
-        # Support legacy plaintext tokens.
-        expected = str(token)
+    try:
+        # ---------------------------------------------
+        # Lock PLCI row
+        # ---------------------------------------------
 
-    if not secrets.compare_digest(
-        str(stored_token),
-        expected
-    ):
-        frappe.throw(
-            "Invalid email verification link."
+        matched = frappe.db.sql(
+            f"""
+            SELECT name
+            FROM `tab{DOCTYPE}`
+            WHERE name = %s
+            FOR UPDATE
+            """,
+            (name,),
+            as_dict=True,
         )
 
-    # Check expiry.
-    if (
-        not doc.email_verification_expires_at
-        or now_datetime() > get_datetime(
-            doc.email_verification_expires_at
-        )
-    ):
-        frappe.throw(
-            "Verification link expired. "
-            "Please request another verification email."
-        )
+        if not matched:
+            frappe.throw(INVALID_VERIFICATION_LINK)
 
-    # ---------------------------------------------
-    # Mark PLCI as verified
-    # ---------------------------------------------
+        doc = frappe.get_doc(DOCTYPE, name)
 
-    doc.email_verified = 1
-    doc.lifecycle_status = "Valid"
+        # ---------------------------------------------
+        # Reject already-verified PLCI
+        # ---------------------------------------------
 
-    doc.email_verification_token = None
-    doc.email_verification_expires_at = None
+        # A consumed token must never return success.
+        # Do not reveal whether the PLCI exists or
+        # whether the email was previously verified.
+        if doc.email_verified:
+            frappe.throw(INVALID_VERIFICATION_LINK)
 
-    doc.flags.allow_email_verification_update = True
+        if not doc.email:
+            frappe.throw(INVALID_VERIFICATION_LINK)
 
-    doc.save(ignore_permissions=True)
+        stored_token = doc.email_verification_token
 
-    # ---------------------------------------------
-    # Create User and assign applicant role
-    # ---------------------------------------------
+        if not stored_token:
+            frappe.throw(INVALID_VERIFICATION_LINK)
 
-    user_name = create_user_from_verified_plci(doc)
+        # ---------------------------------------------
+        # Validate verification token
+        # ---------------------------------------------
 
-    # ---------------------------------------------
-    # Link User to PLCI
-    # ---------------------------------------------
+        if not _is_valid_verification_token(
+            stored_token,
+            token,
+        ):
+            frappe.throw(INVALID_VERIFICATION_LINK)
 
-    if doc.meta.has_field("portal_user"):
+        # ---------------------------------------------
+        # Validate token expiry
+        # ---------------------------------------------
 
-        existing_link = doc.portal_user
+        expires_at = doc.email_verification_expires_at
+
+        if (
+            not expires_at
+            or now_datetime() > get_datetime(expires_at)
+        ):
+            frappe.throw(
+                "Verification link expired. "
+                "Please request another verification email."
+            )
+
+        # ---------------------------------------------
+        # Validate existing User relationship
+        # ---------------------------------------------
+
+        existing_link = doc.get("portal_user")
+
+        if existing_link:
+            linked_email = frappe.db.get_value(
+                "User",
+                existing_link,
+                "email",
+            )
+
+            if (
+                not linked_email
+                or linked_email.strip().lower()
+                != doc.email.strip().lower()
+            ):
+                frappe.throw(
+                    "This identity is already linked "
+                    "to another User account. "
+                    "Contact an administrator."
+                )
+
+        # ---------------------------------------------
+        # Mark PLCI email as verified
+        # ---------------------------------------------
+
+        doc.email_verified = 1
+        doc.lifecycle_status = "Valid"
+
+        # Permanently consume this verification token.
+        doc.email_verification_token = None
+        doc.email_verification_expires_at = None
+
+        doc.flags.allow_email_verification_update = True
+
+        doc.save(ignore_permissions=True)
+
+        # ---------------------------------------------
+        # Create or reuse User
+        # ---------------------------------------------
+
+        user_name = create_user_from_verified_plci(doc)
+
+        # ---------------------------------------------
+        # Ensure PLCI cannot switch User
+        # ---------------------------------------------
 
         if (
             existing_link
             and existing_link != user_name
         ):
             frappe.throw(
-                "This identity is linked to another User. "
-                "Contact an administrator."
+                "This identity is linked "
+                "to a different User account."
             )
 
-        doc.portal_user = user_name
+        # ---------------------------------------------
+        # Link User to PLCI
+        # ---------------------------------------------
 
-        doc.save(ignore_permissions=True)
+        if doc.portal_user != user_name:
+            doc.portal_user = user_name
 
-    # Commit verification and User creation together.
-    frappe.db.commit()
+            doc.save(ignore_permissions=True)
+
+        # ---------------------------------------------
+        # Commit all database changes together
+        # ---------------------------------------------
+
+        # Required because this endpoint uses GET.
+        # No successful redirect is returned before
+        # User provisioning is committed.
+        frappe.db.commit()
+
+    except Exception:
+        # Roll back the current database transaction.
+        #
+        # This protects against partial verification
+        # if account provisioning or linking fails.
+        frappe.db.rollback()
+        raise
+
+    # ---------------------------------------------
+    # Redirect after successful commit
+    # ---------------------------------------------
 
     return redirect_verification_success()
