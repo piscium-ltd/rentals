@@ -840,11 +840,3 @@ class JurisdictionComplianceTemplate(Document):
             ),
             indicator="green",
         )
-
-    def before_cancel(self):
-        frappe.throw(
-            _(
-                "Submitted compliance templates cannot be cancelled. "
-                "Submit a replacement revision instead."
-            )
-        )
